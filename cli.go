@@ -8,18 +8,24 @@ import (
 )
 
 var (
-  paths *config.Paths
+	app config.Application
 )
 
 func init() {
 
 	workingDir, _ := os.Getwd()
-	paths = config.DefaultPaths(workingDir)
+	app = *config.DefaultApplication(workingDir)
 
 }
 
 func main() {
 
-	fmt.Println(paths)
+	fmt.Println("--SETTINGS--")
+	fmt.Println("Name:", app.Name)
+	fmt.Println("Author:", app.Author)
+
+	fmt.Println("--PATHS--")
+	fmt.Println("Conf Path keys:", app.Paths.OrderedConfPathKeys())
+	fmt.Println("All Paths:", app.Paths)
 
 }
