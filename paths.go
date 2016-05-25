@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"os"
@@ -14,9 +14,18 @@ import (
  */
 
 const (
-	WUNDERTOOLS_PROJECT_CONF_FOLDER = ".wundertools"
-	WUNDERTOOLS_USER_CONF_SUBPATH   = "wundertools"
+	WUNDERTOOLS_PROJECT_CONF_FOLDER     = ".wundertools"
+	WUNDERTOOLS_USER_CONF_SUBPATH       = "wundertools"
 )
+
+func DefaultPaths(workingDir string) *Paths {
+	paths := new(Paths)
+	paths.Init()
+	paths.SetPath("working", workingDir, false)
+	paths.DiscoverUserPaths()
+	paths.DiscoverProjectPaths(workingDir)
+	return paths
+}
 
 // Struct used to keep path information
 type Paths struct {
@@ -24,18 +33,10 @@ type Paths struct {
 	confPathKeys []string          // ordered set of AllPaths keys that are possible roots for settings
 }
 
-// do some discovery of paths based on a pwd
-func (paths *Paths) DefaultPaths(workingDir string) {
-	paths.Init()
-	paths.SetPath("working", workingDir, false)
-	paths.DiscoverUserPaths()
-	paths.DiscoverProjectPaths(workingDir)
-}
-
 // quick constructor/initializer
 func (paths *Paths) Init() {
-	paths.allPaths = make(map[string]string)
-	paths.confPathKeys = make([]string, 0)
+	paths.allPaths = map[string]string{}
+	paths.confPathKeys = []string{}
 }
 
 // a quick snippet to discover a user's home folder
