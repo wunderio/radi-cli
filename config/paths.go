@@ -34,8 +34,8 @@ func (paths *Paths) DefaultPaths(workingDir string) {
 
 // quick constructor/initializer
 func (paths *Paths) Init() {
-	paths.allPaths = map[string]string{}
-	paths.confPathKeys = []string{}
+	paths.allPaths = make(map[string]string)
+	paths.confPathKeys = make([]string, 0)
 }
 
 // a quick snippet to discover a user's home folder

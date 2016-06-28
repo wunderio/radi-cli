@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	WUNDERTOOLS_CONFIG_APPLICATION_YAML_PATH = "application.yml"
+	WUNDERTOOLS_CONFIG_APPLICATION_YAML_PATH = "settings.yml"
 )
 
 // iterate through all of the conf paths, and load application.yml
