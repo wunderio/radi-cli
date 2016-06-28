@@ -6,10 +6,16 @@ import (
 	"github.com/docker/libcompose/project/options"
 )
 
-func (composeProject *ComposeProject) Up() {
-	optionsUp := options.Up{}	
+func (project *ComposeProject) Up(NoRecreate, ForceRecreate, NoBuild bool) {
+	optionsUp := options.Up{
+		Create: options.Create{
+			NoRecreate: NoRecreate,
+			ForceRecreate: ForceRecreate,
+			NoBuild: NoBuild,
+		},
+	}	
 
-	if err := composeProject.APIProject.Up(context.Background(), optionsUp); err!= nil {
-		composeProject.log.Fatal(err.Error())
+	if err := project.APIProject.Up(context.Background(), optionsUp); err!= nil {
+		project.log.Fatal(err.Error())
 	}
 }

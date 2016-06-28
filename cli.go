@@ -3,15 +3,15 @@ package main
 import (
 	"os"
 
-	"github.com/james-nesbitt/wundertools-go/command"
+	"github.com/james-nesbitt/wundertools-go/operation"
 	"github.com/james-nesbitt/wundertools-go/config"
 	"github.com/james-nesbitt/wundertools-go/log"
 )
 
 var (
-	commandName string
+	operationName string
 	globalFlags map[string]string
-	commandFlags []string
+	operationFlags []string
 
 	app    config.Application
 	logger log.Log
@@ -19,7 +19,7 @@ var (
 
 func init() {
 
-	commandName, globalFlags, commandFlags = parseGlobalFlags(os.Args)
+	operationName, globalFlags, operationFlags = parseGlobalFlags(os.Args)
 
 	// verbosity
 	var verbosity int = log.VERBOSITY_MESSAGE
@@ -47,14 +47,14 @@ func init() {
 
 func main() {
 
-	if com, ok := command.GetCommand(commandName); ok {
+	if com, ok := operation.GetOperation(operationName); ok {
 
 		com.Init(logger, &app)
-		com.Execute(commandFlags)
+		com.Execute(operationFlags...)
 
 	} else {
 
-		logger.Error("Unknown command "+commandName)
+		logger.Error("Unknown operation "+operationName)
 
 	}
 
