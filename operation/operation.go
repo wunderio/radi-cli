@@ -13,6 +13,9 @@ func GetOperation(name string) (Operation, bool) {
 	case "compose":
 		operation := Compose{}
 		return Operation(&operation), true
+	case "init":
+		operation := Init{}
+		return Operation(&operation), true
 	}
 	return nil, false
 }
