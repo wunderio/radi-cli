@@ -3,9 +3,10 @@ package operation
 import (
 	"github.com/james-nesbitt/wundertools-go/config"
 	"github.com/james-nesbitt/wundertools-go/log"
+	"github.com/james-nesbitt/wundertools-go/command"
 )
 
-func GetOperation(name string) (Operation, bool) {
+func GetOperation(logger log.Log, application *config.Application, name string) (Operation, bool) {
 	switch name {
 	case "info":
 		operation := Info{}
@@ -17,6 +18,14 @@ func GetOperation(name string) (Operation, bool) {
 		operation := Init{}
 		return Operation(&operation), true
 	}
+
+	// dynamic operations are handled by the command functionality
+	if command, ok := command.IsThisACommand(logger, application, name); ok {
+		operation := Command{}
+		operation.AddCommand(command)
+		return Operation(&operation), true
+	}
+
 	return nil, false
 }
 
