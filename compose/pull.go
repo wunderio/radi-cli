@@ -5,7 +5,7 @@ import (
 )
 
 func (project *ComposeProject) Pull(services ...string) {
-	if err := project.APIProject.Pull(context.Background()); err!= nil {
+	if err := project.APIProject.Pull(context.Background()); err != nil {
 		project.log.Fatal(err.Error())
 	}
 }

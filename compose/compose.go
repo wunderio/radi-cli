@@ -41,11 +41,11 @@ func MakeComposeProject(logger log.Log, application *config.Application) (*Compo
 	}
 
 	composeProject := ComposeProject{
-		log: logger,
+		log:         logger,
 		application: application,
-		services: []string{},
-		context: context,
-		APIProject: project,
+		services:    []string{},
+		context:     context,
+		APIProject:  project,
 	}
 
 	return &composeProject, true
@@ -53,7 +53,7 @@ func MakeComposeProject(logger log.Log, application *config.Application) (*Compo
 
 // A wundertools wrapper for the APIProject class
 type ComposeProject struct {
-	log log.Log
+	log         log.Log
 	application *config.Application
 
 	services []string
@@ -64,13 +64,14 @@ type ComposeProject struct {
 
 // get a specific service
 func (project *ComposeProject) Service(name string) (libCompose_project.Service, error) {
- 	return project.context.Project.CreateService(name)
+	return project.context.Project.CreateService(name)
 }
+
 // List all the service names
 func (project *ComposeProject) serviceNames() []string {
- 	return project.context.Project.ServiceConfigs.Keys()
+	return project.context.Project.ServiceConfigs.Keys()
 }
 
 func (project *ComposeProject) ServicePS(names ...string) (libCompose_project.InfoSet, error) {
- 	return project.context.Project.Ps(context.Background(), false, names...)
+	return project.context.Project.Ps(context.Background(), false, names...)
 }

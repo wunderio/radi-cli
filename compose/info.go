@@ -9,10 +9,8 @@ import (
 	"text/tabwriter"
 
 	"golang.org/x/net/context"
-
 	// "github.com/james-nesbitt/wundertools-go/config"
 	// "github.com/james-nesbitt/wundertools-go/log"
-
 	// "github.com/docker/libcompose/docker"
 	// libCompose_project "github.com/docker/libcompose/project"
 )
@@ -20,9 +18,9 @@ import (
 // main info method
 func (project *ComposeProject) Info() {
 
-  project.log.Message("PROJECT COMPOSE INFORMATION")
+	project.log.Message("PROJECT COMPOSE INFORMATION")
 
-  project.info_nodes()
+	project.info_nodes()
 
 }
 
@@ -56,21 +54,21 @@ func (project *ComposeProject) info_nodes() {
 			"|-",
 			service.Name(),
 			config.Image,
-		// 	image.ID[:11],
-		// 	strings.Join(image.RepoTags, ","),
-		// 	strconv.FormatInt(image.Created, 10),
-		// 	//			strconv.FormatInt(image.Size, 10),
-		// 	//			strconv.FormatInt(image.VirtualSize, 10),
-		// 	//			image.ParentID,
-		// 	// 			strings.Join(image.RepoDigests, "\n"),
-		// 	// 			strings.Join(image.Labels, "\n"),
+			// 	image.ID[:11],
+			// 	strings.Join(image.RepoTags, ","),
+			// 	strconv.FormatInt(image.Created, 10),
+			// 	//			strconv.FormatInt(image.Size, 10),
+			// 	//			strconv.FormatInt(image.VirtualSize, 10),
+			// 	//			image.ParentID,
+			// 	// 			strings.Join(image.RepoDigests, "\n"),
+			// 	// 			strings.Join(image.Labels, "\n"),
 		}
 		w.Write([]byte(strings.Join(row, "\t") + "\n"))
 
-		if len(containers)>0 {
+		if len(containers) > 0 {
 			for _, container := range containers {
 
-				var status string = "unknown"
+				var status string = "not-running"
 				if running, _ := container.IsRunning(ctx); running {
 					status = "running"
 				}
@@ -84,10 +82,9 @@ func (project *ComposeProject) info_nodes() {
 				}
 				w.Write([]byte(strings.Join(row, "\t") + "\n"))
 
-			}			
+			}
 		}
 	}
 
 	w.Flush()
 }
-

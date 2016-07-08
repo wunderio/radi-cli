@@ -8,12 +8,12 @@ import (
 
 func (project *ComposeProject) Down(RemoveVolume bool, RemoveImages string, RemoveOrphans bool) {
 	optionsDown := options.Down{
-		RemoveVolume: RemoveVolume,
-		RemoveImages: options.ImageType(RemoveImages),
+		RemoveVolume:  RemoveVolume,
+		RemoveImages:  options.ImageType(RemoveImages),
 		RemoveOrphans: RemoveOrphans,
-	}	
+	}
 
-	if err := project.APIProject.Down(context.Background(), optionsDown); err!= nil {
+	if err := project.APIProject.Down(context.Background(), optionsDown); err != nil {
 		project.log.Fatal(err.Error())
 	}
 }
