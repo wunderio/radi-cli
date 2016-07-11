@@ -9,13 +9,13 @@ import (
 func (project *ComposeProject) Up(NoRecreate, ForceRecreate, NoBuild bool) {
 	optionsUp := options.Up{
 		Create: options.Create{
-			NoRecreate: NoRecreate,
+			NoRecreate:    NoRecreate,
 			ForceRecreate: ForceRecreate,
-			NoBuild: NoBuild,
+			NoBuild:       NoBuild,
 		},
-	}	
+	}
 
-	if err := project.APIProject.Up(context.Background(), optionsUp); err!= nil {
+	if err := project.APIProject.Up(context.Background(), optionsUp); err != nil {
 		project.log.Fatal(err.Error())
 	}
 }

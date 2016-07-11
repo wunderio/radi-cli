@@ -30,7 +30,7 @@ func (app *Application) from_ConfYaml() {
 }
 
 /**
- * configura an application from a yaml stream of Bytes
+ * configure an application from a yaml stream of Bytes
  * @TODO make this a reader?
  */
 func (app *Application) from_ConfYamlBytes(yamlBytes []byte) {

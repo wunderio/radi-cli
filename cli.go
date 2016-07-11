@@ -3,14 +3,14 @@ package main
 import (
 	"os"
 
-	"github.com/james-nesbitt/wundertools-go/operation"
 	"github.com/james-nesbitt/wundertools-go/config"
 	"github.com/james-nesbitt/wundertools-go/log"
+	"github.com/james-nesbitt/wundertools-go/operation"
 )
 
 var (
-	operationName string
-	globalFlags map[string]string
+	operationName  string
+	globalFlags    map[string]string
 	operationFlags []string
 
 	app    config.Application
@@ -47,14 +47,14 @@ func init() {
 
 func main() {
 
-	if com, ok := operation.GetOperation(operationName); ok {
+	if com, ok := operation.GetOperation(logger, &app, operationName); ok {
 
 		com.Init(logger, &app)
 		com.Execute(operationFlags...)
 
 	} else {
 
-		logger.Error("Unknown operation "+operationName)
+		logger.Error("Unknown operation " + operationName)
 
 	}
 

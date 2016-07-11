@@ -30,7 +30,6 @@ func parseGlobalFlags(flags []string) (commandName string, globalFlags map[strin
 		case "--staaap":
 			globalFlags["verbosity"] = "staaap"
 
-
 		default:
 
 			commandName = arg
