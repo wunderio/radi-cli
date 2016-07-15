@@ -17,6 +17,6 @@ func (project *ComposeProject) Up(NoRecreate, ForceRecreate, NoBuild bool) {
 	}
 
 	if err := project.APIProject.Up(context.Background(), optionsUp); err != nil {
-		log.WithError(err).Panic("Could not up the project.")
+		log.WithError(err).Fatal("Could not up the project.")
 	}
 }

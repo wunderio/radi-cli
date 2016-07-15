@@ -10,7 +10,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
-
 	// "github.com/james-nesbitt/wundertools-go/config"
 	// "github.com/docker/libcompose/docker"
 	// libCompose_project "github.com/docker/libcompose/project"

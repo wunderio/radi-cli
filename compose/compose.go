@@ -36,7 +36,7 @@ func MakeComposeProject(application *config.Application) (*ComposeProject, bool)
 	project, err := libCompose_docker.NewProject(context, nil)
 
 	if err != nil {
-		log.WithError(err).Panic("Could not make the docker-compose project.")
+		log.WithError(err).Fatal("Could not make the docker-compose project.")
 		return nil, false
 	}
 

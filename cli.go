@@ -18,7 +18,7 @@ var (
 	globalFlags    map[string]string
 	operationFlags []string
 
-	app    config.Application
+	app config.Application
 )
 
 func init() {
@@ -27,7 +27,7 @@ func init() {
 
 	// verbosity
 	if globalFlags["verbosity"] != "" {
-		if level, err := log.ParseLevel(globalFlags["verbosity"]); err==nil {
+		if level, err := log.ParseLevel(globalFlags["verbosity"]); err == nil {
 			log.SetLevel(level)
 		} else {
 			log.Warn("Unrecognized logging verosity value.  Ignoring it.")
@@ -47,7 +47,7 @@ func main() {
 
 	} else {
 
-		log.Error("Unknown operation " + operationName)
+		log.WithFields(log.Fields{"operation": operationName}).Error("Unknown operation")
 
 	}
 

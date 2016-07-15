@@ -17,7 +17,7 @@ func parseGlobalFlags(flags []string) (commandName string, globalFlags map[strin
 		arg := flags[index]
 
 		/**
-		 * Verbosity flags here should match the 
+		 * Verbosity flags here should match the
 		 * github.com/sirupsen/logrus string equivalent
 		 * of the levels.  we don't actually set any
 		 * log level here to keep it abstract, and to
@@ -37,7 +37,6 @@ func parseGlobalFlags(flags []string) (commandName string, globalFlags map[strin
 			fallthrough
 		case "--debug":
 			globalFlags["verbosity"] = "debug"
-
 
 		default:
 

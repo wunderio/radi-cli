@@ -49,7 +49,7 @@ func (commands *Commands) from_ConfYamlBytes(yamlBytes []byte) {
 		}
 
 	} else {
-		log.WithFields(log.Fields{"error": err.Error()}).Warn("Could not parse commands yml.")
+		log.WithError(err).Warn("Could not parse commands yml.")
 	}
 }
 

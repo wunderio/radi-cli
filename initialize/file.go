@@ -10,7 +10,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/Sirupsen/logrus")
+	log "github.com/Sirupsen/logrus"
+)
 
 type InitTaskFileBase struct {
 	root string

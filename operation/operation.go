@@ -1,8 +1,8 @@
 package operation
 
 import (
-	"github.com/james-nesbitt/wundertools-go/config"
 	"github.com/james-nesbitt/wundertools-go/command"
+	"github.com/james-nesbitt/wundertools-go/config"
 )
 
 func GetOperation(application *config.Application, name string) (Operation, bool) {

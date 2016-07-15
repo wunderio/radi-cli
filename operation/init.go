@@ -2,9 +2,9 @@ package operation
 
 import (
 	log "github.com/Sirupsen/logrus"
-	
+
 	// "github.com/james-nesbitt/wundertools-go/config"
- 	"github.com/james-nesbitt/wundertools-go/initialize"
+	"github.com/james-nesbitt/wundertools-go/initialize"
 )
 
 type Init struct {
@@ -16,11 +16,11 @@ func (operation *Init) Execute(flags ...string) {
 	var method string = "bare"
 	var source string = "" // has context based on type
 
-	if len(flags)>0 {
+	if len(flags) > 0 {
 		switch flags[0] {
 		case "git":
 			method = "git"
-			if len(flags)>1 {
+			if len(flags) > 1 {
 				source = flags[0]
 			} else {
 				log.Error("No git repository provided.")
@@ -28,7 +28,7 @@ func (operation *Init) Execute(flags ...string) {
 		case "yml":
 			method = "yml"
 
-			if len(flags)>1 {
+			if len(flags) > 1 {
 				source = flags[0]
 			} else {
 				log.Error("No yml source provided.")

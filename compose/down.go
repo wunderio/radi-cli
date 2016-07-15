@@ -1,6 +1,6 @@
 package compose
 
-import (	
+import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
@@ -15,6 +15,6 @@ func (project *ComposeProject) Down(RemoveVolume bool, RemoveImages string, Remo
 	}
 
 	if err := project.APIProject.Down(context.Background(), optionsDown); err != nil {
-		log.WithError(err).Panic("Could not down the project.")
+		log.WithError(err).Fatal("Could not down the project.")
 	}
 }

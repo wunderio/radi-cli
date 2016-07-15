@@ -2,7 +2,7 @@ package operation
 
 import (
 	log "github.com/Sirupsen/logrus"
-	
+
 	"github.com/james-nesbitt/wundertools-go/compose"
 )
 
@@ -18,7 +18,7 @@ func (operation *Compose) Execute(flags ...string) {
 		return
 	}
 
-	if len(flags)>0 {
+	if len(flags) > 0 {
 		switch flags[0] {
 		case "pull":
 			log.Debug("Pulling project")
@@ -41,8 +41,7 @@ func (operation *Compose) Execute(flags ...string) {
 
 }
 
-
-func (operation *Compose) execute_Up(composeProject *compose.ComposeProject,flags ...string) {
+func (operation *Compose) execute_Up(composeProject *compose.ComposeProject, flags ...string) {
 	NoRecreate := false
 	ForceRecreate := false
 	NoBuild := false

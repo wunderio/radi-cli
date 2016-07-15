@@ -14,8 +14,8 @@ func (operation *Info) Execute(flags ...string) {
 	app := operation.application
 
 	log.WithFields(log.Fields{
-		"Name": app.Name,
-		"Author": app.Author,
+		"Name":        app.Name,
+		"Author":      app.Author,
 		"Environment": app.Environment,
 	}).Info("Settings")
 
@@ -27,7 +27,7 @@ func (operation *Info) Execute(flags ...string) {
 	if !ok {
 		log.Error("could not build compose project")
 		return
-	}	
+	}
 
 	composeProject.Info()
 }

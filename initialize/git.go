@@ -64,7 +64,7 @@ func (task *InitTaskGitClone) RunTask() bool {
 	url := task.url
 
 	logWriter := log.StandardLogger().Writer()
-	defer logWriter.Close()	
+	defer logWriter.Close()
 
 	if !task.MakeDir(destinationPath, false) {
 		return false
