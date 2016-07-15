@@ -1,6 +1,7 @@
 package compose
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
 	"github.com/docker/libcompose/project/options"
@@ -16,6 +17,6 @@ func (project *ComposeProject) Up(NoRecreate, ForceRecreate, NoBuild bool) {
 	}
 
 	if err := project.APIProject.Up(context.Background(), optionsUp); err != nil {
-		project.log.Fatal(err.Error())
+		log.WithError(err).Fatal("Could not up the project.")
 	}
 }

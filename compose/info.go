@@ -8,9 +8,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 	// "github.com/james-nesbitt/wundertools-go/config"
-	// "github.com/james-nesbitt/wundertools-go/log"
 	// "github.com/docker/libcompose/docker"
 	// libCompose_project "github.com/docker/libcompose/project"
 )
@@ -18,7 +18,7 @@ import (
 // main info method
 func (project *ComposeProject) Info() {
 
-	project.log.Message("PROJECT COMPOSE INFORMATION")
+	log.Info("PROJECT COMPOSE INFORMATION")
 
 	project.info_nodes()
 
@@ -30,8 +30,11 @@ func (project *ComposeProject) info_nodes() {
 	// use a single run context for all of the operations
 	ctx := context.Background()
 
+	writer := log.StandardLogger().Writer()
+	defer writer.Close()
+
 	w := new(tabwriter.Writer)
-	w.Init(project.log, 15, 20, 2, ' ', 0)
+	w.Init(writer, 15, 20, 2, ' ', 0)
 
 	row := []string{
 		"|=",

@@ -1,4 +1,5 @@
 package operation
+
 /**
  * Command is an operation that hands off to any dynamic
  * operation handler, which are typically abstract commands
@@ -6,9 +7,8 @@ package operation
  */
 
 import (
+	"github.com/james-nesbitt/wundertools-go/command"
 	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
- 	"github.com/james-nesbitt/wundertools-go/command"
 )
 
 type Command struct {
@@ -22,9 +22,9 @@ func (operation *Command) AddCommand(command command.Command) {
 }
 
 // store a logger, and conf
-func (operation *Command) Init(logger log.Log, application *config.Application) {
-	operation.BaseOperation.Init(logger, application)
-	operation.command.Init(logger, application)
+func (operation *Command) Init(application *config.Application) {
+	operation.BaseOperation.Init(application)
+	operation.command.Init(application)
 }
 
 func (operation *Command) Execute(flags ...string) {

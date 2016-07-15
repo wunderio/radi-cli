@@ -5,10 +5,10 @@ import (
 	"os"
 	"path"
 
+	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
 	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 )
 
 // iterate through all of the conf paths, and load commands.yml
-func (commands *Commands) Commands_FromYaml(logger log.Log, application *config.Application) {
+func (commands *Commands) Commands_FromYaml(application *config.Application) {
 
 	for _, key := range application.Paths.OrderedConfPathKeys() {
 		confPath, _ := application.Paths.Path(key)
@@ -25,7 +25,7 @@ func (commands *Commands) Commands_FromYaml(logger log.Log, application *config.
 		if _, err := os.Stat(yamlFilePath); err == nil {
 			yamlFile, err := ioutil.ReadFile(yamlFilePath)
 			if err == nil {
-				commands.from_ConfYamlBytes(logger, yamlFile)
+				commands.from_ConfYamlBytes(yamlFile)
 			}
 		}
 	}
@@ -36,7 +36,7 @@ func (commands *Commands) Commands_FromYaml(logger log.Log, application *config.
  * configure an command from a yaml stream of Bytes
  * @TODO make this a reader?
  */
-func (commands *Commands) from_ConfYamlBytes(logger log.Log, yamlBytes []byte) {
+func (commands *Commands) from_ConfYamlBytes(yamlBytes []byte) {
 	// parse the config file contents as a ConfSource_projectyaml object
 	source := new(CommandsFromYaml)
 	if err := yaml.Unmarshal(yamlBytes, source); err == nil {
@@ -49,7 +49,7 @@ func (commands *Commands) from_ConfYamlBytes(logger log.Log, yamlBytes []byte) {
 		}
 
 	} else {
-		logger.Warning("Could not parse commands yml: " + err.Error())
+		log.WithError(err).Warn("Could not parse commands yml.")
 	}
 }
 

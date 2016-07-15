@@ -4,36 +4,39 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
 )
 
-func (tasks *InitTasks) Init_Git_Run(logger log.Log, source string) bool {
+func (tasks *InitTasks) Init_Git_Run(source string) bool {
 
 	if source == "" {
-		logger.Error("You have not provided a git target $/> wundertools init git https://github.com/aleksijohansson/docker-drupal-coach")
+		log.Error("You have not provided a git target $/> wundertools init git https://github.com/aleksijohansson/docker-drupal-coach")
 		return false
 	}
 
 	url := source
 	path := tasks.root
 
+	logWriter := log.StandardLogger().Writer()
+	defer logWriter.Close()
+
 	cmd := exec.Command("git", "clone", "--progress", url, path)
 	cmd.Stdin = os.Stdin
-	cmd.Stdout = logger
-	cmd.Stderr = logger
+	cmd.Stdout = logWriter
+	cmd.Stderr = logWriter
 
 	err := cmd.Start()
 
 	if err != nil {
-		logger.Error("Failed to clone the remote repository [" + url + "] => " + err.Error())
+		log.WithFields(log.Fields{"url": url}).WithError(err).Error("Failed to clone the remote repository.")
 		return false
 	}
 
-	logger.Message("Clone remote repository to local project folder [" + url + "]")
+	log.WithFields(log.Fields{"url": url}).Info("Clone remote repository to local project folder.")
 	err = cmd.Wait()
 
 	if err != nil {
-		logger.Error("Failed to clone the remote repository [" + url + "] => " + err.Error())
+		log.WithFields(log.Fields{"url": url}).WithError(err).Error("Failed to clone the remote repository.")
 		return false
 	}
 
@@ -51,41 +54,44 @@ type InitTaskGitClone struct {
 	url  string
 }
 
-func (task *InitTaskGitClone) RunTask(logger log.Log) bool {
+func (task *InitTaskGitClone) RunTask() bool {
 	if task.root == "" || task.url == "" {
-		logger.Error("EMPTY ROOT PASSED TO GIT: " + task.root)
+		log.WithFields(log.Fields{"root": task.root}).Error("EMPTY ROOT PASSED TO GIT")
 		return false
 	}
 
 	destinationPath := task.path
 	url := task.url
 
-	if !task.MakeDir(logger, destinationPath, false) {
+	logWriter := log.StandardLogger().Writer()
+	defer logWriter.Close()
+
+	if !task.MakeDir(destinationPath, false) {
 		return false
 	}
 
 	destinationAbsPath, ok := task.absolutePath(destinationPath, true)
 	if !ok {
-		logger.Warning("Invalid copy destination path: " + destinationPath)
+		log.WithFields(log.Fields{"path": destinationPath}).Warning("Invalid copy destination path.")
 		return false
 	}
 
 	cmd := exec.Command("git", "clone", "--progress", url, destinationAbsPath)
-	cmd.Stderr = logger
+	cmd.Stderr = logWriter
 	err := cmd.Start()
 
 	if err != nil {
-		logger.Error("Failed to clone the remote repository [" + url + "] => " + err.Error())
+		log.WithFields(log.Fields{"url": url}).WithError(err).Error("Failed to clone the remote repository.")
 		return false
 	}
 
 	err = cmd.Wait()
 
 	if err != nil {
-		logger.Error("Failed to clone the remote repository [" + url + "] => " + err.Error())
+		log.WithFields(log.Fields{"url": url}).WithError(err).Error("Failed to clone the remote repository.")
 		return false
 	}
 
-	logger.Message("Cloned remote repository [" + url + "] to local path " + destinationPath)
+	log.WithFields(log.Fields{"url": url, "path": destinationPath}).Info("Cloned remote repository to local path.")
 	return true
 }

@@ -1,7 +1,8 @@
 package operation
 
 import (
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/james-nesbitt/wundertools-go/compose"
 )
 
@@ -10,24 +11,23 @@ type Info struct {
 }
 
 func (operation *Info) Execute(flags ...string) {
-	logger := operation.logger
 	app := operation.application
 
-	logger.Message("--SETTINGS--")
-	logger.Debug(log.VERBOSITY_MESSAGE, "Name:", app.Name)
-	logger.Debug(log.VERBOSITY_MESSAGE, "Author:", app.Author)
-	logger.Debug(log.VERBOSITY_MESSAGE, "Environment:", app.Environment)
+	log.WithFields(log.Fields{
+		"Name":        app.Name,
+		"Author":      app.Author,
+		"Environment": app.Environment,
+	}).Info("Settings")
 
 	// logger.Message("--PATHS--")
 	// logger.Debug(log.VERBOSITY_MESSAGE, "Conf Path keys:", app.Paths.OrderedConfPathKeys())
 	// logger.Debug(log.VERBOSITY_MESSAGE, "Project Paths:", app.Paths)
 
-	composeProject, ok := compose.MakeComposeProject(logger, app)
+	composeProject, ok := compose.MakeComposeProject(app)
 	if !ok {
-		operation.logger.Error("could not build compose project")
+		log.Error("could not build compose project")
 		return
-	}	
+	}
 
 	composeProject.Info()
-
 }

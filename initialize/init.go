@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 type InitTasks struct {
@@ -10,15 +10,15 @@ type InitTasks struct {
 	tasks []InitTask
 }
 
-func (tasks *InitTasks) Init(logger log.Log, root string) bool {
+func (tasks *InitTasks) Init(root string) bool {
 	tasks.root = root
 	tasks.tasks = []InitTask{}
 	return true
 }
-func (tasks *InitTasks) RunTasks(logger log.Log) {
+func (tasks *InitTasks) RunTasks() {
 	for _, task := range tasks.tasks {
-		logger.Debug(log.VERBOSITY_DEBUG_LOTS, "INIT TASK:", task)
-		task.RunTask(logger)
+		log.WithFields(log.Fields{"task": task}).Debug("INIT TASK")
+		task.RunTask()
 	}
 }
 
@@ -75,15 +75,15 @@ func (tasks *InitTasks) AddError(error string) {
 }
 
 type InitTask interface {
-	RunTask(logger log.Log) bool
+	RunTask() bool
 }
 
 type InitTaskError struct {
 	error string
 }
 
-func (task *InitTaskError) RunTask(logger log.Log) bool {
-	logger.Error(task.error)
+func (task *InitTaskError) RunTask() bool {
+	log.WithFields(log.Fields{"task": task}).Error(task.error)
 	return true
 }
 
@@ -91,7 +91,7 @@ type InitTaskMessage struct {
 	message string
 }
 
-func (task *InitTaskMessage) RunTask(logger log.Log) bool {
-	logger.Message(task.message)
+func (task *InitTaskMessage) RunTask() bool {
+	log.WithFields(log.Fields{"task": task}).Info(task.message)
 	return true
 }

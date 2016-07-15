@@ -1,9 +1,9 @@
 package operation
 
 import (
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/james-nesbitt/wundertools-go/compose"
-// 	"github.com/james-nesbitt/wundertools-go/config"
- 	"github.com/james-nesbitt/wundertools-go/log"
 )
 
 type Compose struct {
@@ -12,37 +12,36 @@ type Compose struct {
 
 func (operation *Compose) Execute(flags ...string) {
 
-	composeProject, ok := compose.MakeComposeProject(operation.logger, operation.application)
+	composeProject, ok := compose.MakeComposeProject(operation.application)
 	if !ok {
-		operation.logger.Error("could not build compose project")
+		log.Error("could not build compose project")
 		return
 	}
 
-	if len(flags)>0 {
+	if len(flags) > 0 {
 		switch flags[0] {
 		case "pull":
-			operation.logger.Debug(log.VERBOSITY_DEBUG, "Pulling project")
+			log.Debug("Pulling project")
 			composeProject.Pull()
 		case "up":
-			operation.logger.Debug(log.VERBOSITY_DEBUG, "Upping project")
+			log.Debug("Upping project")
 			operation.execute_Up(composeProject, flags...)
 		case "down":
-			operation.logger.Debug(log.VERBOSITY_DEBUG, "Upping project")
+			log.Debug("Upping project")
 			operation.execute_Down(composeProject, flags...)
 
 		case "info":
-			operation.logger.Debug(log.VERBOSITY_DEBUG, "Project information")
+			log.Debug("Project information")
 			composeProject.Info()
 		}
 
 	} else {
-		operation.logger.Warning("No operation was passed to the compose operation")
+		log.Warn("No operation was passed to the compose operation")
 	}
 
 }
 
-
-func (operation *Compose) execute_Up(composeProject *compose.ComposeProject,flags ...string) {
+func (operation *Compose) execute_Up(composeProject *compose.ComposeProject, flags ...string) {
 	NoRecreate := false
 	ForceRecreate := false
 	NoBuild := false

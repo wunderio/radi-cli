@@ -8,11 +8,11 @@ import (
 	"encoding/json"
 	"gopkg.in/yaml.v2"
 
-	"github.com/james-nesbitt/coach/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 // Get tasks from remote YAML corresponding to a remote yaml file
-func (tasks *InitTasks) Init_Yaml_Run(logger log.Log, path string) bool {
+func (tasks *InitTasks) Init_Yaml_Run(path string) bool {
 
 	var yamlSourceBytes []byte
 	var err error
@@ -21,7 +21,7 @@ func (tasks *InitTasks) Init_Yaml_Run(logger log.Log, path string) bool {
 
 		resp, err := http.Get(path)
 		if err != nil {
-			logger.Error("Could not retrieve remote yaml init instructions [" + path + "] : " + err.Error())
+			log.WithFields(log.Fields{"path": path}).WithError(err).Error("Could not retrieve remote yaml init instructions.")
 			return false
 		}
 		defer resp.Body.Close()
@@ -32,11 +32,11 @@ func (tasks *InitTasks) Init_Yaml_Run(logger log.Log, path string) bool {
 		// read the config file
 		yamlSourceBytes, err = ioutil.ReadFile(path)
 		if err != nil {
-			logger.Error("Could not read the local YAML file [" + path + "]: " + err.Error())
+			log.WithFields(log.Fields{"path": path}).WithError(err).Error("Could not read the local YAML file.")
 			return false
 		}
 		if len(yamlSourceBytes) == 0 {
-			logger.Error("Yaml file [" + path + "] was empty")
+			log.WithFields(log.Fields{"path": path}).Error("Yaml file was empty.")
 			return false
 		}
 
@@ -45,7 +45,7 @@ func (tasks *InitTasks) Init_Yaml_Run(logger log.Log, path string) bool {
 	tasks.AddMessage("Initializing using YAML Source [" + path + "] to local project folder")
 
 	// get tasks from yaml
-	tasks.AddTasksFromYaml(logger, yamlSourceBytes)
+	tasks.AddTasksFromYaml(yamlSourceBytes)
 
 	// Add some message items
 	tasks.AddFile(".wundertools/CREATEDFROM.md", "THIS PROJECT WAS CREATED A COACH YAML INSTALLER :"+path)
@@ -57,7 +57,7 @@ func (tasks *InitTasks) Init_Yaml_Run(logger log.Log, path string) bool {
  *Getting tasks from YAML
  */
 
-func (tasks *InitTasks) AddTasksFromYaml(logger log.Log, yamlSource []byte) error {
+func (tasks *InitTasks) AddTasksFromYaml(yamlSource []byte) error {
 
 	var yaml_tasks []map[string]interface{}
 	err := yaml.Unmarshal(yamlSource, &yaml_tasks)
@@ -120,7 +120,7 @@ func (tasks *InitTasks) AddTasksFromYaml(logger log.Log, yamlSource []byte) erro
 
 		default:
 			taskType := task_struct["Type"].(string)
-			logger.Warning("Unknown init task type [" + taskType + "]")
+			log.WithFields(log.Fields{"type": taskType}).Warning("Unknown init task type.")
 		}
 
 		if taskAdder != nil {

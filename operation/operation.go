@@ -1,12 +1,11 @@
 package operation
 
 import (
-	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
 	"github.com/james-nesbitt/wundertools-go/command"
+	"github.com/james-nesbitt/wundertools-go/config"
 )
 
-func GetOperation(logger log.Log, application *config.Application, name string) (Operation, bool) {
+func GetOperation(application *config.Application, name string) (Operation, bool) {
 	switch name {
 	case "info":
 		operation := Info{}
@@ -20,7 +19,7 @@ func GetOperation(logger log.Log, application *config.Application, name string) 
 	}
 
 	// dynamic operations are handled by the command functionality
-	if command, ok := command.IsThisACommand(logger, application, name); ok {
+	if command, ok := command.IsThisACommand(application, name); ok {
 		operation := Command{}
 		operation.AddCommand(command)
 		return Operation(&operation), true
@@ -30,18 +29,16 @@ func GetOperation(logger log.Log, application *config.Application, name string) 
 }
 
 type Operation interface {
-	Init(logger log.Log, application *config.Application)
+	Init(application *config.Application)
 	Execute(flags ...string)
 }
 
-// Base Command class, which will receive and keep the logger, and project conf
+// Base Command class, which will receive and keep the project conf
 type BaseOperation struct {
-	logger      log.Log
 	application *config.Application
 }
 
-// store a logger, and conf
-func (operation *BaseOperation) Init(logger log.Log, application *config.Application) {
-	operation.logger = logger
+// store a conf
+func (operation *BaseOperation) Init(application *config.Application) {
 	operation.application = application
 }

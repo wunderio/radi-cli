@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 type InitTaskFileBase struct {
@@ -47,13 +47,13 @@ func (task *InitTaskFileBase) userHomePath() string {
 	}
 }
 
-func (task *InitTaskFileBase) MakeDir(logger log.Log, makePath string, pathIsFile bool) bool {
+func (task *InitTaskFileBase) MakeDir(makePath string, pathIsFile bool) bool {
 	if makePath == "" {
 		return true // it's already made
 	}
 
 	if pathDirectory, ok := task.absolutePath(makePath, true); !ok {
-		logger.Warning("Invalid directory path: " + pathDirectory)
+		log.WithFields(log.Fields{"path": pathDirectory}).Warning("Invalid directory path")
 		return false
 	}
 	pathDirectory := path.Join(task.root, makePath)
@@ -67,14 +67,14 @@ func (task *InitTaskFileBase) MakeDir(logger log.Log, makePath string, pathIsFil
 	}
 	return true
 }
-func (task *InitTaskFileBase) MakeFile(logger log.Log, destinationPath string, contents string) bool {
-	if !task.MakeDir(logger, destinationPath, true) {
+func (task *InitTaskFileBase) MakeFile(destinationPath string, contents string) bool {
+	if !task.MakeDir(destinationPath, true) {
 		// @todo something log
 		return false
 	}
 
 	if destinationPath, ok := task.absolutePath(destinationPath, true); !ok {
-		logger.Warning("Invalid file destination path: " + destinationPath)
+		log.WithFields(log.Fields{"path": destinationPath}).Warning("Invalid file destination path")
 		return false
 	}
 
@@ -92,45 +92,45 @@ func (task *InitTaskFileBase) MakeFile(logger log.Log, destinationPath string, c
 	return true
 }
 
-func (task *InitTaskFileBase) CopyFile(logger log.Log, destinationPath string, sourcePath string) bool {
+func (task *InitTaskFileBase) CopyFile(destinationPath string, sourcePath string) bool {
 	if destinationPath == "" || sourcePath == "" {
-		logger.Warning("empty source or destination passed for copy")
+		log.Warning("empty source or destination passed for copy")
 		return false
 	}
 
 	sourcePath, ok := task.absolutePath(sourcePath, false)
 	if !ok {
-		logger.Warning("Invalid copy source path: " + sourcePath)
+		log.WithFields(log.Fields{"path": sourcePath}).Warning("Invalid copy source path")
 		return false
 	}
 	sourceFile, err := os.Open(sourcePath)
 	if err != nil {
-		logger.Warning("could not copy file as it does not exist [" + sourcePath + "] : " + err.Error())
+		log.WithFields(log.Fields{"path": sourcePath}).WithError(err).Warning("could not copy file as it does not exist")
 		return false
 	}
 	defer sourceFile.Close()
 
-	if !task.MakeDir(logger, destinationPath, true) {
+	if !task.MakeDir(destinationPath, true) {
 		// @todo something log
-		logger.Warning("could not copy file as the path to the destination file could not be created [" + destinationPath + "]")
+		log.WithFields(log.Fields{"path": destinationPath}).Warning("could not copy file as the path to the destination file could not be created")
 		return false
 	}
 	destinationAbsPath, ok := task.absolutePath(destinationPath, true)
 	if !ok {
-		logger.Warning("Invalid copy destination path: " + destinationPath)
+		log.WithFields(log.Fields{"path": destinationPath}).Warning("Invalid copy destination path")
 		return false
 	}
 
 	destinationFile, err := os.Open(destinationAbsPath)
 	if err == nil {
-		logger.Warning("could not copy file as it already exists [" + destinationPath + "]")
+		log.WithFields(log.Fields{"path": destinationPath}).Warning("could not copy file as it already exists.")
 		destinationFile.Close()
 		return false
 	}
 
 	destinationFile, err = os.Create(destinationAbsPath)
 	if err != nil {
-		logger.Warning("could not copy file as destination file could not be created [" + destinationPath + "] : " + err.Error())
+		log.WithFields(log.Fields{"path": destinationPath}).WithError(err).Warning("could not copy file as destination file could not be created.")
 		return false
 	}
 
@@ -143,46 +143,46 @@ func (task *InitTaskFileBase) CopyFile(logger log.Log, destinationPath string, s
 			err = os.Chmod(destinationPath, sourceInfo.Mode())
 			return true
 		} else {
-			logger.Warning("could not copy file as destination file could not be created [" + destinationPath + "] : " + err.Error())
+			log.WithFields(log.Fields{"path": destinationPath}).WithError(err).Warning("could not copy file as destination file could not be created.")
 			return false
 		}
 	} else {
-		logger.Warning("could not copy file as copy failed [" + destinationPath + "] : " + err.Error())
+		log.WithFields(log.Fields{"path": destinationPath}).WithError(err).Warning("could not copy file as copy failed.")
 	}
 
 	return true
 }
 
-func (task *InitTaskFileBase) CopyRemoteFile(logger log.Log, destinationPath string, sourcePath string) bool {
+func (task *InitTaskFileBase) CopyRemoteFile(destinationPath string, sourcePath string) bool {
 	if destinationPath == "" || sourcePath == "" {
 		return false
 	}
 
 	response, err := http.Get(sourcePath)
 	if err != nil {
-		logger.Warning("Could not open remote URL: " + sourcePath)
+		log.WithFields(log.Fields{"path": sourcePath}).Warning("Could not open remote URL")
 		return false
 	}
 	defer response.Body.Close()
 
 	sourceContent, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		logger.Warning("Could not read remote file: " + sourcePath)
+		log.WithFields(log.Fields{"path": sourcePath}).Warning("Could not read remote file")
 		return false
 	}
 
-	return task.MakeFile(logger, destinationPath, string(sourceContent))
+	return task.MakeFile(destinationPath, string(sourceContent))
 }
 
-func (task *InitTaskFileBase) CopyFileRecursive(logger log.Log, path string, source string) bool {
+func (task *InitTaskFileBase) CopyFileRecursive(path string, source string) bool {
 	sourceAbsPath, ok := task.absolutePath(source, false)
 	if !ok {
-		logger.Warning("Couldn't find copy source " + source)
+		log.WithFields(log.Fields{"path": source}).Warning("Couldn't find copy source.")
 		return false
 	}
-	return task.copyFileRecursive(logger, path, sourceAbsPath, "")
+	return task.copyFileRecursive(path, sourceAbsPath, "")
 }
-func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootPath string, sourceRootPath string, sourcePath string) bool {
+func (task *InitTaskFileBase) copyFileRecursive(destinationRootPath string, sourceRootPath string, sourcePath string) bool {
 	fullPath := sourceRootPath
 
 	if sourcePath != "" {
@@ -194,7 +194,7 @@ func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootP
 		err := os.Stat(fullPath)
 	if err != nil {
 		// @TODO do something log : source doesn't exist
-		logger.Warning("File does not exist :" + fullPath)
+		log.WithFields(log.Fields{"path": fullPath}).Warning("File does not exist.")
 		return false
 	}
 
@@ -206,7 +206,7 @@ func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootP
 
 		if err != nil {
 			// @TODO do something log : source doesn't exist
-			logger.Warning("Could not open directory")
+			log.WithFields(log.Fields{"path": fullPath}).Warning("Could not open directory")
 			return false
 		}
 
@@ -214,8 +214,8 @@ func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootP
 
 			//childSourcePath := source + "/" + obj.Name()
 			childSourcePath := path.Join(sourcePath, obj.Name())
-			if !task.copyFileRecursive(logger, destinationRootPath, sourceRootPath, childSourcePath) {
-				logger.Warning("Resursive copy failed")
+			if !task.copyFileRecursive(destinationRootPath, sourceRootPath, childSourcePath) {
+				log.Warning("Resursive copy failed")
 			}
 
 		}
@@ -223,11 +223,11 @@ func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootP
 	} else {
 		// add file copy
 		destinationPath := path.Join(destinationRootPath, sourcePath)
-		if task.CopyFile(logger, destinationPath, sourceRootPath) {
-			logger.Info("--> Copied file (recursively): " + sourcePath + " [from " + sourceRootPath + "]")
+		if task.CopyFile(destinationPath, sourceRootPath) {
+			log.WithFields(log.Fields{"path": sourcePath, "root": sourceRootPath}).Info("--> Copied file (recursively).")
 			return true
 		} else {
-			logger.Warning("--> Failed to copy file: " + sourcePath + " [from " + sourceRootPath + "]")
+			log.WithFields(log.Fields{"path": sourcePath, "root": sourceRootPath}).Warning("--> Failed to copy file.")
 			return false
 		}
 		return true
@@ -236,24 +236,24 @@ func (task *InitTaskFileBase) copyFileRecursive(logger log.Log, destinationRootP
 }
 
 // perform a string replace on file contents
-func (task *InitTaskFileBase) FileStringReplace(logger log.Log, targetPath string, oldString string, newString string, replaceCount int) bool {
+func (task *InitTaskFileBase) FileStringReplace(targetPath string, oldString string, newString string, replaceCount int) bool {
 
 	targetPath, ok := task.absolutePath(targetPath, false)
 	if !ok {
-		logger.Warning("Invalid string replace path: " + targetPath)
+		log.WithFields(log.Fields{"path": targetPath}).Warning("Invalid string replace path")
 		return false
 	}
 
 	contents, err := ioutil.ReadFile(targetPath)
 	if err != nil {
-		logger.Error(err.Error())
+		log.WithError(err).Error("Could not read file for string replacement.")
 	}
 
 	contents = []byte(strings.Replace(string(contents), oldString, newString, replaceCount))
 
 	err = ioutil.WriteFile(targetPath, contents, 0644)
 	if err != nil {
-		logger.Error(err.Error())
+		log.WithError(err).Error("Could not write to file for string replacement.")
 	}
 	return true
 }
@@ -266,16 +266,16 @@ type InitTaskFile struct {
 	contents string
 }
 
-func (task *InitTaskFile) RunTask(logger log.Log) bool {
+func (task *InitTaskFile) RunTask() bool {
 	if task.path == "" {
 		return false
 	}
 
-	if task.MakeFile(logger, task.path, task.contents) {
-		logger.Message("--> Created file : " + task.path)
+	if task.MakeFile(task.path, task.contents) {
+		log.WithFields(log.Fields{"path": task.path}).Info("--> Created file.")
 		return true
 	} else {
-		logger.Warning("--> Failed to create file : " + task.path)
+		log.WithFields(log.Fields{"path": task.path}).Warning("--> Failed to create file.")
 		return false
 	}
 }
@@ -288,16 +288,16 @@ type InitTaskRemoteFile struct {
 	url  string
 }
 
-func (task *InitTaskRemoteFile) RunTask(logger log.Log) bool {
+func (task *InitTaskRemoteFile) RunTask() bool {
 	if task.path == "" || task.root == "" || task.url == "" {
 		return false
 	}
 
-	if task.CopyRemoteFile(logger, task.path, task.url) {
-		logger.Message("--> Copied remote file : " + task.url + " -> " + task.path)
+	if task.CopyRemoteFile(task.path, task.url) {
+		log.WithFields(log.Fields{"root": task.root, "url": task.url, "path": task.path}).Info("--> Copied remote file.")
 		return true
 	} else {
-		logger.Warning("--> Failed to copy remote file : " + task.url)
+		log.WithFields(log.Fields{"root": task.root, "url": task.url, "path": task.path}).Warning("--> Failed to copy remote file.")
 		return false
 	}
 }
@@ -310,16 +310,16 @@ type InitTaskFileCopy struct {
 	source string
 }
 
-func (task *InitTaskFileCopy) RunTask(logger log.Log) bool {
+func (task *InitTaskFileCopy) RunTask() bool {
 	if task.path == "" || task.root == "" || task.source == "" {
 		return false
 	}
 
-	if task.CopyFileRecursive(logger, task.path, task.source) {
-		logger.Message("--> Copied file : " + task.source + " -> " + task.path)
+	if task.CopyFileRecursive(task.path, task.source) {
+		log.WithFields(log.Fields{"root": task.root, "path": task.path, "source": task.source}).Info("--> Copied file.")
 		return true
 	} else {
-		logger.Warning("--> Failed to copy file : " + task.source + " -> " + task.path)
+		log.WithFields(log.Fields{"root": task.root, "path": task.path, "source": task.source}).Warning("--> Failed to copy file.")
 		return false
 	}
 }
@@ -334,7 +334,7 @@ type InitTaskFileStringReplace struct {
 	replaceCount int
 }
 
-func (task *InitTaskFileStringReplace) RunTask(logger log.Log) bool {
+func (task *InitTaskFileStringReplace) RunTask() bool {
 	if task.path == "" || task.root == "" || task.oldString == "" || task.newString == "" {
 		return false
 	}
@@ -342,11 +342,11 @@ func (task *InitTaskFileStringReplace) RunTask(logger log.Log) bool {
 		task.replaceCount = -1
 	}
 
-	if task.FileStringReplace(logger, task.path, task.oldString, task.newString, task.replaceCount) {
-		logger.Message("--> performed string replace on file : " + task.path)
+	if task.FileStringReplace(task.path, task.oldString, task.newString, task.replaceCount) {
+		log.WithFields(log.Fields{"root": task.root, "path": task.path}).Info("--> performed string replace on file.")
 		return true
 	} else {
-		logger.Warning("--> Failed to perform string replace on file : " + task.path)
+		log.WithFields(log.Fields{"root": task.root, "path": task.path}).Warning("--> Failed to perform string replace on file.")
 		return false
 	}
 }

@@ -7,7 +7,6 @@ import (
 	libCompose_project_options "github.com/docker/libcompose/project/options"
 
 	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
 )
 
 const COMMAND_TYPE_CONTAINERIZED = "container"
@@ -27,8 +26,8 @@ type ContainerizedCommand struct {
 	persistant bool
 }
 
-func (command *ContainerizedCommand) Init(logger log.Log, application *config.Application) {
-	command.CommandBase.Init(logger, application)
+func (command *ContainerizedCommand) Init(application *config.Application) {
+	command.CommandBase.Init(application)
 }
 func (command *ContainerizedCommand) Settings(settings interface{}) {
 	command.settings = settings.(ContainerizedCommandSettings)

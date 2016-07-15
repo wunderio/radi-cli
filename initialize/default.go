@@ -1,10 +1,6 @@
 package initialize
 
-import (
-	"github.com/james-nesbitt/wundertools-go/log"
-)
-
-func (tasks *InitTasks) Init_Default_Run(logger log.Log, source string) bool {
+func (tasks *InitTasks) Init_Default_Run(source string) bool {
 
 	switch source {
 	case "bare":

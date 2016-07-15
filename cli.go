@@ -1,10 +1,15 @@
 package main
 
+/**
+ * @TODO This will likely soon be replaced with github.com/urfave/cli
+ */
+
 import (
 	"os"
 
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
 	"github.com/james-nesbitt/wundertools-go/operation"
 )
 
@@ -13,8 +18,7 @@ var (
 	globalFlags    map[string]string
 	operationFlags []string
 
-	app    config.Application
-	logger log.Log
+	app config.Application
 )
 
 func init() {
@@ -22,24 +26,13 @@ func init() {
 	operationName, globalFlags, operationFlags = parseGlobalFlags(os.Args)
 
 	// verbosity
-	var verbosity int = log.VERBOSITY_MESSAGE
 	if globalFlags["verbosity"] != "" {
-		switch globalFlags["verbosity"] {
-		case "message":
-			verbosity = log.VERBOSITY_MESSAGE
-		case "info":
-			verbosity = log.VERBOSITY_INFO
-		case "warning":
-			verbosity = log.VERBOSITY_WARNING
-		case "verbose":
-			verbosity = log.VERBOSITY_DEBUG_LOTS
-		case "debug":
-			verbosity = log.VERBOSITY_DEBUG_WOAH
-		case "staaap":
-			verbosity = log.VERBOSITY_DEBUG_STAAAP
+		if level, err := log.ParseLevel(globalFlags["verbosity"]); err == nil {
+			log.SetLevel(level)
+		} else {
+			log.Warn("Unrecognized logging verosity value.  Ignoring it.")
 		}
 	}
-	logger = log.MakeCliLog("wundertools", os.Stdout, verbosity)
 
 	workingDir, _ := os.Getwd()
 	app = *config.DefaultApplication(workingDir)
@@ -47,14 +40,14 @@ func init() {
 
 func main() {
 
-	if com, ok := operation.GetOperation(logger, &app, operationName); ok {
+	if com, ok := operation.GetOperation(&app, operationName); ok {
 
-		com.Init(logger, &app)
+		com.Init(&app)
 		com.Execute(operationFlags...)
 
 	} else {
 
-		logger.Error("Unknown operation " + operationName)
+		log.WithFields(log.Fields{"operation": operationName}).Error("Unknown operation")
 
 	}
 
