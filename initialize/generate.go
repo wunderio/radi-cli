@@ -6,25 +6,24 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
 )
 
-func Init_Generate(logger log.Log, handler string, path string, skip []string, sizeLimit int64, output io.Writer) bool {
-	logger.Message("GENERATING INIT")
+func Init_Generate(handler string, path string, skip []string, sizeLimit int64, output io.Writer) bool {
+	log.Info("GENERATING INIT")
 
 	var generator Generator
 	switch handler {
 	case "test":
-		generator = Generator(&TestInitGenerator{logger: logger, output: output})
+		generator = Generator(&TestInitGenerator{output: output})
 	case "yaml":
-		generator = Generator(&YMLInitGenerator{logger: logger, output: output})
+		generator = Generator(&YMLInitGenerator{output: output})
 	default:
-		logger.Error("Unknown init generator (handler) " + handler)
+		log.WithFields(log.Fields{"handler": handler}).Error("Unknown init generator (handler).")
 		return false
 	}
 
 	iterator := GenerateIterator{
-		logger:    logger,
 		output:    output,
 		skip:      skip,
 		sizeLimit: sizeLimit,
@@ -32,16 +31,15 @@ func Init_Generate(logger log.Log, handler string, path string, skip []string, s
 	}
 
 	if iterator.Generate(path) {
-		logger.Message("FINISHED GENERATING YML INIT")
+		log.Info("FINISHED GENERATING YML INIT")
 		return true
 	} else {
-		logger.Error("ERROR OCCURRED GENERATING YML INIT")
+		log.Error("ERROR OCCURRED GENERATING YML INIT")
 		return false
 	}
 }
 
 type GenerateIterator struct {
-	logger log.Log
 	output io.Writer
 
 	skip      []string
@@ -62,7 +60,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 
 	for _, skipEach := range iterator.skip {
 		if match, _ := regexp.MatchString(skipEach, sourcePath); match {
-			iterator.logger.Info("Skipping marked skip file :" + sourcePath)
+			log.WithFields(log.Fields{"path": sourcePath}).Info("Skipping marked skip file.")
 			return true
 		}
 	}
@@ -71,7 +69,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 	info, err := os.Stat(fullPath)
 	if err != nil {
 		// @TODO do something log : source doesn't exist
-		iterator.logger.Warning("File does not exist :" + fullPath)
+		log.WithFields(log.Fields{"path": fullPath}).Warning("File does not exist.")
 		return false
 	}
 
@@ -81,10 +79,10 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 		// check for GIT folder
 		if _, err := os.Open(path.Join(fullPath, ".git")); err == nil {
 			if iterator.generator.generateGit(fullPath, sourcePath) {
-				iterator.logger.Info("Generated git file: " + sourcePath)
+				log.WithFields(log.Fields{"path": sourcePath}).Info("Generated git file.")
 				return true
 			} else {
-				iterator.logger.Warning("Failed to generate git file: " + sourcePath)
+				log.WithFields(log.Fields{"path": sourcePath}).Warning("Failed to generate git file.")
 			}
 		}
 
@@ -94,7 +92,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 
 		if err != nil {
 			// @TODO do something log : source doesn't exist
-			iterator.logger.Warning("Could not open directory")
+			log.WithFields(log.Fields{"path": fullPath}).Warning("Could not open directory.")
 			return false
 		}
 
@@ -103,7 +101,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 			//childSourcePath := source + "/" + obj.Name()
 			childSourcePath := path.Join(sourcePath, obj.Name())
 			if !iterator.generate_Recursive(sourceRootPath, childSourcePath) {
-				iterator.logger.Warning("Resursive generate failed")
+				log.WithFields(log.Fields{"path": childSourcePath, "root": sourceRootPath}).Warning("Resursive generate failed")
 			}
 
 		}
@@ -111,21 +109,21 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 	} else if mode.IsRegular() {
 
 		if info.Size() > iterator.sizeLimit {
-			iterator.logger.Info("Skipped file that is larger than our limit: " + sourcePath)
+			log.WithFields(log.Fields{"path": sourcePath, "limit": iterator.sizeLimit}).Info("Skipped file that is larger than our limit.")
 			return true
 		}
 
 		// generate single file from contents
 		if iterator.generator.generateSingleFile(fullPath, sourcePath) {
-			iterator.logger.Info("Generated file (recursively): " + sourcePath)
+			log.WithFields(log.Fields{"path": sourcePath}).Info("Generated file (recursively).")
 			return true
 		} else {
-			iterator.logger.Warning("Failed to generate file: " + sourcePath)
+			log.WithFields(log.Fields{"path": sourcePath}).Warning("Failed to generate file.")
 			return false
 		}
 		return true
 	} else {
-		iterator.logger.Warning("Skipped generation non-regular file: " + sourcePath)
+		log.WithFields(log.Fields{"path": sourcePath}).Warning("Skipped generation non-regular file.")
 	}
 
 	return true
@@ -138,19 +136,18 @@ type Generator interface {
 
 type TestInitGenerator struct {
 	output io.Writer
-	logger log.Log
 }
 
 func (generator *TestInitGenerator) generateSingleFile(fullPath string, sourcePath string) bool {
 	singleFile, _ := os.Open(fullPath)
 	defer singleFile.Close()
 
-	generator.logger.Debug(log.VERBOSITY_DEBUG_LOTS, "GENERATE SINGLE FILE: ", singleFile.Name())
+	log.WithFields(log.Fields{"name": singleFile.Name()}).Debug("GENERATE SINGLE FILE")
 	generator.output.Write([]byte("GENERATE SINGLE FILE: " + sourcePath + "\n"))
 	return true
 }
 func (generator *TestInitGenerator) generateGit(fullPath string, sourcePath string) bool {
-	generator.logger.Debug(log.VERBOSITY_DEBUG_LOTS, "GENERATE GIT FILE: ", sourcePath)
+	log.WithFields(log.Fields{"path": sourcePath}).Debug("GENERATE GIT FILE")
 	generator.output.Write([]byte("GENERATE GIT FILE: " + sourcePath + "\n"))
 	return true
 }

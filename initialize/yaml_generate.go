@@ -7,21 +7,20 @@ import (
 	"path"
 	"strings"
 
-	"github.com/james-nesbitt/wundertools-go/log"
+	log "github.com/Sirupsen/logrus"
 )
 
 type YMLInitGenerator struct {
 	output io.Writer
-	logger log.Log
 }
 
 func (generator *YMLInitGenerator) generateSingleFile(fullPath string, sourcePath string) bool {
 	singleFile, _ := os.Open(fullPath)
 	defer singleFile.Close()
 
-	generator.logger.Debug(log.VERBOSITY_DEBUG_LOTS, "GENERATE SINGLE FILE: ", singleFile.Name())
+	log.WithFields(log.Fields{"name": singleFile.Name()}).Debug("GENERATE SINGLE FILE")
 	generator.output.Write([]byte("- Type: File\n"))
-	generator.output.Write([]byte("  Path: " + sourcePath + "\n"))
+	generator.output.Write([]byte("  path: " + sourcePath + "\n"))
 	generator.output.Write([]byte("  Contents: |\n"))
 
 	r := bufio.NewReader(singleFile)
@@ -30,7 +29,7 @@ func (generator *YMLInitGenerator) generateSingleFile(fullPath string, sourcePat
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			generator.logger.Error(err.Error())
+			log.Error(err.Error())
 			return false // if you return error
 		}
 		generator.output.Write([]byte("    " + line))
@@ -49,7 +48,7 @@ func (generator *YMLInitGenerator) generateGit(fullPath string, sourcePath strin
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				generator.logger.Error(err.Error())
+				log.WithError(err).Error("Could not read from git configuration file.")
 				return false // if you return error
 			}
 			if strings.Contains(line, "url =") {
@@ -60,18 +59,18 @@ func (generator *YMLInitGenerator) generateGit(fullPath string, sourcePath strin
 		}
 
 	} else {
-		generator.logger.Error("Could not open .git/config in " + sourcePath)
+		log.WithFields(log.Fields{"path": sourcePath}).Error("Could not open .git/config in path.")
 		return false
 	}
 
 	if gitUrl == "" {
-		generator.logger.Error("Could not determine GIT Url from .git/config")
+		log.Error("Could not determine GIT Url from .git/config")
 		return false
 	}
 
-	generator.logger.Debug(log.VERBOSITY_DEBUG_LOTS, "GENERATE GIT FILE: ", sourcePath)
+	log.WithFields(log.Fields{"path": sourcePath}).Debug("GENERATE GIT FILE.")
 	generator.output.Write([]byte("- Type: GitClone\n"))
-	generator.output.Write([]byte("  Path: " + sourcePath + "\n"))
+	generator.output.Write([]byte("  path: " + sourcePath + "\n"))
 	generator.output.Write([]byte("  Url: " + gitUrl + "\n"))
 	return true
 }

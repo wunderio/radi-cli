@@ -7,17 +7,17 @@ package compose
 import (
 	"path"
 
-	"github.com/james-nesbitt/wundertools-go/config"
-	"github.com/james-nesbitt/wundertools-go/log"
-
+	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
 	// libCompose_config "github.com/docker/libcompose/config"
 	libCompose_docker "github.com/docker/libcompose/docker"
 	libCompose_project "github.com/docker/libcompose/project"
+
+	"github.com/james-nesbitt/wundertools-go/config"
 )
 
-func MakeComposeProject(logger log.Log, application *config.Application) (*ComposeProject, bool) {
+func MakeComposeProject(application *config.Application) (*ComposeProject, bool) {
 
 	composeProjectName := application.Name
 	composeFiles := []string{}
@@ -36,12 +36,11 @@ func MakeComposeProject(logger log.Log, application *config.Application) (*Compo
 	project, err := libCompose_docker.NewProject(context, nil)
 
 	if err != nil {
-		logger.Fatal(err.Error())
+		log.WithError(err).Panic("Could not make the docker-compose project.")
 		return nil, false
 	}
 
 	composeProject := ComposeProject{
-		log:         logger,
 		application: application,
 		services:    []string{},
 		context:     context,
@@ -53,7 +52,6 @@ func MakeComposeProject(logger log.Log, application *config.Application) (*Compo
 
 // A wundertools wrapper for the APIProject class
 type ComposeProject struct {
-	log         log.Log
 	application *config.Application
 
 	services []string

@@ -1,8 +1,9 @@
 package operation
 
 import (
+	log "github.com/Sirupsen/logrus"
+	
 	// "github.com/james-nesbitt/wundertools-go/config"
- 	// "github.com/james-nesbitt/wundertools-go/log"
  	"github.com/james-nesbitt/wundertools-go/initialize"
 )
 
@@ -22,7 +23,7 @@ func (operation *Init) Execute(flags ...string) {
 			if len(flags)>1 {
 				source = flags[0]
 			} else {
-				operation.logger.Error("No git repository provided.")
+				log.Error("No git repository provided.")
 			}
 		case "yml":
 			method = "yml"
@@ -30,32 +31,32 @@ func (operation *Init) Execute(flags ...string) {
 			if len(flags)>1 {
 				source = flags[0]
 			} else {
-				operation.logger.Error("No yml source provided.")
+				log.Error("No yml source provided.")
 			}
 		}
 
 	} else {
-		operation.logger.Warning("No operation was passed to the compose operation. A bare project will be created.")
+		log.Warning("No operation was passed to the compose operation. A bare project will be created.")
 	}
 
 	if rootpath, ok := operation.application.Path("project-root"); !ok {
-		operation.logger.Error("No project root path has been defined, so no project can be initialized.")
+		log.Error("No project root path has been defined, so no project can be initialized.")
 		return
 	} else {
 
 		initTasks := initialize.InitTasks{}
-		initTasks.Init(operation.logger, rootpath)
+		initTasks.Init(rootpath)
 
 		switch method {
 		case "git":
-			operation.logger.Info("Creating project from git")
-			initTasks.Init_Git_Run(operation.logger, source)
+			log.Info("Creating project from git")
+			initTasks.Init_Git_Run(source)
 		case "bare":
-			operation.logger.Info("Creating bare project")
+			log.Info("Creating bare project")
 			initTasks.Init_Default_Bare()
 		}
 
-		initTasks.RunTasks(operation.logger)
+		initTasks.RunTasks()
 
 	}
 
