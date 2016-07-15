@@ -246,14 +246,14 @@ func (task *InitTaskFileBase) FileStringReplace(targetPath string, oldString str
 
 	contents, err := ioutil.ReadFile(targetPath)
 	if err != nil {
-		log.Error(err.Error())
+		log.WithError(err).Error("Could not read file for string replacement.")
 	}
 
 	contents = []byte(strings.Replace(string(contents), oldString, newString, replaceCount))
 
 	err = ioutil.WriteFile(targetPath, contents, 0644)
 	if err != nil {
-		log.Error(err.Error())
+		log.WithError(err).Error("Could not write to file for string replacement.")
 	}
 	return true
 }

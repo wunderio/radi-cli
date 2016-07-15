@@ -1,8 +1,6 @@
 package command
 
 import (
-	log "github.com/Sirupsen/logrus"
-
 	"github.com/james-nesbitt/wundertools-go/compose"
 	"github.com/james-nesbitt/wundertools-go/config"
 )
