@@ -38,6 +38,9 @@ func (command *ContainerizedCommand) Exec(flags ...string) {
 		Detached: false,
 	}
 
+	// allow our app to alter the service, to do some string replacements etc
+	command.application.AlterService(&command.settings.serviceConfig)
+
 	command.project.AddConfig(command.name, &command.settings.serviceConfig)
 	command.project.Run(context.Background(), command.name, flags, runOptions)
 

@@ -78,6 +78,34 @@ func (command *CommandFromYaml) UnmarshalYAML(unmarshal func(interface{}) error)
 					command.command.Settings(settings)
 
 				}
+			case COMMAND_TYPE_EXEC:
+
+				settings := ExecCommandSettings{}
+				if err = unmarshal(&settings); err == nil {
+
+					command.command = Command(&ExecCommand{})
+					command.command.Settings(settings)
+
+				}
+			case COMMAND_TYPE_SET:
+
+				settings := CommandSetSettings{}
+				if err = unmarshal(&settings); err == nil {
+
+					command.command = Command(&CommandSet{})
+					command.command.Settings(settings)
+
+				}
+
+			default:
+
+				settings := UnknownTypeCommandSettings{}
+				if err = unmarshal(&settings); err == nil {
+
+					command.command = Command(&UnknownTypeCommand{})
+					command.command.Settings(settings)
+
+				}
 			}
 		}
 	}
