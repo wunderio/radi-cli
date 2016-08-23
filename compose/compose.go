@@ -71,5 +71,5 @@ func (project *ComposeProject) serviceNames() []string {
 }
 
 func (project *ComposeProject) ServicePS(names ...string) (libCompose_project.InfoSet, error) {
-	return project.context.Project.Ps(context.Background(), false, names...)
+	return project.context.Project.Ps(context.Background(), names...)
 }

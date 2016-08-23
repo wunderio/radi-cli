@@ -31,45 +31,26 @@ func (app *Application) alterService_RewriteMappedVolumes(service *libCompose_co
 	// short cut to the application paths, which we will use for substitution
 	appPaths := app.Paths
 
-	for index, volume := range service.Volumes {
-		if !strings.Contains(volume, ":") {
-			// this volume is not mapped
-			continue
-		}
+	for index, _ := range service.Volumes.Volumes {
 
-		/**
-		 * use the volume as a slice:
-		 *   [0] : local path
-		 *   [1] : container path
-		 *   [2] : optional RO flag
-		 */
-		volumeSlices := strings.SplitN(volume, ":", 3)
-		modified := false
+		volume := service.Volumes.Volumes[index]
 
-		switch volumeSlices[0][0] {
+		switch volume.Source[0] {
 		/**
 		 * @TODO refactor this string comparison to be less cumbersome
 		 */
 		case []byte("~")[0]:
 			homePath, _ := appPaths.Path("user-home")
-			volumeSlices[0] = strings.Replace(volumeSlices[0], "~", homePath, 1)
-			modified = true
+			volume.Source = strings.Replace(volume.Source, "~", homePath, 1)
 
 		case []byte(".")[0]:
 			appPath, _ := appPaths.Path("project-root")
-			volumeSlices[0] = strings.Replace(volumeSlices[0], "~", appPath, 1)
-			modified = true
+			volume.Source = strings.Replace(volume.Source, "~", appPath, 1)
 
 		case []byte("@")[0]:
-			alias := volumeSlices[0]
-			if aliasPath, found := appPaths.Path(alias[1:]); found {
-				volumeSlices[0] = strings.Replace(volumeSlices[0], alias, aliasPath, 1)
-				modified = true
+			if aliasPath, found := appPaths.Path(volume.Source[1:]); found {
+				volume.Source = strings.Replace(volume.Source, volume.Source, aliasPath, 1)
 			}
-		}
-
-		if modified {
-			service.Volumes[index] = strings.Join(volumeSlices, ":")
 		}
 	}
 
