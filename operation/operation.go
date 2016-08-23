@@ -13,8 +13,12 @@ func GetOperation(application *config.Application, name string) (Operation, bool
 	case "compose":
 		operation := Compose{}
 		return Operation(&operation), true
+
 	case "init":
 		operation := Init{}
+		return Operation(&operation), true
+	case "init-generate":
+		operation := InitGenerate{}
 		return Operation(&operation), true
 	}
 
