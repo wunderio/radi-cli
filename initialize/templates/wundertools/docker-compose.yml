@@ -1,0 +1,126 @@
+# WunderTools docker-compose
+#
+version: "2"
+
+services:
+
+  ####
+  # Project related images
+  #
+  # Typically volume containers that are used to provide source and asset to
+  # servers for the application.  The project related images are the focus of the
+  # management tools approach to updating, archiving and distributing an application
+  # and to provide the specifics of an application as a service.
+  #
+  # In production, any required asset or file for an application is provided
+  # strictly as an images based resource, so that production services can be used
+  # with only access to the contents of the compose.yml.
+  # Assets and source should be built into application specific images, as described
+  # below.  Assets can be quite bare, and built up on the server, or can be considered
+  # a distributable resource, and built into the asset image)
+  #
+
+  ####
+  # Source
+  #
+  # Source image holds any elements that are considered immutable in the system
+  # Runtime volumes are added so that parts of this image can be mounted as
+  # read only in other containers.
+  # Production management relies on the source container to be immutable, and
+  # that the source image versions are maintained in such a way that it is clear
+  # which version should be used in production. The production tools perform no
+  # archiving or management of the contents of the source image/container.
+  #
+  # e.g.:
+  #  - php source code
+  #  - js source code
+  #  - css styling
+  #  - php settings and configuration
+  #  - yml configuration
+  #
+  source:
+    image: "quay.io/wunder/wunder-alpine-base"
+    command:
+      - /bin/true
+    volumes:
+      - "./app/web:/app/web"
+      - "./app/vendor:/app/vendor"
+      - "./app/config:/app/config"
+
+  ####
+  # Assets
+  #
+  # In contrast to source, assets holds any mutable files and data that other
+  # container may need access to.
+  # Assets is a distributable image, with volumes that need to be managed in any
+  # environment (backups, revisioned, distributed.) Asset volumes are typically
+  # used with named-volumes in production environments, so they do not need to
+  # have anything kept in image, but it can be advantageous to keep things in the
+  # image.
+  #
+  assets:
+    image: quay.io/wunder/wunder-alpine-base
+    command:
+      - /bin/true
+    volumes:
+      - "./assets/public:/app/web/sites/default/files"
+      - "./assets/backup:/app/backup"
+      - "./assets/private:/app/private"
+
+  ####
+  # Servers
+  #
+  # The following nodes are services that support the application.  Typically
+  # the AMP stack is represented, along with any key-value, search and static-caching
+  # servers used.
+  #
+  # It is optimal if the services use generic shared images, that are used across
+  # instances, and across applications.  This makes the overally server impact low
+  # and means that management tools can focus on the source and asset images
+  #
+
+  ####
+  # DB node
+  #
+  db:
+    image: quay.io/wunder/wundertools-image-fuzzy-mariadb
+
+  ####
+  # MemCacheD
+  #
+  memcache:
+    image: quay.io/wunder/alpine-memcached
+
+  ####
+  # FPM node
+  #
+
+  fpm:
+    image: quay.io/wunder/wundertools-image-fuzzy-php
+    volumes_from:
+      - source
+      - assets
+    links:
+      - db:db.app
+      - memcache:memcached.app
+
+  ####
+  # WWW node
+  #
+  www:
+    image: quay.io/wunder/wundertools-image-fuzzy-nginx
+    volumes_from:
+      - source
+      - assets
+    links:
+      - fpm:fpm.app
+
+  ####
+  # Static cache service
+  #
+  varnish:
+    image: quay.io/wunder/alpine-varnish
+    environment:
+      VARNISH_BACKEND_HOST: backend.app
+    links:
+      - www:backend.app
