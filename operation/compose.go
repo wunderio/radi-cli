@@ -29,6 +29,12 @@ func (operation *Compose) Execute(flags ...string) {
 		case "down":
 			log.Debug("Upping project")
 			operation.execute_Down(composeProject, flags...)
+		case "start":
+			log.Debug("Upping project")
+			operation.execute_Start(composeProject, flags...)
+		case "stop":
+			log.Debug("Upping project")
+			operation.execute_Stop(composeProject, flags...)
 
 		case "info":
 			log.Debug("Project information")
@@ -41,6 +47,7 @@ func (operation *Compose) Execute(flags ...string) {
 
 }
 
+// Parse flags and interpret a compose up
 func (operation *Compose) execute_Up(composeProject *compose.ComposeProject, flags ...string) {
 	NoRecreate := false
 	ForceRecreate := false
@@ -64,6 +71,7 @@ func (operation *Compose) execute_Up(composeProject *compose.ComposeProject, fla
 	composeProject.Up(NoRecreate, ForceRecreate, NoBuild)
 }
 
+// Parse flags and interpret a compose down
 func (operation *Compose) execute_Down(composeProject *compose.ComposeProject, flags ...string) {
 	RemoveVolume := false
 	RemoveImages := ""
@@ -85,4 +93,23 @@ func (operation *Compose) execute_Down(composeProject *compose.ComposeProject, f
 	}
 
 	composeProject.Down(RemoveVolume, RemoveImages, RemoveOrphans)
+}
+
+// Parse flags and interpret a compose start
+func (operation *Compose) execute_Start(composeProject *compose.ComposeProject, flags ...string) {
+	composeProject.Start()
+}
+
+// Parse flags and interpret a compose stop
+func (operation *Compose) execute_Stop(composeProject *compose.ComposeProject, flags ...string) {
+	timeout := 10
+
+	for _, flag := range flags {
+		switch flag {
+		case "--quick":
+			timeout = 1
+		}
+	}
+
+	composeProject.Stop(timeout)
 }
