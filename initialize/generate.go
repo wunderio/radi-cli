@@ -1,10 +1,12 @@
 package initialize
 
 import (
+	"bufio"
 	"io"
 	"os"
 	"path"
 	"regexp"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -49,16 +51,16 @@ type GenerateIterator struct {
 }
 
 func (iterator *GenerateIterator) Generate(path string) bool {
-	return iterator.generate_Recursive(path, "")
+	return iterator.generate_Recursive(path, "", iterator.skip)
 }
-func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sourcePath string) bool {
+func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sourcePath string, skip []string) bool {
 	fullPath := sourceRootPath
 
 	if sourcePath != "" {
 		fullPath = path.Join(fullPath, sourcePath)
 	}
 
-	for _, skipEach := range iterator.skip {
+	for _, skipEach := range skip {
 		if match, _ := regexp.MatchString(skipEach, sourcePath); match {
 			log.WithFields(log.Fields{"path": sourcePath}).Info("Skipping marked skip file.")
 			return true
@@ -86,6 +88,32 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 			}
 		}
 
+		// add any .gitignore/.dockerignore entries to the skip list
+		for _, ignoreFileName := range []string{".gitignore", ".dockerignore", ".ignore"} {
+			if ignoreFile, err := os.Open(path.Join(fullPath, ignoreFileName)); err == nil {
+
+				scanner := bufio.NewScanner(ignoreFile)
+				for scanner.Scan() {
+					text := scanner.Text()
+
+					if text == "" {
+						continue
+					}
+					if strings.HasPrefix(text, "#") {
+						continue
+					}
+
+					log.WithFields(log.Fields{"skip": text, "ignoreSource": ignoreFileName, "path": fullPath}).Info("add ignore item to skip list")
+					skip = append(skip, strings.TrimSpace(text))
+				}
+
+				if err := scanner.Err(); err != nil {
+					log.Fatal(err)
+				}
+
+			}
+		}
+
 		directory, _ := os.Open(fullPath)
 		defer directory.Close()
 		objects, err := directory.Readdir(-1)
@@ -100,7 +128,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 
 			//childSourcePath := source + "/" + obj.Name()
 			childSourcePath := path.Join(sourcePath, obj.Name())
-			if !iterator.generate_Recursive(sourceRootPath, childSourcePath) {
+			if !iterator.generate_Recursive(sourceRootPath, childSourcePath, skip) {
 				log.WithFields(log.Fields{"path": childSourcePath, "root": sourceRootPath}).Warning("Resursive generate failed")
 			}
 
