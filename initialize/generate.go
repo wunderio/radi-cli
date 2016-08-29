@@ -27,6 +27,7 @@ func Init_Generate(handler string, path string, skip []string, sizeLimit int64, 
 
 	iterator := GenerateIterator{
 		output:    output,
+		skipFiles: []string{".gitignore", ".ignore"}, // @todo get this from function parameter?
 		skip:      skip,
 		sizeLimit: sizeLimit,
 		generator: generator,
@@ -44,6 +45,7 @@ func Init_Generate(handler string, path string, skip []string, sizeLimit int64, 
 type GenerateIterator struct {
 	output io.Writer
 
+	skipFiles []string
 	skip      []string
 	sizeLimit int64
 
@@ -89,7 +91,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 		}
 
 		// add any .gitignore/.dockerignore entries to the skip list
-		for _, ignoreFileName := range []string{".gitignore", ".dockerignore", ".ignore"} {
+		for _, ignoreFileName := range iterator.skipFiles {
 			if ignoreFile, err := os.Open(path.Join(fullPath, ignoreFileName)); err == nil {
 
 				scanner := bufio.NewScanner(ignoreFile)
