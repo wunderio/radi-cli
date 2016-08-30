@@ -12,12 +12,13 @@ import (
 
 	// libCompose_config "github.com/docker/libcompose/config"
 	libCompose_docker "github.com/docker/libcompose/docker"
+	libCompose_logger "github.com/docker/libcompose/logger"
 	libCompose_project "github.com/docker/libcompose/project"
 
 	"github.com/james-nesbitt/wundertools-go/config"
 )
 
-func MakeComposeProject(application *config.Application) (*ComposeProject, bool) {
+func MakeComposeProject(application *config.Application, logger libCompose_logger.Factory) (*ComposeProject, bool) {
 
 	composeProjectName := application.Name
 	composeFiles := []string{}
@@ -33,6 +34,11 @@ func MakeComposeProject(application *config.Application) (*ComposeProject, bool)
 			ProjectName:  composeProjectName,
 		},
 	}
+
+	if logger != nil {
+		context.LoggerFactory = logger
+	}
+
 	project, err := libCompose_docker.NewProject(context, nil)
 
 	if err != nil {

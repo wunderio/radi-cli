@@ -6,13 +6,14 @@ package compose
 
 import (
 	"strings"
+	// "strconv"
 	"text/tabwriter"
 
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 	// "github.com/james-nesbitt/wundertools-go/config"
 	// "github.com/docker/libcompose/docker"
-	// libCompose_project "github.com/docker/libcompose/project"
+	libCompose_project "github.com/docker/libcompose/project"
 )
 
 // main info method
@@ -48,8 +49,26 @@ func (project *ComposeProject) info_nodes() {
 	for _, serviceName := range project.serviceNames() {
 
 		service, _ := project.CreateService(serviceName)
+		infoSet, _ := service.Info(context.Background())
 		containers, _ := service.Containers(ctx)
 		config := service.Config()
+
+		var info libCompose_project.Info
+		if len(infoSet) > 0 {
+			info = infoSet[0]
+		} else {
+			info = libCompose_project.Info{}
+		}
+
+		if _, ok := info["State"]; !ok {
+			info["State"] = ""
+		}
+		// infoString := ""
+		// for index, info := range infoSet {
+		// 	for key, value := range info {
+		// 		infoString += strconv.FormatInt(int64(index), 10)+":"+key+"="+value+"|"
+		// 	}
+		// }
 
 		var row []string
 
@@ -57,6 +76,8 @@ func (project *ComposeProject) info_nodes() {
 			"|-",
 			service.Name(),
 			config.Image,
+			"",
+			info["State"],
 			// 	image.ID[:11],
 			// 	strings.Join(image.RepoTags, ","),
 			// 	strconv.FormatInt(image.Created, 10),

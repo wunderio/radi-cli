@@ -64,7 +64,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 
 	for _, skipEach := range skip {
 		if match, _ := regexp.MatchString(skipEach, sourcePath); match {
-			log.WithFields(log.Fields{"path": sourcePath}).Info("Skipping marked skip file.")
+			log.WithFields(log.Fields{"path": sourcePath}).Info("Skipping marked skip item.")
 			return true
 		}
 	}
@@ -105,7 +105,7 @@ func (iterator *GenerateIterator) generate_Recursive(sourceRootPath string, sour
 						continue
 					}
 
-					log.WithFields(log.Fields{"skip": text, "ignoreSource": ignoreFileName, "path": fullPath}).Info("add ignore item to skip list")
+					log.WithFields(log.Fields{"skip": text, "file": ignoreFileName, "path": fullPath}).Info("add ignore item to skip list")
 					skip = append(skip, strings.TrimSpace(text))
 				}
 
