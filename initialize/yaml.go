@@ -45,7 +45,9 @@ func (tasks *InitTasks) Init_Yaml_Run(path string) bool {
 	tasks.AddMessage("Initializing using YAML Source [" + path + "] to local project folder")
 
 	// get tasks from yaml
-	tasks.AddTasksFromYaml(yamlSourceBytes)
+	if err := tasks.AddTasksFromYaml(yamlSourceBytes); err != nil {
+		log.WithError(err).Error("An error occured interpreting yml task list.")
+	}
 
 	// Add some message items
 	tasks.AddFile(".wundertools/CREATEDFROM.md", "THIS PROJECT WAS CREATED A COACH YAML INSTALLER :"+path)
