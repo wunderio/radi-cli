@@ -4,8 +4,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/james-nesbitt/wundertools-go/compose"
-
-	libCompose_logger "github.com/docker/libcompose/logger"
 )
 
 type Compose struct {
@@ -14,7 +12,7 @@ type Compose struct {
 
 func (operation *Compose) Execute(flags ...string) {
 
-	composeProject, ok := compose.MakeComposeProject(operation.application, libCompose_logger.Factory(&libCompose_logger.RawLogger{}))
+	composeProject, ok := compose.MakeComposeProject(operation.application, compose.NewWundertoolsLoggerFactory())
 	if !ok {
 		log.Error("could not build compose project")
 		return
