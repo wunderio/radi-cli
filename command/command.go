@@ -3,6 +3,8 @@ package command
 import (
 	"github.com/james-nesbitt/wundertools-go/compose"
 	"github.com/james-nesbitt/wundertools-go/config"
+
+	libCompose_logger "github.com/docker/libcompose/logger"
 )
 
 // Determine if the string corresponds to a command name,
@@ -69,5 +71,5 @@ func (command *CommandBase) Prepare(name string, allCommands *Commands) {
 }
 func (command *CommandBase) Init(application *config.Application) {
 	command.application = application
-	command.project, _ = compose.MakeComposeProject(application)
+	command.project, _ = compose.MakeComposeProject(application, libCompose_logger.Factory(&libCompose_logger.RawLogger{}))
 }

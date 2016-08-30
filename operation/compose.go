@@ -4,6 +4,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/james-nesbitt/wundertools-go/compose"
+
+	libCompose_logger "github.com/docker/libcompose/logger"
 )
 
 type Compose struct {
@@ -12,7 +14,7 @@ type Compose struct {
 
 func (operation *Compose) Execute(flags ...string) {
 
-	composeProject, ok := compose.MakeComposeProject(operation.application)
+	composeProject, ok := compose.MakeComposeProject(operation.application, libCompose_logger.Factory(&libCompose_logger.RawLogger{}))
 	if !ok {
 		log.Error("could not build compose project")
 		return
@@ -35,6 +37,10 @@ func (operation *Compose) Execute(flags ...string) {
 		case "stop":
 			log.Debug("Upping project")
 			operation.execute_Stop(composeProject, flags...)
+
+		case "log":
+			log.Debug("Outputting log for project")
+			operation.execute_Log(composeProject, flags...)
 
 		case "info":
 			log.Debug("Project information")
@@ -112,4 +118,18 @@ func (operation *Compose) execute_Stop(composeProject *compose.ComposeProject, f
 	}
 
 	composeProject.Stop(timeout)
+}
+
+// Parse flags and interpret a compose log
+func (operation *Compose) execute_Log(composeProject *compose.ComposeProject, flags ...string) {
+	follow := false
+
+	for _, flag := range flags {
+		switch flag {
+		case "--follow":
+			follow = true
+		}
+	}
+
+	composeProject.Log(follow)
 }
