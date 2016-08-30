@@ -21,15 +21,17 @@ func (operation *Init) Execute(flags ...string) {
 		case "git":
 			method = "git"
 			if len(flags) > 1 {
-				source = flags[0]
+				source = flags[1]
 			} else {
 				log.Error("No git repository provided.")
 			}
 		case "yml":
+			fallthrough
+		case "yaml":
 			method = "yml"
 
 			if len(flags) > 1 {
-				source = flags[0]
+				source = flags[1]
 			} else {
 				log.Error("No yml source provided.")
 			}
@@ -49,10 +51,13 @@ func (operation *Init) Execute(flags ...string) {
 
 		switch method {
 		case "git":
-			log.Info("Creating project from git")
+			log.WithFields(log.Fields{"method": method, "source": source}).Info("Creating project from git")
 			initTasks.Init_Git_Run(source)
+		case "yml":
+			log.WithFields(log.Fields{"method": method, "source": source}).Info("Creating yml project")
+			initTasks.Init_Yaml_Run(source)
 		case "bare":
-			log.Info("Creating bare project")
+			log.WithFields(log.Fields{"method": method, "source": source}).Info("Creating bare project")
 			initTasks.Init_Default_Bare()
 		}
 

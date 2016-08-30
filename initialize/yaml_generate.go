@@ -21,18 +21,34 @@ func (generator *YMLInitGenerator) generateSingleFile(fullPath string, sourcePat
 	log.WithFields(log.Fields{"name": singleFile.Name()}).Debug("GENERATE SINGLE FILE")
 	generator.output.Write([]byte("- Type: File\n"))
 	generator.output.Write([]byte("  path: " + sourcePath + "\n"))
-	generator.output.Write([]byte("  Contents: |\n"))
 
 	r := bufio.NewReader(singleFile)
-	for {
-		line, err := r.ReadString(10) // 0x0A separator = newline
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			log.Error(err.Error())
-			return false // if you return error
+	indent := "    "
+
+	line, err := r.ReadString(10) // 0x0A separator = newline
+	if err == io.EOF {
+		generator.output.Write([]byte("  Contents: \n"))
+	} else if err != nil {
+		log.Error(err.Error())
+		return false
+	} else {
+
+		generator.output.Write([]byte("  Contents: |\n"))
+		line = "'" + line
+
+		for {
+			generator.output.Write([]byte(indent + line))
+
+			line, err = r.ReadString(10) // 0x0A separator = newline
+			if err == io.EOF {
+				generator.output.Write([]byte(indent + "'\n"))
+				break
+			} else if err != nil {
+				log.Error(err.Error())
+				return false
+			}
 		}
-		generator.output.Write([]byte("    " + line))
+
 	}
 	return true
 }
