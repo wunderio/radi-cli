@@ -35,7 +35,9 @@ func MakeComposeProject(application *config.Application, logger libCompose_logge
 		},
 	}
 
-	if logger != nil {
+	if logger == nil {
+		context.LoggerFactory = NewWundertoolsLoggerFactory()
+	} else {
 		context.LoggerFactory = logger
 	}
 
