@@ -12,6 +12,7 @@ import (
 
 	// libCompose_config "github.com/docker/libcompose/config"
 	libCompose_docker "github.com/docker/libcompose/docker"
+	libCompose_dockerctx "github.com/docker/libcompose/docker/ctx"
 	libCompose_logger "github.com/docker/libcompose/logger"
 	libCompose_project "github.com/docker/libcompose/project"
 
@@ -28,7 +29,7 @@ func MakeComposeProject(application *config.Application, logger libCompose_logge
 		composeFiles = append(composeFiles, yamlPath)
 	}
 
-	context := &libCompose_docker.Context{
+	context := &libCompose_dockerctx.Context{
 		Context: libCompose_project.Context{
 			ComposeFiles: composeFiles,
 			ProjectName:  composeProjectName,
@@ -64,7 +65,7 @@ type ComposeProject struct {
 
 	services []string
 
-	context *libCompose_docker.Context
+	context *libCompose_dockerctx.Context
 	libCompose_project.APIProject
 }
 
