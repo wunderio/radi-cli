@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+INSTALL_PATH="${GOPATH}/bin/wundertools"
+
+# Get rid of existing binary
+rm -f ${INSTALL_PATH}
+
+cp bundles/wundertools "${INSTALL_PATH}"
