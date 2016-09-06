@@ -7,11 +7,12 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/james-nesbitt/wundertools-go/version"
+	"github.com/james-nesbitt/wundertools-go/api"
 )
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "wundertools-cli"
+	app.Name = "wundertools"
 	app.Usage = "Command line interface for Wundertools API."
 	app.Version = version.VERSION + " (" + version.GITCOMMIT + ")"
 	app.Author = "Wunder.IO"
@@ -23,6 +24,11 @@ func main() {
 			Usage:   "Test CLI",
 			Action:  TestCommand,
 		},
+		{
+			Name:    "api",
+			Usage:   "Test API",
+			Action:  TestAPI,
+		},
 	}
 
 	app.Run(os.Args)
@@ -31,5 +37,15 @@ func main() {
 
 func TestCommand(c *cli.Context) error {
 	log.WithFields(log.Fields{"args": c.Args()}).Info("added task")
+	return nil
+}
+
+func TestAPI(c *cli.Context) error {
+
+	nAPI := api.MakeNullAPI()
+
+	log.WithFields(log.Fields{"api": nAPI}).Info("API test")
+
+
 	return nil
 }
