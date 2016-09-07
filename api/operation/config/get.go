@@ -9,19 +9,23 @@ import (
  */
 
 // Base class for config get Operation
-type BaseConfigGetOperation struct {}
+type BaseConfigGetOperation struct{}
+
 // Id the operation
 func (get *BaseConfigGetOperation) Id() string {
 	return "config.get"
 }
+
 // Label the operation
 func (get *BaseConfigGetOperation) Label() string {
 	return "Config Get"
 }
+
 // Description for the operation
 func (get *BaseConfigGetOperation) Description() string {
 	return "Retrieve a keyed configuration."
 }
+
 // Is this an internal API operation
 func (get *BaseConfigGetOperation) Internal() bool {
 	return false

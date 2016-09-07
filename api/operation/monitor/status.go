@@ -13,18 +13,22 @@ const (
 type BaseMonitorStatusOperation struct {
 	MonitorBaseWriterOperation
 }
+
 // Id the operation
 func (status *BaseMonitorStatusOperation) Id() string {
 	return OPERATION_ID_MONITOR_STATUS
 }
+
 // Label the operation
 func (status *BaseMonitorStatusOperation) Label() string {
 	return "Status"
 }
+
 // Description for the operation
 func (status *BaseMonitorStatusOperation) Description() string {
 	return "App status information."
 }
+
 // Is this an internal API operation
 func (status *BaseMonitorStatusOperation) Internal() bool {
 	return false

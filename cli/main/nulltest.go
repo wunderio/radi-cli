@@ -2,7 +2,7 @@ package main
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli"	
+	"github.com/urfave/cli"
 
 	"github.com/james-nesbitt/wundertools-go/api/handler/null"
 	"github.com/james-nesbitt/wundertools-go/api/operation/monitor"
@@ -16,10 +16,10 @@ func TestNullAPI(c *cli.Context) error {
 
 	ops := nAPI.Operations()
 
-	for _, id := range ops.Order() { 
+	for _, id := range ops.Order() {
 		op, _ := ops.Get(id)
 
-		log.WithFields(log.Fields{"id": op.Id()}).Info("Operation: "+op.Label())
+		log.WithFields(log.Fields{"id": op.Id()}).Info("Operation: " + op.Label())
 		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Configurations()
 	}
 
@@ -30,7 +30,7 @@ func TestNullAPI(c *cli.Context) error {
 	} else {
 		log.Warning("No status operations was available")
 	}
-	
+
 	// if there is a monitor.info operation, attach a writer to it and use it
 	if info, exists := ops.Get(monitor.OPERATION_ID_MONITOR_INFO); exists {
 		log.Info("Running info operation")

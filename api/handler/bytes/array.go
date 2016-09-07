@@ -5,4 +5,3 @@ package bytes
  * from passed in []bytes, which are wrapped in a stream
  * buffer
  */
- 

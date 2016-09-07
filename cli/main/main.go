@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/urfave/cli"
 	log "github.com/Sirupsen/logrus"
+	"github.com/urfave/cli"
 
 	"github.com/james-nesbitt/wundertools-go/version"
 )
@@ -16,17 +16,17 @@ func main() {
 	app.Version = version.VERSION + " (" + version.GITCOMMIT + ")"
 	app.Author = "Wunder.IO"
 	app.Email = "https://github.com/james-nesbitt/wundertools-go"
-//	app.Flags = append(command.CommonFlags(), dockerApp.DockerClientFlags()...)
+	//	app.Flags = append(command.CommonFlags(), dockerApp.DockerClientFlags()...)
 	app.Commands = []cli.Command{
 		{
-			Name:    "test",
-			Usage:   "Test CLI",
-			Action:  TestCommand,
+			Name:   "test",
+			Usage:  "Test CLI",
+			Action: TestCommand,
 		},
 		{
-			Name:    "null-api",
-			Usage:   "Test API",
-			Action:  TestNullAPI,
+			Name:   "null-api",
+			Usage:  "Test API",
+			Action: TestNullAPI,
 		},
 	}
 

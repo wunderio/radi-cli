@@ -9,7 +9,7 @@ package operation
 // Result is an what an operation returns
 type Result interface {
 	// Did the operation execute successfully? Return any error that occured
-	Success()  (bool, []error)
+	Success() (bool, []error)
 }
 
 // BaseResult is a base class for results which keep success boolean and errors slice as variables
@@ -17,6 +17,7 @@ type BaseResult struct {
 	success bool
 	errors  []error
 }
+
 // Set the state and add errors to the result
 func (base *BaseResult) Set(success bool, errors []error) {
 	base.success = success
@@ -26,11 +27,11 @@ func (base *BaseResult) Success() (bool, []error) {
 	return base.success, base.errors
 }
 
-
 // ChainResult is a Result that aggregates multiple results
 type ChainResult struct {
 	BaseResult
 }
+
 // Add A result to the chain
 func (chain *ChainResult) AddResult(add Result) {
 	chainSuccess, chainErrors := chain.Success()
