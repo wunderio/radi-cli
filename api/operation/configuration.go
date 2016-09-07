@@ -22,6 +22,9 @@ package operation
 
 import (
 	"io"
+	"os"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // A set of Configurations
@@ -29,18 +32,22 @@ type Configurations struct {
 	configurationMap map[string]Configuration
 	configurationOrder []string
 }
-func (configurations *Configurations) AddConfiguration(configuration Configuration) {
+func (configurations *Configurations) Add(configuration Configuration) {
+	if configurations.configurationMap==nil {
+		configurations.configurationMap = map[string]Configuration{}
+		configurations.configurationOrder = []string{}
+	}
 	/**
 	 * @TODO check if it already exists (by key)
 	 */
 	configurations.configurationMap[configuration.Id()] = configuration
 	configurations.configurationOrder = append( configurations.configurationOrder, configuration.Id() )
 }
-func (configurations *Configurations) Configuration(id string) (Configuration, bool) {
+func (configurations *Configurations) Get(id string) (Configuration, bool) {
 	configuration, ok := configurations.configurationMap[id]
 	return configuration, ok
 }
-func (configurations *Configurations) ConfigurationOrder() []string {
+func (configurations *Configurations) Order() []string {
 	return configurations.configurationOrder
 }
 
@@ -54,7 +61,8 @@ type Configuration interface {
 	Description() string
 
 	// Value allows the retrieval and setting of unknown Typed values for the Configuration.
-	Value() interface{}
+	Get() interface{}
+	Set(interface{}) bool
 }
 
 // BaseConfiguration is a Base Configuration implementation that keeps string variables for primary methods
@@ -79,30 +87,73 @@ func (config *BaseConfiguration) Description() string {
 type StringConfiguration struct {
 	value string
 }
-func (config *StringConfiguration) Value() interface{} {
+func (config *StringConfiguration) Get() interface{} {
 	return interface{}(&config.value)
+}
+func (config *StringConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.(string); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte string")
+		return false
+	}
 }
 
 // A base Configuration that provides a Bytes Array value
 type BytesArrayConfiguration struct {
 	value []byte
 }
-func (config *BytesArrayConfiguration) Value() interface{} {
+func (config *BytesArrayConfiguration) Get() interface{} {
 	return interface{}(&config.value)
+}
+func (config *BytesArrayConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.([]byte); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign COnfiguration value, because the passed parameter was the wrong type. Expecte []byte")
+		return false
+	}
 }
 
 // A base Configuration that provides a Boolean value
 type BooleanConfiguration struct {
 	value bool
 }
-func (config *BooleanConfiguration) Value() interface{} {
+func (config *BooleanConfiguration) Get() interface{} {
 	return interface{}(&config.value)
+}
+func (config *BooleanConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.(bool); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte bool")
+		return false
+	}
 }
 
 // A base Configuration that provides an IO.Writer
 type WriterConfiguration struct {
 	value io.Writer
 }
-func (config *WriterConfiguration) Value() interface{} {
-	return interface{}(&config.value)
+func (config *WriterConfiguration) Get() interface{} {
+	if config.value==nil {
+		// writer := log.StandardLogger().Writer()
+		// defer writer.Close()
+		// config.value = io.Writer(writer)
+		config.value = io.Writer(os.Stdout)
+	}
+
+	return interface{}(config.value)
+}
+func (config *WriterConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.(io.Writer); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte io.Writer")
+		return false
+	}
 }

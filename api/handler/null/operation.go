@@ -92,10 +92,25 @@ type NullMonitorInfoOperation struct {
 	monitor.BaseMonitorInfoOperation
 }
 
+// Null status operation exec method
+func (info *NullMonitorInfoOperation) Exec() operation.Result {
+	message := "App is using NULL Info handler\n"	
+	info.WriteMessage(message)
+
+	return info.NullAllwaysTrueOperation.Exec()
+}
+
 // Null operation for monitoring status
 type NullMonitorStatusOperation struct {
 	NullAllwaysTrueOperation
 	monitor.BaseMonitorStatusOperation
+}
+// Null status operation exec method
+func (status *NullMonitorStatusOperation) Exec() operation.Result {
+	message := "App is using NULL status handler\n"	
+	status.WriteMessage(message)
+
+	return status.NullAllwaysTrueOperation.Exec()
 }
 
 /**

@@ -26,18 +26,18 @@ func (operations *Operations) Add(add Operation) bool {
 }
 // Merge one Operations set into the current set
 func (operations *Operations) Merge(merge *Operations) {
-	for _, operation := range merge.OperationOrder() {
-		mergeOperation, _ := merge.Operation(operation)
+	for _, operation := range merge.Order() {
+		mergeOperation, _ := merge.Get(operation)
 		operations.Add(mergeOperation)
 	}
 }
 // Operation accessor by id
-func (operations *Operations) Operation(id string) (Operation, bool) {
+func (operations *Operations) Get(id string) (Operation, bool) {
 	operation, ok := operations.operationsMap[id]
 	return operation, ok
 }
 // OperationOrder returns a slice of operation ids, used in iterators to maintain an operation order
-func (operations *Operations) OperationOrder() []string {
+func (operations *Operations) Order() []string {
 	return operations.operationsOrder
 }
 
@@ -102,8 +102,8 @@ func (chain *ChainOperation) Exec() Result {
 			},
 	}
 
-	for _, id := range chain.operations.OperationOrder() {
-		operation, _ := chain.operations.Operation(id)
+	for _, id := range chain.operations.Order() {
+		operation, _ := chain.operations.Get(id)
 		result := operation.Exec()
 		chainResult.AddResult(result)
 

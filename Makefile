@@ -1,13 +1,15 @@
-.PHONY: binary
+.PHONY: cli-build build install clean
 
-default: binary
+default: cli-build
 
 all:
 
-binary: 
+cli-build: 
 	./scripts/make.sh binary
 
-install: binary
+build: cli-build
+
+install: build
 	./scripts/make.sh install
 
 clean:

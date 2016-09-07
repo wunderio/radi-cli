@@ -1,7 +1,7 @@
 package monitor
 
-import (
-	"github.com/james-nesbitt/wundertools-go/api/operation"
+const (
+	OPERATION_ID_MONITOR_STATUS = "monitor.status"
 )
 
 /**
@@ -10,10 +10,12 @@ import (
  */
 
 // Base class for monitor status Operation
-type BaseMonitorStatusOperation struct {}
+type BaseMonitorStatusOperation struct {
+	MonitorBaseWriterOperation
+}
 // Id the operation
 func (status *BaseMonitorStatusOperation) Id() string {
-	return "monitor.status"
+	return OPERATION_ID_MONITOR_STATUS
 }
 // Label the operation
 func (status *BaseMonitorStatusOperation) Label() string {
@@ -26,7 +28,4 @@ func (status *BaseMonitorStatusOperation) Description() string {
 // Is this an internal API operation
 func (status *BaseMonitorStatusOperation) Internal() bool {
 	return false
-}
-func (status *BaseMonitorStatusOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
 }
