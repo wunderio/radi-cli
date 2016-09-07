@@ -1,4 +1,11 @@
-package api 
+package operation 
+
+/**
+ * This file holds the definition for an API Operation, and
+ * also defines a usefull Operation list struct, as well as
+ * a utility BaseOperation struct, which can be used for 
+ * Operation inheritance.
+ */
 
 // Operations are a keyed map of individual Operations
 type Operations struct {
@@ -18,14 +25,15 @@ func (operations *Operations) Merge(merge *Operations) {
 		operations.Add(mergeOperation)
 	}
 }
+// Operation accessor by id
 func (operations *Operations) Operation(id string) (Operation, bool) {
 	operation, ok := operations.operationsMap[id]
 	return operation, ok
 }
+// OperationOrder returns a slice of operation ids, used in iterators to maintain an operation order
 func (operations *Operations) OperationOrder() []string {
 	return operations.operationsOrder
 }
-
 
 // A single operation
 type Operation interface {
@@ -61,8 +69,6 @@ type BaseOperation struct {
 func (operation *BaseOperation) Validate() bool {
 	return operation.Id() != ""
 }
-
-
 func (operation *BaseOperation) Id() string {
 	return operation.id
 }
@@ -72,7 +78,33 @@ func (operation *BaseOperation) Label() string {
 func (operation *BaseOperation) Description() string {
 	return operation.description
 }
-
 func (operation *BaseOperation) Configurations() *Configurations {
 	return operation.configurations
+}
+
+// ChainOperation runs multiple operations in sequence.  Extend this and add ID/Label/Configurations handling
+type ChainOperation struct {
+	stopOnSuccess  bool
+	operations 	   *Operations
+}
+// Exec the chain operation by running Exec on each child
+func (chain *ChainOperation) Exec() Result {
+	chainResult := ChainResult{
+		BaseResult{
+			success: true,
+			errors: []error{},
+			},
+	}
+
+	for _, id := range chain.operations.OperationOrder() {
+		operation, _ := chain.operations.Operation(id)
+		result := operation.Exec()
+		chainResult.AddResult(result)
+
+		if resultSuccess, _ := result.Success(); chain.stopOnSuccess && resultSuccess {
+			break
+		}
+	}
+
+	return Result(&chainResult)
 }

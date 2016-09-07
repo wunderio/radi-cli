@@ -7,7 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/james-nesbitt/wundertools-go/version"
-	"github.com/james-nesbitt/wundertools-go/api"
+	"github.com/james-nesbitt/wundertools-go/api/handler/null"
 )
 
 func main() {
@@ -42,7 +42,7 @@ func TestCommand(c *cli.Context) error {
 
 func TestAPI(c *cli.Context) error {
 
-	nAPI := api.MakeNullAPI()
+	nAPI := null.MakeNullAPI()
 
 	log.WithFields(log.Fields{"api": nAPI}).Info("API test")
 

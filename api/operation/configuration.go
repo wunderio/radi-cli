@@ -1,4 +1,4 @@
-package api
+package operation
 
 // A set of Configurations
 type Configurations struct {
@@ -26,7 +26,7 @@ type Configuration interface {
 	Label() string
 	Description() string
 
-	Value() *interface{}
+	Value() interface{}
 }
 
 
@@ -49,21 +49,21 @@ func (config *BaseConfiguration) Description() string {
 type StringConfiguration struct {
 	value string
 }
-func (config *StringConfiguration) Value() *interface{} {
-	return &config.value
+func (config *StringConfiguration) Value() interface{} {
+	return interface{}(&config.value)
 }
 
 type BytesArrayConfiguration struct {
 	value []byte
 }
-func (config *BytesArrayConfiguration) Value() *interface{} {
-	return &config.value
+func (config *BytesArrayConfiguration) Value() interface{} {
+	return interface{}(&config.value)
 }
 
 
 type BooleanConfiguration struct {
 	value bool
 }
-func (config *BooleanConfiguration) Value() *interface{} {
-	return &config.value
+func (config *BooleanConfiguration) Value() interface{} {
+	return interface{}(&config.value)
 }
