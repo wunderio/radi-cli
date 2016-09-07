@@ -2,6 +2,9 @@
 set -e
 
 export WUNDERTOOLS_PKG='github.com/wundertools/wundertools-go'
+export WUNDERTOOLS_BUILD_PATH="./bundles"
+export WUNDERTOOLS_BUILD_BINARY_PATH="${WUNDERTOOLS_BUILD_PATH}/wundertools"
+export WUNDERTOOLS_INSTALL_PATH="${GOPATH}/bin/wundertools"
 
 # List of bundles to create when no argument is passed
 DEFAULT_BUNDLES=(

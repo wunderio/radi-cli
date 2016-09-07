@@ -7,5 +7,8 @@ all:
 binary: 
 	./scripts/make.sh binary
 
-install:
-	./scripts/make.sh install	
+install: binary
+	./scripts/make.sh install
+
+clean:
+	./scripts/make.sh clean
