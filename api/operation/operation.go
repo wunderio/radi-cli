@@ -14,8 +14,14 @@ type Operations struct {
 }
 
 // Add a new Operation to the map
-func (operations *Operations) Add(operation Operation) bool {
-	operations.operationsMap[operation.Id()] = operation
+func (operations *Operations) Add(add Operation) bool {
+	if operations.operationsMap==nil {
+		operations.operationsMap = map[string]Operation{}
+		operations.operationsOrder = []string{}
+	}
+	addId := add.Id()
+	operations.operationsMap[addId] = add
+	operations.operationsOrder = append(operations.operationsOrder, addId)
 	return true
 }
 // Merge one Operations set into the current set
@@ -57,7 +63,7 @@ type Operation interface {
 	Exec()        Result
 }
 
-// BaseOPeration a simple operation base class, which provides string methods via local variables
+// BaseOperation a simple operation base class, which provides string methods via local variables
 type BaseOperation struct {
 	id             string
 	label          string

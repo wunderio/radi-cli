@@ -1,5 +1,9 @@
 package security
 
+import (
+	"github.com/james-nesbitt/wundertools-go/api/operation"
+)
+
 /**
  * Operations for authenticating access to the API
  * which can come in a few forms.  This files holds
@@ -7,14 +11,24 @@ package security
  * build.
  */
  
-// A token based authentication
-type OperationAuthenticateByToken struct {
-
+// Base class for security authenticate Operation
+type BaseSecurityAuthenticateOperation struct {}
+// Id the operation
+func (authenticate *BaseSecurityAuthenticateOperation) Id() string {
+	return "security.authenticate"
 }
-// Id for OperationAuthenticateByToken
-func (operation *OperationAuthenticateByToken) Id() string {
-	return "security.authenticate.bytoken"
+// Label the operation
+func (authenticate *BaseSecurityAuthenticateOperation) Label() string {
+	return "Authenticate"
 }
-func (operation *OperationAuthenticateByToken) Label() string {
-	return "Authenticate user via a Passed token"
+// Description for the operation
+func (authenticate *BaseSecurityAuthenticateOperation) Description() string {
+	return "Authenticate access to the app."
+}
+// Is this an internal API operation
+func (authenticate *BaseSecurityAuthenticateOperation) Internal() bool {
+	return false
+}
+func (authenticate *BaseSecurityAuthenticateOperation) Configurations() *operation.Configurations {
+	return &operation.Configurations{}
 }

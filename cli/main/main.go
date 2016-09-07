@@ -7,7 +7,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/james-nesbitt/wundertools-go/version"
-	"github.com/james-nesbitt/wundertools-go/api/handler/null"
 )
 
 func main() {
@@ -25,9 +24,9 @@ func main() {
 			Action:  TestCommand,
 		},
 		{
-			Name:    "api",
+			Name:    "null-api",
 			Usage:   "Test API",
-			Action:  TestAPI,
+			Action:  TestNullAPI,
 		},
 	}
 
@@ -37,15 +36,5 @@ func main() {
 
 func TestCommand(c *cli.Context) error {
 	log.WithFields(log.Fields{"args": c.Args()}).Info("added task")
-	return nil
-}
-
-func TestAPI(c *cli.Context) error {
-
-	nAPI := null.MakeNullAPI()
-
-	log.WithFields(log.Fields{"api": nAPI}).Info("API test")
-
-
 	return nil
 }

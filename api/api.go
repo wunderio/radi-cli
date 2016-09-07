@@ -48,8 +48,11 @@ func (base *BaseAPI) Validate() bool {
 	return len(base.handlers)>0
 }
 // AddHandler adds a Handler to the API, and will use it's Operations
-func (base *BaseAPI) AddHandler(handler handler.Handler) bool {
-	base.handlers[handler.Id()] = handler
+func (base *BaseAPI) AddHandler(add handler.Handler) bool {
+	if base.handlers==nil {
+		base.handlers = map[string]handler.Handler{}
+	}
+	base.handlers[add.Id()] = add
 	return true
 }
 // Handler retrieves a single keyed Handler from the list
