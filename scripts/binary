@@ -2,7 +2,7 @@
 set -e
 
 # Get rid of existing binary
-rm -f wundertools
+rm -f "${WUNDERTOOLS_BUILD_BINARY_PATH}"
 
 go generate
 
@@ -11,6 +11,6 @@ GITCOMMIT=$(git rev-parse --short HEAD)
 
 # Build binaries
 go build \
-   -ldflags="-w -X github.com/james-nesbitt/wundertools-go/version.GITCOMMIT=${GITCOMMIT} -X github.com/james-nesbitt/wundertools-go/version.BUILDTIME=${BUILDTIME} -X github.com/james-nesbitt/wundertools/version.SHOWWARNING=${SHOWWARNING}" \
-   -o bundles/wundertools \
+   -ldflags="-w -X ${WUNDERTOOLS_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${WUNDERTOOLS_PKG}/version.BUILDTIME=${BUILDTIME} -X ${WUNDERTOOLS_PKG}/version.SHOWWARNING=${SHOWWARNING}" \
+   -o "${WUNDERTOOLS_BUILD_BINARY_PATH}" \
    ./cli/main
