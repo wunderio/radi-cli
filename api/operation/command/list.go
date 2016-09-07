@@ -10,19 +10,23 @@ import (
  */
 
 // Base class for command list Operation
-type BaseCommandListOperation struct {}
+type BaseCommandListOperation struct{}
+
 // Id the operation
 func (list *BaseCommandListOperation) Id() string {
 	return "command.list"
 }
+
 // Label the operation
 func (list *BaseCommandListOperation) Label() string {
 	return "Command List"
 }
+
 // Description for the operation
 func (list *BaseCommandListOperation) Description() string {
 	return "List all available commands."
 }
+
 // Is this an internal API operation
 func (list *BaseCommandListOperation) Internal() bool {
 	return false

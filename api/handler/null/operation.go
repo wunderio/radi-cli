@@ -4,11 +4,10 @@ package null
  * Operations that the Null Handler implements
  */
 
-
 import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
-	"github.com/james-nesbitt/wundertools-go/api/operation/config"
 	"github.com/james-nesbitt/wundertools-go/api/operation/command"
+	"github.com/james-nesbitt/wundertools-go/api/operation/config"
 	"github.com/james-nesbitt/wundertools-go/api/operation/document"
 	"github.com/james-nesbitt/wundertools-go/api/operation/monitor"
 	"github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
@@ -16,11 +15,13 @@ import (
 )
 
 // Null base operation which always execs TRUE
-type NullAllwaysTrueOperation struct {}
+type NullAllwaysTrueOperation struct{}
+
 // Validate the operation
 func (alwaystrue *NullAllwaysTrueOperation) Validate() bool {
 	return true
 }
+
 // Exec the operation
 func (alwaystrue *NullAllwaysTrueOperation) Exec() operation.Result {
 	baseResult := operation.BaseResult{}
@@ -70,7 +71,7 @@ type NullConfigSetOperation struct {
  * Documentationm
  */
 
-// Null operation for listing documentation topics 
+// Null operation for listing documentation topics
 type NullDocumentTopicListOperation struct {
 	NullAllwaysTrueOperation
 	document.BaseDocumentTopicListOperation
@@ -94,7 +95,7 @@ type NullMonitorInfoOperation struct {
 
 // Null status operation exec method
 func (info *NullMonitorInfoOperation) Exec() operation.Result {
-	message := "App is using NULL Info handler\n"	
+	message := "App is using NULL Info handler\n"
 	info.WriteMessage(message)
 
 	return info.NullAllwaysTrueOperation.Exec()
@@ -105,9 +106,10 @@ type NullMonitorStatusOperation struct {
 	NullAllwaysTrueOperation
 	monitor.BaseMonitorStatusOperation
 }
+
 // Null status operation exec method
 func (status *NullMonitorStatusOperation) Exec() operation.Result {
-	message := "App is using NULL status handler\n"	
+	message := "App is using NULL status handler\n"
 	status.WriteMessage(message)
 
 	return status.NullAllwaysTrueOperation.Exec()
@@ -122,6 +124,7 @@ type NullOrchestrateUpOperation struct {
 	NullAllwaysTrueOperation
 	orchestrate.BaseOrchestrationUpOperation
 }
+
 // Null operation for orchestration DOWN
 type NullOrchestrateDownOperation struct {
 	NullAllwaysTrueOperation

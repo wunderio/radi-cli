@@ -17,9 +17,9 @@ package api
  * on request, each of which is executable on it's own.
  *
  * Internally, the API Operation objects are abstract, but the keys
- * of certain Operations are of significance in some cases.  For 
- * example, the authentication and user-retrieval operations are 
- * used internally to enforce authorization control over other 
+ * of certain Operations are of significance in some cases.  For
+ * example, the authentication and user-retrieval operations are
+ * used internally to enforce authorization control over other
  * operations, and the configuration retrieval may be used internally
  * in order to retrieve information about what other handlers should
  * be used.
@@ -43,23 +43,27 @@ type API interface {
 type BaseAPI struct {
 	handlers map[string]handler.Handler
 }
+
 // Validate returns true as along as at least one Handler has been added
 func (base *BaseAPI) Validate() bool {
-	return len(base.handlers)>0
+	return len(base.handlers) > 0
 }
+
 // AddHandler adds a Handler to the API, and will use it's Operations
 func (base *BaseAPI) AddHandler(add handler.Handler) bool {
-	if base.handlers==nil {
+	if base.handlers == nil {
 		base.handlers = map[string]handler.Handler{}
 	}
 	base.handlers[add.Id()] = add
 	return true
 }
+
 // Handler retrieves a single keyed Handler from the list
 func (base *BaseAPI) Handler(id string) (handler.Handler, bool) {
 	handler, ok := base.handlers[id]
 	return handler, ok
 }
+
 // Operations returns a list of all of the Operations provided by all of the Handlers
 func (base *BaseAPI) Operations() operation.Operations {
 	operations := operation.Operations{}

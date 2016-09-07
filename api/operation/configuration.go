@@ -1,17 +1,17 @@
 package operation
 
 /**
- * Configurations are abstract Operations settings which 
+ * Configurations are abstract Operations settings which
  * are meant to be set outside of the Operation, before it
  * is executed.  Operations of a single key, from different
- * Handlers should probably try to all offer the same 
+ * Handlers should probably try to all offer the same
  * Configuration key/types, even if the work differently.
  *
  * This file provides a configuration collection sturct,
  * and the intercface for a single Configuration along with
  * some standard data type configuration base structs.
  *
- * A Configuration consumer should either recognized the 
+ * A Configuration consumer should either recognized the
  * Operation by it's keys, and then handle it's Configuraitons
  * as "knowns", or it should iterate through the Configurations
  * and use some user-interface to allow interaction.
@@ -29,11 +29,12 @@ import (
 
 // A set of Configurations
 type Configurations struct {
-	configurationMap map[string]Configuration
+	configurationMap   map[string]Configuration
 	configurationOrder []string
 }
+
 func (configurations *Configurations) Add(configuration Configuration) {
-	if configurations.configurationMap==nil {
+	if configurations.configurationMap == nil {
 		configurations.configurationMap = map[string]Configuration{}
 		configurations.configurationOrder = []string{}
 	}
@@ -41,7 +42,7 @@ func (configurations *Configurations) Add(configuration Configuration) {
 	 * @TODO check if it already exists (by key)
 	 */
 	configurations.configurationMap[configuration.Id()] = configuration
-	configurations.configurationOrder = append( configurations.configurationOrder, configuration.Id() )
+	configurations.configurationOrder = append(configurations.configurationOrder, configuration.Id())
 }
 func (configurations *Configurations) Get(id string) (Configuration, bool) {
 	configuration, ok := configurations.configurationMap[id]
@@ -54,7 +55,7 @@ func (configurations *Configurations) Order() []string {
 // A single Configuration
 type Configuration interface {
 	// ID returns string unique configuration Identifier
-	Id()  string
+	Id() string
 	// Label returns a short user readable label for the configuration
 	Label() string
 	// Description provides a longer multi-line string description of what the Configuration does
@@ -67,10 +68,11 @@ type Configuration interface {
 
 // BaseConfiguration is a Base Configuration implementation that keeps string variables for primary methods
 type BaseConfiguration struct {
-	id string
-	label string
+	id          string
+	label       string
 	description string
 }
+
 // Id returns the string id variable
 func (config *BaseConfiguration) Id() string {
 	return config.id
@@ -87,6 +89,7 @@ func (config *BaseConfiguration) Description() string {
 type StringConfiguration struct {
 	value string
 }
+
 func (config *StringConfiguration) Get() interface{} {
 	return interface{}(&config.value)
 }
@@ -104,6 +107,7 @@ func (config *StringConfiguration) Set(value interface{}) bool {
 type BytesArrayConfiguration struct {
 	value []byte
 }
+
 func (config *BytesArrayConfiguration) Get() interface{} {
 	return interface{}(&config.value)
 }
@@ -121,6 +125,7 @@ func (config *BytesArrayConfiguration) Set(value interface{}) bool {
 type BooleanConfiguration struct {
 	value bool
 }
+
 func (config *BooleanConfiguration) Get() interface{} {
 	return interface{}(&config.value)
 }
@@ -138,8 +143,9 @@ func (config *BooleanConfiguration) Set(value interface{}) bool {
 type WriterConfiguration struct {
 	value io.Writer
 }
+
 func (config *WriterConfiguration) Get() interface{} {
-	if config.value==nil {
+	if config.value == nil {
 		// writer := log.StandardLogger().Writer()
 		// defer writer.Close()
 		// config.value = io.Writer(writer)

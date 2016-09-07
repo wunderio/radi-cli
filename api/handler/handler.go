@@ -1,7 +1,7 @@
 package handler
 
 /**
- * This file defines the core handle functionality, which 
+ * This file defines the core handle functionality, which
  * actual handler implementations will implement.
  *
  */
@@ -16,5 +16,5 @@ type Handler interface {
 
 	Id() string
 
-	Operations() *operation.Operations	
+	Operations() *operation.Operations
 }

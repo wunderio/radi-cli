@@ -13,18 +13,22 @@ const (
 type BaseMonitorInfoOperation struct {
 	MonitorBaseWriterOperation
 }
+
 // Id the operation
 func (info *BaseMonitorInfoOperation) Id() string {
 	return OPERATION_ID_MONITOR_INFO
 }
+
 // Label the operation
 func (info *BaseMonitorInfoOperation) Label() string {
 	return "Information"
 }
+
 // Description for the operation
 func (info *BaseMonitorInfoOperation) Description() string {
 	return "App information."
 }
+
 // Is this an internal API operation
 func (info *BaseMonitorInfoOperation) Internal() bool {
 	return false
