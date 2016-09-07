@@ -25,5 +25,27 @@ func (handler *NullHandler) Validate() bool {
 // [Handler.]Operations returns an Operations list of a number of different Null operations
 func (handler *NullHandler) Operations() *operation.Operations {
 	operations := operation.Operations{}
+
+	// Add Null config operations
+	operations.Add( operation.Operation(&NullConfigListOperation{}) )
+	operations.Add( operation.Operation(&NullConfigGetOperation{}) )
+	operations.Add( operation.Operation(&NullConfigSetOperation{}) )
+	// Add Null command operations
+	operations.Add( operation.Operation(&NullCommandListOperation{}) )
+	operations.Add( operation.Operation(&NullCommandExecOperation{}) )
+	// Add Null documentation operations
+	operations.Add( operation.Operation(&NullDocumentTopicListOperation{}) )
+	operations.Add( operation.Operation(&NullDocumentTopicGetOperation{}) )
+	// Add null monitor operations
+	operations.Add( operation.Operation(&NullMonitorStatusOperation{}) )
+	operations.Add( operation.Operation(&NullMonitorInfoOperation{}) )
+	// Add Null orchestration operations
+	operations.Add( operation.Operation(&NullOrchestrateUpOperation{}) )
+	operations.Add( operation.Operation(&NullOrchestrateDownOperation{}) )
+	// Add Null security handlers
+	operations.Add( operation.Operation(&NullSecurityAuthenticateOperation{}) )
+	operations.Add( operation.Operation(&NullSecurityAuthorizeOperation{}) )
+	operations.Add( operation.Operation(&NullSecurityUserOperation{}) )
+
 	return &operations
 }

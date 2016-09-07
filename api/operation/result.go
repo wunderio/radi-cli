@@ -17,8 +17,13 @@ type BaseResult struct {
 	success bool
 	errors  []error
 }
-func (result *BaseResult) Success() (bool, []error) {
-	return result.success, result.errors
+// Set the state and add errors to the result
+func (base *BaseResult) Set(success bool, errors []error) {
+	base.success = success
+	base.errors = append(base.errors, errors...)
+}
+func (base *BaseResult) Success() (bool, []error) {
+	return base.success, base.errors
 }
 
 
