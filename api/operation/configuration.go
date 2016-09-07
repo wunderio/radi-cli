@@ -103,6 +103,6 @@ func (config *BooleanConfiguration) Value() interface{} {
 type WriterConfiguration struct {
 	value io.Writer
 }
-func (config *BooleanConfiguration) Value() interface{} {
+func (config *WriterConfiguration) Value() interface{} {
 	return interface{}(&config.value)
 }
