@@ -91,7 +91,7 @@ type StringConfiguration struct {
 }
 
 func (config *StringConfiguration) Get() interface{} {
-	return interface{}(&config.value)
+	return interface{}(config.value)
 }
 func (config *StringConfiguration) Set(value interface{}) bool {
 	if converted, ok := value.(string); ok {
@@ -109,7 +109,7 @@ type BytesArrayConfiguration struct {
 }
 
 func (config *BytesArrayConfiguration) Get() interface{} {
-	return interface{}(&config.value)
+	return interface{}(config.value)
 }
 func (config *BytesArrayConfiguration) Set(value interface{}) bool {
 	if converted, ok := value.([]byte); ok {
@@ -127,7 +127,7 @@ type BooleanConfiguration struct {
 }
 
 func (config *BooleanConfiguration) Get() interface{} {
-	return interface{}(&config.value)
+	return interface{}(config.value)
 }
 func (config *BooleanConfiguration) Set(value interface{}) bool {
 	if converted, ok := value.(bool); ok {

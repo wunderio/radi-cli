@@ -5,7 +5,7 @@ default: cli-build
 fmt:
 	./scripts/make.sh fmt	
 
-cli-build: fmt 
+cli-build:
 	./scripts/make.sh binary
 
 build: cli-build
