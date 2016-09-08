@@ -1,5 +1,10 @@
 package null
 
+/**
+ * The NullHandler provides a handlers with a set of operations that are
+ * entirly Null provided.
+ */
+
 import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 	"github.com/james-nesbitt/wundertools-go/api/operation/monitor"

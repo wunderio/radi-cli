@@ -66,7 +66,7 @@ func TestNullAPI(c *cli.Context) error {
 	message, _ := confs.Get(monitor.OPERATION_CONFIGURATION_CONF_MONITOR_LOG_MESSAGE)
 
 	// start off with just info
-	logtype.Set("info")
+	logtype.Set("info") // this is actually default
 	message.Set("here is my test info")
 	logger.Exec()
 	message.Set("here is my second test info")

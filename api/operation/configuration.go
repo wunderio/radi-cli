@@ -24,6 +24,8 @@ import (
 	"io"
 	"os"
 
+	"golang.org/x/net/context"
+
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -160,6 +162,29 @@ func (config *WriterConfiguration) Set(value interface{}) bool {
 		return true
 	} else {
 		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte io.Writer")
+		return false
+	}
+}
+
+// A base Configuration that provides an net context
+type ContextConfiguration struct {
+	value context.Context
+}
+
+// Retrieve the context, or retrieve a Background context by default
+func (config *ContextConfiguration) Get() interface{} {
+	if config.value == nil {
+		config.value = context.Background()
+	}
+
+	return interface{}(config.value)
+}
+func (config *ContextConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.(context.Context); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expected golang.org/x/net/context/Context")
 		return false
 	}
 }
