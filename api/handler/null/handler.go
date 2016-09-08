@@ -1,7 +1,13 @@
 package null
 
+/**
+ * The NullHandler provides a handlers with a set of operations that are
+ * entirly Null provided.
+ */
+
 import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
+	"github.com/james-nesbitt/wundertools-go/api/operation/monitor"
 )
 
 // NullHandler Constructor, doesn't do much preprocessing really
@@ -43,6 +49,7 @@ func (handler *NullHandler) Operations() *operation.Operations {
 	// Add null monitor operations
 	operations.Add(operation.Operation(&NullMonitorStatusOperation{}))
 	operations.Add(operation.Operation(&NullMonitorInfoOperation{}))
+	operations.Add(operation.Operation(&monitor.MonitorStandardLogOperation{}))
 	// Add Null orchestration operations
 	operations.Add(operation.Operation(&NullOrchestrateUpOperation{}))
 	operations.Add(operation.Operation(&NullOrchestrateDownOperation{}))

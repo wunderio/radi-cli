@@ -28,6 +28,11 @@ func main() {
 			Usage:  "Test API",
 			Action: TestNullAPI,
 		},
+		{
+			Name:   "local-api",
+			Usage:  "Test API",
+			Action: TestLocalAPI,
+		},
 	}
 
 	app.Run(os.Args)
