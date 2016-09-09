@@ -27,7 +27,6 @@ package api
  */
 
 import (
-	"github.com/james-nesbitt/wundertools-go/api/handler"
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
@@ -37,39 +36,4 @@ type API interface {
 	Validate() bool
 	// Operations returns a list of executable operations
 	Operations() operation.Operations
-}
-
-// BaseAPI is a base struct API implementation
-type BaseAPI struct {
-	handlers map[string]handler.Handler
-}
-
-// Validate returns true as along as at least one Handler has been added
-func (base *BaseAPI) Validate() bool {
-	return len(base.handlers) > 0
-}
-
-// AddHandler adds a Handler to the API, and will use it's Operations
-func (base *BaseAPI) AddHandler(add handler.Handler) bool {
-	if base.handlers == nil {
-		base.handlers = map[string]handler.Handler{}
-	}
-	base.handlers[add.Id()] = add
-	return true
-}
-
-// Handler retrieves a single keyed Handler from the list
-func (base *BaseAPI) Handler(id string) (handler.Handler, bool) {
-	handler, ok := base.handlers[id]
-	return handler, ok
-}
-
-// Operations returns a list of all of the Operations provided by all of the Handlers
-func (base *BaseAPI) Operations() operation.Operations {
-	operations := operation.Operations{}
-	for _, handler := range base.handlers {
-		merge := handler.Operations()
-		operations.Merge(merge)
-	}
-	return operations
 }

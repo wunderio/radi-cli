@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+# Update all cli go dependencies
+go get -u ./cli/main
+
