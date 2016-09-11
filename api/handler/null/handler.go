@@ -24,12 +24,11 @@ func (handler *NullHandler) Id() string {
 	return "null"
 }
 
-// [Handler.]Init tells the NullHandler to process it's configurations
-func (handler *NullHandler) Init() {}
-
-// [Handler.]Validate always returns true, as this handler never fails
-func (handler *NullHandler) Validate() bool {
-	return true
+// [Handler.]Init tells the NullHandler to process it's configurations. Return true as Null Handler always validates true
+func (handler *NullHandler) Init() operation.Result {
+	result := operation.BaseResult{}
+	result.Set(true, nil)
+	return operation.Result(&result)
 }
 
 // [Handler.]Operations returns an Operations list of a number of different Null operations
@@ -37,7 +36,6 @@ func (handler *NullHandler) Operations() *operation.Operations {
 	operations := operation.Operations{}
 
 	// Add Null config operations
-	operations.Add(operation.Operation(&NullConfigListOperation{}))
 	operations.Add(operation.Operation(&NullConfigGetOperation{}))
 	operations.Add(operation.Operation(&NullConfigSetOperation{}))
 	// Add Null command operations

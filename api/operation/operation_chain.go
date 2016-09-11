@@ -2,8 +2,10 @@ package operation
 
 // ChainOperation runs multiple operations in sequence.  Extend this and add ID/Label/Configurations handling
 type ChainOperation struct {
+	// Tell this operation to stop processing the chained operations on the first TRUE result
 	stopOnSuccess bool
-	operations    *Operations
+	// The ordered chain of Operations to process when this operation is called
+	operations *Operations
 }
 
 // Exec the chain operation by running Exec on each child

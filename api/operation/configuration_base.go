@@ -145,3 +145,20 @@ func (config *ContextConfiguration) Set(value interface{}) bool {
 		return false
 	}
 }
+
+type StringSliceConfiguration struct {
+	value []string
+}
+
+func (config *StringSliceConfiguration) Get() interface{} {
+	return interface{}(config.value)
+}
+func (config *StringSliceConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.([]string); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte []string")
+		return false
+	}
+}

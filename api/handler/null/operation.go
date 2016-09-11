@@ -22,6 +22,10 @@ func (alwaystrue *NullAllwaysTrueOperation) Validate() bool {
 	return true
 }
 
+// return empty Configuraitons
+// func (alwaystrue *NullAllwaysTrueOperation) Configurations() *operation.Configurations {
+// 	return &operation.Configurations{}
+// }
 // Exec the operation
 func (alwaystrue *NullAllwaysTrueOperation) Exec() operation.Result {
 	baseResult := operation.BaseResult{}
@@ -48,12 +52,6 @@ type NullCommandExecOperation struct {
 /**
  * Config
  */
-
-// Null Configuration listing operation
-type NullConfigListOperation struct {
-	NullAllwaysTrueOperation
-	config.BaseConfigListOperation
-}
 
 // Null Configuration retreive accessor operation
 type NullConfigGetOperation struct {

@@ -9,6 +9,8 @@ go generate
 BUILDTIME=$(date --rfc-3339 ns | sed -e 's/ /T/') &> /dev/null
 GITCOMMIT=$(git rev-parse --short HEAD)
 
+echo "  --> Building ${WUNDERTOOLS_BUILD_BINARY_PATH}"
+
 # Build cli binaries
 go build \
    -ldflags="-w -X ${WUNDERTOOLS_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${WUNDERTOOLS_PKG}/version.BUILDTIME=${BUILDTIME} -X ${WUNDERTOOLS_PKG}/version.SHOWWARNING=${SHOWWARNING}" \

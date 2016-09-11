@@ -1,5 +1,5 @@
-BYTES 
-=====
+BYTESOURCE 
+==========
 
 Bytes is a BaseHandler which allows Operations to be provided
 which are based on configuration from Bytes streams.

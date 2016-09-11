@@ -40,6 +40,7 @@ type Configurations struct {
 	configurationOrder []string
 }
 
+// Add a configuration
 func (configurations *Configurations) Add(configuration Configuration) {
 	if configurations.configurationMap == nil {
 		configurations.configurationMap = map[string]Configuration{}
@@ -51,10 +52,22 @@ func (configurations *Configurations) Add(configuration Configuration) {
 	configurations.configurationMap[configuration.Id()] = configuration
 	configurations.configurationOrder = append(configurations.configurationOrder, configuration.Id())
 }
+
+// Merge in one set of configurations into this configurations
+func (configurations *Configurations) Merge(merge Configurations) {
+	for _, id := range merge.Order() {
+		configuration, _ := merge.Get(id)
+		configurations.Add(configuration)
+	}
+}
+
+// Retrieve a single configuration based on key id
 func (configurations *Configurations) Get(id string) (Configuration, bool) {
 	configuration, ok := configurations.configurationMap[id]
 	return configuration, ok
 }
+
+// Retrieve and ordered list of configuration keys
 func (configurations *Configurations) Order() []string {
 	return configurations.configurationOrder
 }
