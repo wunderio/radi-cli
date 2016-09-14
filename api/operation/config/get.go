@@ -1,7 +1,15 @@
 package config
 
 import (
+	"errors"
+
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/james-nesbitt/wundertools-go/api/operation"
+)
+
+const (
+	OPERATION_ID_CONFIG_GET = "config.get"
 )
 
 /**
@@ -9,11 +17,13 @@ import (
  */
 
 // Base class for config get Operation
-type BaseConfigGetOperation struct{}
+type BaseConfigGetOperation struct {
+	BaseConfigKeyValueOperation
+}
 
 // Id the operation
 func (get *BaseConfigGetOperation) Id() string {
-	return "config.get"
+	return OPERATION_ID_CONFIG_GET
 }
 
 // Label the operation
@@ -30,6 +40,38 @@ func (get *BaseConfigGetOperation) Description() string {
 func (get *BaseConfigGetOperation) Internal() bool {
 	return false
 }
-func (get *BaseConfigGetOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+
+//
+type ConfigConnectorGetOperation struct {
+	BaseConfigGetOperation
+	BaseConfigConnectorOperation
+}
+
+//
+func (get ConfigConnectorGetOperation) Validate() bool {
+	return true
+}
+
+//
+func (get ConfigConnectorGetOperation) Exec() operation.Result {
+	result := operation.BaseResult{}
+	result.Set(true, nil)
+
+	confs := get.BaseConfigKeyValueOperation.Configurations()
+	keyConf, _ := confs.Get(OPERATION_CONFIGURATION_CONFIG_KEY)
+	valueConf, _ := confs.Get(OPERATION_CONFIGURATION_CONFIG_VALUE)
+
+	if key, ok := keyConf.Get().(string); ok {
+		if value, ok := get.Connector().Get(key); ok {
+			valueConf.Set(value)
+		} else {
+			log.Error("Config connector did not find the value you were looking for")
+			result.Set(false, []error{errors.New("Config connector did not find the value you were looking for")})
+		}
+	} else {
+		log.Error("Could not get a string value for Key from the config connector")
+		result.Set(false, []error{errors.New("Could not get a string value for Key from the config connector")})
+	}
+
+	return operation.Result(&result)
 }

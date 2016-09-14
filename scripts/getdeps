@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+echo "  --> updating go dependencies"
+
 # Update all cli go dependencies
 go get -u ./cli/main
-

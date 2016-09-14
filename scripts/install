@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo "  --> Installing last compiled binary (${WUNDERTOOLS_BUILD_BINARY_PATH}) to: ${WUNDERTOOLS_INSTALL_PATH}"
+
 # Get rid of existing binary
 rm -f "${WUNDERTOOLS_INSTALL_PATH}"
 

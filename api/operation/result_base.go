@@ -8,8 +8,14 @@ type BaseResult struct {
 
 // Set the state and add errors to the result
 func (base *BaseResult) Set(success bool, errors []error) {
+	if base.errors == nil {
+		base.errors = []error{}
+	}
+
 	base.success = success
-	base.errors = append(base.errors, errors...)
+	if errors != nil {
+		base.errors = append(base.errors, errors...)
+	}
 }
 func (base *BaseResult) Success() (bool, []error) {
 	return base.success, base.errors

@@ -25,8 +25,13 @@ func main() {
 		},
 		{
 			Name:   "null-api",
-			Usage:  "Test API",
+			Usage:  "Test Null API",
 			Action: TestNullAPI,
+		},
+		{
+			Name:   "local-api",
+			Usage:  "Test Local API",
+			Action: TestLocalAPI,
 		},
 	}
 
