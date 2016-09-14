@@ -4,17 +4,17 @@ import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
-//
+// A Base config operation that provides a config connector
 type BaseConfigConnectorOperation struct {
 	connector ConfigConnector
 }
 
-//
+// set the operation config connect
 func (base *BaseConfigConnectorOperation) SetConnector(connector ConfigConnector) {
 	base.connector = connector
 }
 
-//
+// retrieve the operations config connnector
 func (base *BaseConfigConnectorOperation) Connector() ConfigConnector {
 	return base.connector
 }
@@ -29,7 +29,7 @@ func (base *BaseConfigKeyOperation) Configurations() *operation.Configurations {
 	if base.configurations == nil {
 		base.configurations = &operation.Configurations{}
 
-		base.configurations.Add(operation.Configuration(&ConfigValueConfiguration{}))
+		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
 	}
 	return base.configurations
 }
@@ -46,22 +46,6 @@ func (base *BaseConfigKeyValueOperation) Configurations() *operation.Configurati
 
 		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
 		base.configurations.Add(operation.Configuration(&ConfigValueConfiguration{}))
-	}
-	return base.configurations
-}
-
-//
-type BaseConfigKeyValueROOperation struct {
-	configurations *operation.Configurations
-}
-
-//
-func (base *BaseConfigKeyValueROOperation) Configurations() *operation.Configurations {
-	if base.configurations == nil {
-		base.configurations = &operation.Configurations{}
-
-		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
-		base.configurations.Add(operation.Configuration(&ConfigValueROConfiguration{}))
 	}
 	return base.configurations
 }

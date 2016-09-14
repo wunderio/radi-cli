@@ -9,6 +9,10 @@ import (
  * in the app
  */
 
+const (
+	OPERATION_ID_COMMAND_LIST = "command.list"
+)
+
 // Base class for command list Operation
 type BaseCommandListOperation struct{}
 
