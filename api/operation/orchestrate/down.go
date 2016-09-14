@@ -11,12 +11,16 @@ import (
  * related volumes and networks.
  */
 
+const (
+	OPERATION_ID_ORCHESTRATE_DOWN = "orchestrate.down"
+)
+
 // Base class for orchestration Down Operation
 type BaseOrchestrationDownOperation struct{}
 
 // Id the operation
 func (down *BaseOrchestrationDownOperation) Id() string {
-	return "orchestrate.down"
+	return OPERATION_ID_ORCHESTRATE_DOWN
 }
 
 // Label the operation

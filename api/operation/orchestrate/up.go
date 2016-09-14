@@ -10,12 +10,16 @@ import (
  * Bring up all app containers, volumes and networks.
  */
 
+const (
+	OPERATION_ID_ORCHESTRATE_UP = "orchestrate.up"
+)
+
 // Base class for orchestration Up Operation
 type BaseOrchestrationUpOperation struct{}
 
 // Id the operation
 func (up *BaseOrchestrationUpOperation) Id() string {
-	return "orchestrate.up"
+	return OPERATION_ID_ORCHESTRATE_UP
 }
 
 // Label the operation

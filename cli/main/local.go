@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"os/user"
 	"path"
@@ -8,10 +9,13 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
+	"golang.org/x/net/context"
 
 	api_bytesource "github.com/james-nesbitt/wundertools-go/api/handler/bytesource"
+	api_libcompose "github.com/james-nesbitt/wundertools-go/api/handler/libcompose"
 	api_local "github.com/james-nesbitt/wundertools-go/api/handler/local"
 	api_config "github.com/james-nesbitt/wundertools-go/api/operation/config"
+	api_orchestrate "github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
 )
 
 const (
@@ -22,7 +26,11 @@ const (
 func TestLocalAPI(c *cli.Context) error {
 
 	workingDir, _ := os.Getwd()
-	settings := api_local.LocalAPISettings{ExecPath: workingDir, ConfigPaths: &api_bytesource.Paths{}}
+	settings := api_local.LocalAPISettings{
+		ExecPath:    workingDir,
+		ConfigPaths: &api_bytesource.Paths{},
+		Context:     context.Background(),
+	}
 
 	// Discover paths for the user like ~ and ~/.config/wundertools
 	DiscoverUserPaths(&settings)
@@ -55,7 +63,7 @@ func TestLocalAPI(c *cli.Context) error {
 	for _, id := range ops.Order() {
 		op, _ := ops.Get(id)
 
-		log.WithFields(log.Fields{"id": op.Id(), "op": op}).Info("Operation: " + op.Label())
+		log.WithFields(log.Fields{"id": op.Id()}).Info("Operation: " + op.Label())
 		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Configurations()
 	}
 
@@ -81,7 +89,7 @@ func TestLocalAPI(c *cli.Context) error {
 		for _, err := range errs {
 			logger.WithError(err)
 		}
-		logger.Error("failed to exec config.get operation")
+		logger.Error("failed to exec config.list operation")
 	}
 
 	configSet, _ := ops.Get(api_config.OPERATION_ID_CONFIG_SET)
@@ -94,9 +102,79 @@ func TestLocalAPI(c *cli.Context) error {
 	valueConf.Set(newValue)
 	if ok, errs := configSet.Exec().Success(); ok {
 		log.WithFields(log.Fields{"key": "time", "value": newValue}).Info("Saved new key value")
+
+		configGet, _ := ops.Get(api_config.OPERATION_ID_CONFIG_GET)
+		valueConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_VALUE)
+		keyConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_KEY)
+
+		key := keyConf.Get().(string)
+		keyConf.Set(key)
+		configGet.Exec()
+		log.WithFields(log.Fields{"key": key, "value": valueConf.Get()}).Info("Checking new key value")
 	} else {
 		for _, err := range errs {
 			log.WithError(err).Error("failed to set config value")
+		}
+	}
+
+	// Before testing orchestration, let's attach to log output
+	log.Info("attaching to log output before testing orchestration")
+
+	monitorLogs, _ := ops.Get(api_libcompose.OPERATION_ID_COMPOSE_MONITOR_LOGS)
+
+	outputConf, _ := monitorLogs.Configurations().Get(api_libcompose.OPERATION_CONFIGURATION_LIBCOMPOSE_OUTPUT)
+	outputConf.Set(os.Stdout)
+
+	stayAttachedConf, _ := monitorLogs.Configurations().Get(api_libcompose.OPERATION_CONFIGURATION_LIBCOMPOSE_ATTACH_FOLLOW)
+	if !stayAttachedConf.Set(false) {
+		log.Error("Could not set logs to follow")
+	}
+
+	// This runs logging as an inline action, without following, which will output any existing log items
+	// this will output somethign if the containers already exist.
+	log.Info("output logs before starting orchestration tests")
+	if success, errs := monitorLogs.Exec().Success(); !success {
+		for _, err := range errs {
+			log.WithError(err).Error("Logs operation failed")
+		}
+	}
+	log.Info("logs outputted")
+
+	// test orchestrate up
+	log.Info("Testing orchestration up")
+	orchestrateUp, _ := ops.Get(api_orchestrate.OPERATION_ID_ORCHESTRATE_UP)
+	if success, errs := orchestrateUp.Exec().Success(); !success {
+		for _, err := range errs {
+			log.WithError(err).Error("failed to run orchestrate up")
+		}
+	}
+
+	// run the log tracking execution in it's own thread
+	// it appears that this stay open until the containers are shut down
+	if !stayAttachedConf.Set(true) {
+		log.Error("Could not set logs to follow")
+	}
+	go func() {
+		os.Stdout.Write([]byte("Log follow started\n"))
+		if success, _ := monitorLogs.Exec().Success(); !success {
+			log.Error("Couldn't run log monitor")
+		}
+		os.Stdout.Write([]byte("Log follow ended\n"))
+	}()
+
+	response, err := http.Get("http://wundertools.docker")
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		defer response.Body.Close()
+	}
+
+	// test orchestrate up
+	log.Info("Testing orchestration down")
+	orchestrateDown, _ := ops.Get(api_orchestrate.OPERATION_ID_ORCHESTRATE_DOWN)
+	if success, errs := orchestrateDown.Exec().Success(); !success {
+		for _, err := range errs {
+			log.WithError(err).Error("failed to run orchestrate down")
 		}
 	}
 

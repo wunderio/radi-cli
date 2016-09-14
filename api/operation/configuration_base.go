@@ -62,6 +62,23 @@ func (config *StringConfiguration) Set(value interface{}) bool {
 	}
 }
 
+type StringSliceConfiguration struct {
+	value []string
+}
+
+func (config *StringSliceConfiguration) Get() interface{} {
+	return interface{}(config.value)
+}
+func (config *StringSliceConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.([]string); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte []string")
+		return false
+	}
+}
+
 // A base Configuration that provides a Bytes Array value
 type BytesArrayConfiguration struct {
 	value []byte
@@ -110,7 +127,6 @@ func (config *WriterConfiguration) Get() interface{} {
 		// config.value = io.Writer(writer)
 		config.value = io.Writer(os.Stdout)
 	}
-
 	return interface{}(config.value)
 }
 func (config *WriterConfiguration) Set(value interface{}) bool {
@@ -119,6 +135,27 @@ func (config *WriterConfiguration) Set(value interface{}) bool {
 		return true
 	} else {
 		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte io.Writer")
+		return false
+	}
+}
+
+// A base Configuration that provides an IO.Reader
+type ReaderConfiguration struct {
+	value io.Reader
+}
+
+func (config *ReaderConfiguration) Get() interface{} {
+	if config.value == nil {
+		config.value = io.Reader(os.Stdin)
+	}
+	return interface{}(config.value)
+}
+func (config *ReaderConfiguration) Set(value interface{}) bool {
+	if converted, ok := value.(io.Reader); ok {
+		config.value = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte io.Reader")
 		return false
 	}
 }
@@ -142,23 +179,6 @@ func (config *ContextConfiguration) Set(value interface{}) bool {
 		return true
 	} else {
 		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expected golang.org/x/net/context/Context")
-		return false
-	}
-}
-
-type StringSliceConfiguration struct {
-	value []string
-}
-
-func (config *StringSliceConfiguration) Get() interface{} {
-	return interface{}(config.value)
-}
-func (config *StringSliceConfiguration) Set(value interface{}) bool {
-	if converted, ok := value.([]string); ok {
-		config.value = converted
-		return true
-	} else {
-		log.WithFields(log.Fields{"value": value}).Error("Could not assign Configuration value, because the passed parameter was the wrong type. Expecte []string")
 		return false
 	}
 }

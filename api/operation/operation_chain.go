@@ -8,6 +8,16 @@ type ChainOperation struct {
 	operations *Operations
 }
 
+// Get Operation Configuration from all operations
+func (chain *ChainOperation) Configurations() *Configurations {
+	configurations := Configurations{}
+	for _, key := range chain.operations.Order() {
+		op, _ := chain.operations.Get(key)
+		configurations.Merge(*op.Configurations())
+	}
+	return &configurations
+}
+
 // Exec the chain operation by running Exec on each child
 func (chain *ChainOperation) Exec() Result {
 	chainResult := ChainResult{

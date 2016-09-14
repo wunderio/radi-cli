@@ -24,12 +24,12 @@ func (list *BaseConfigListOperation) Id() string {
 
 // Label the operation
 func (list *BaseConfigListOperation) Label() string {
-	return "Config Get"
+	return "Config List"
 }
 
 // Description for the operation
 func (list *BaseConfigListOperation) Description() string {
-	return "Retrieve a keyed configuration."
+	return "Retrieve a list of available configuration keys."
 }
 
 // Is this an internal API operation

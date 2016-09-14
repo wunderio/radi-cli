@@ -4,13 +4,21 @@ import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
+/**
+ * Here are the commond shared configurations for the various
+ * Config operations.
+ */
+
 const (
-	OPERATION_CONFIGURATION_CONFIG_KEY   = "config.key"
-	OPERATION_CONFIGURATION_CONFIG_KEYS  = "config.keys"
+	// config for a single config key
+	OPERATION_CONFIGURATION_CONFIG_KEY = "config.key"
+	// config for an orerered list of keys
+	OPERATION_CONFIGURATION_CONFIG_KEYS = "config.keys"
+	// config for a single config value (string)
 	OPERATION_CONFIGURATION_CONFIG_VALUE = "config.value"
 )
 
-// Configuration
+// Configuration for a single config ket
 type ConfigKeyConfiguration struct {
 	operation.StringConfiguration
 }
@@ -30,7 +38,7 @@ func (confKey *ConfigKeyConfiguration) Description() string {
 	return "Configuration key."
 }
 
-// Configuration
+// Configuration for an ordered list of config keys
 type ConfigKeysConfiguration struct {
 	operation.StringSliceConfiguration
 }
@@ -50,7 +58,7 @@ func (keyValue *ConfigKeysConfiguration) Description() string {
 	return "Configuration key list."
 }
 
-// Configuration
+// Configuration for a single config value
 type ConfigValueConfiguration struct {
 	operation.StringConfiguration
 }
@@ -67,25 +75,5 @@ func (confValue *ConfigValueConfiguration) Label() string {
 
 // Description for the configuration
 func (confValue *ConfigValueConfiguration) Description() string {
-	return "Configuration value."
-}
-
-// Configuration
-type ConfigValueROConfiguration struct {
-	ConfigValueConfiguration
-}
-
-// Id for the configuration
-func (confValue *ConfigValueROConfiguration) ReadOnly() bool {
-	return true
-}
-
-// Label for the configuration
-func (confValue *ConfigValueROConfiguration) Label() string {
-	return "Configuration value."
-}
-
-// Description for the configuration
-func (confValue *ConfigValueROConfiguration) Description() string {
 	return "Configuration value."
 }

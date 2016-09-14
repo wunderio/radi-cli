@@ -2,6 +2,7 @@ package local
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"golang.org/x/net/context"
 
 	"github.com/james-nesbitt/wundertools-go/api"
 	"github.com/james-nesbitt/wundertools-go/api/handler"
@@ -18,9 +19,11 @@ func MakeLocalAPI(settings LocalAPISettings) api.API {
 		settings: &settings,
 	}
 	if success, errs := localHandler.Init().Success(); !success {
+		logger := log.WithFields(log.Fields{})
 		for _, err := range errs {
-			log.WithError(err).Error(err.Error())
+			logger.Error(err.Error())
 		}
+		logger.Error("Failed to initialize local handler")
 	}
 
 	localAPI.AddHandler(handler.Handler(&localHandler))
@@ -34,6 +37,7 @@ type LocalAPISettings struct {
 	UserHomePath    string
 	ExecPath        string
 	ConfigPaths     *bytesource.Paths
+	Context         context.Context
 }
 
 // An API based entirely on local handler

@@ -40,12 +40,17 @@ type Configurations struct {
 	configurationOrder []string
 }
 
-// Add a configuration
-func (configurations *Configurations) Add(configuration Configuration) {
+// safe initialization of vars
+func (configurations *Configurations) makeSafe() {
 	if configurations.configurationMap == nil {
 		configurations.configurationMap = map[string]Configuration{}
 		configurations.configurationOrder = []string{}
 	}
+}
+
+// Add a configuration
+func (configurations *Configurations) Add(configuration Configuration) {
+	configurations.makeSafe()
 	/**
 	 * @TODO check if it already exists (by key)
 	 */
@@ -63,11 +68,13 @@ func (configurations *Configurations) Merge(merge Configurations) {
 
 // Retrieve a single configuration based on key id
 func (configurations *Configurations) Get(id string) (Configuration, bool) {
+	configurations.makeSafe()
 	configuration, ok := configurations.configurationMap[id]
 	return configuration, ok
 }
 
 // Retrieve and ordered list of configuration keys
 func (configurations *Configurations) Order() []string {
+	configurations.makeSafe()
 	return configurations.configurationOrder
 }
