@@ -34,6 +34,6 @@ func (authorize *BaseSecurityAuthorizeOperation) Description() string {
 func (authorize *BaseSecurityAuthorizeOperation) Internal() bool {
 	return false
 }
-func (authorize *BaseSecurityAuthorizeOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (authorize *BaseSecurityAuthorizeOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

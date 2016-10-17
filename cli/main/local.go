@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/user"
 	"path"
-	"time"
+	// "time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -14,7 +14,7 @@ import (
 	api_bytesource "github.com/james-nesbitt/wundertools-go/api/handler/bytesource"
 	api_libcompose "github.com/james-nesbitt/wundertools-go/api/handler/libcompose"
 	api_local "github.com/james-nesbitt/wundertools-go/api/handler/local"
-	api_config "github.com/james-nesbitt/wundertools-go/api/operation/config"
+	// api_config "github.com/james-nesbitt/wundertools-go/api/operation/config"
 	api_orchestrate "github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
 )
 
@@ -53,7 +53,7 @@ func TestLocalAPI(c *cli.Context) error {
 
 	for index, id := range settings.ConfigPaths.Order() {
 		confPath, _ := settings.ConfigPaths.Get(id)
-		log.WithFields(log.Fields{"index": index, "id": id, "path": confPath.PathString()}).Info("Config Path: ")
+		log.WithFields(log.Fields{"index": index, "id": id, "path": confPath.PathString()}).Info("Property Path: ")
 	}
 
 	// get all of the operations
@@ -64,69 +64,44 @@ func TestLocalAPI(c *cli.Context) error {
 		op, _ := ops.Get(id)
 
 		log.WithFields(log.Fields{"id": op.Id()}).Info("Operation: " + op.Label())
-		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Configurations()
+		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Properties()
 	}
 
-	configList, _ := ops.Get(api_config.OPERATION_ID_CONFIG_LIST)
-	KeysConf, _ := configList.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_KEYS)
+	confList, confErr := local.Config.List("")
+	log.WithFields(log.Fields{"list": confList}).WithError(confErr).Info("Config list")
 
-	if ok, errs := configList.Exec().Success(); ok {
-		keys := KeysConf.Get().([]string)
-		log.WithFields(log.Fields{"keys": keys}).Info("Config Key list")
+	projectSettings, errList := local.Settings.List("")
+	log.WithFields(log.Fields{"list": projectSettings}).WithError(errList).Info("Setting list")
 
-		configGet, _ := ops.Get(api_config.OPERATION_ID_CONFIG_GET)
-		valueConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_VALUE)
-		keyConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_KEY)
+	GeoSettings, geoList := local.Settings.List("Geo")
+	log.WithFields(log.Fields{"list": GeoSettings}).WithError(geoList).Info("Setting list Geo keys")
 
-		for _, key := range keys {
-			keyConf.Set(key)
-			configGet.Exec()
-			log.WithFields(log.Fields{"key": key, "value": valueConf.Get()}).Info("Config setting: " + key)
-		}
+	project, errProject := local.Settings.Get("Project")
+	log.WithFields(log.Fields{"Project": project}).WithError(errProject).Info("Setting:Project")
 
-	} else {
-		logger := log.WithFields(log.Fields{})
-		for _, err := range errs {
-			logger.WithError(err)
-		}
-		logger.Error("failed to exec config.list operation")
+	for settingsIndex, settingKey := range projectSettings {
+		settingValue, err := local.Settings.Get(settingKey)
+		log.WithFields(log.Fields{"index": settingsIndex, "key": settingKey, "value": settingValue}).WithError(err).Info("Property value")
 	}
 
-	configSet, _ := ops.Get(api_config.OPERATION_ID_CONFIG_SET)
-	valueConf, _ := configSet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_VALUE)
-	keyConf, _ := configSet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_KEY)
-
-	log.Info("testing config set")
-	keyConf.Set("time")
-	newValue := time.Now().Format(time.UnixDate)
-	valueConf.Set(newValue)
-	if ok, errs := configSet.Exec().Success(); ok {
-		log.WithFields(log.Fields{"key": "time", "value": newValue}).Info("Saved new key value")
-
-		configGet, _ := ops.Get(api_config.OPERATION_ID_CONFIG_GET)
-		valueConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_VALUE)
-		keyConf, _ := configGet.Configurations().Get(api_config.OPERATION_CONFIGURATION_CONFIG_KEY)
-
-		key := keyConf.Get().(string)
-		keyConf.Set(key)
-		configGet.Exec()
-		log.WithFields(log.Fields{"key": key, "value": valueConf.Get()}).Info("Checking new key value")
-	} else {
-		for _, err := range errs {
-			log.WithError(err).Error("failed to set config value")
-		}
-	}
+	// Test setting.Set() for 'time'
+	/**
+	 * DON'T DO THIS YET, IT WILL WRITE AN EMPTY FILE :(
+	newTimeValue := time.Now().Format(time.UnixDate)
+	errSet := local.Settings.Set("time", newTimeValue)
+	log.WithFields(log.Fields{"key": "time", "value": newTimeValue}).WithError(errSet).Info("Saved `setting` value")
+	*/
 
 	// Before testing orchestration, let's attach to log output
 	log.Info("attaching to log output before testing orchestration")
 
 	monitorLogs, _ := ops.Get(api_libcompose.OPERATION_ID_COMPOSE_MONITOR_LOGS)
 
-	outputConf, _ := monitorLogs.Configurations().Get(api_libcompose.OPERATION_CONFIGURATION_LIBCOMPOSE_OUTPUT)
-	outputConf.Set(os.Stdout)
+	outputProp, _ := monitorLogs.Properties().Get(api_libcompose.OPERATION_PROPERTY_LIBCOMPOSE_OUTPUT)
+	outputProp.Set(os.Stdout)
 
-	stayAttachedConf, _ := monitorLogs.Configurations().Get(api_libcompose.OPERATION_CONFIGURATION_LIBCOMPOSE_ATTACH_FOLLOW)
-	if !stayAttachedConf.Set(false) {
+	stayAttachedProp, _ := monitorLogs.Properties().Get(api_libcompose.OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW)
+	if !stayAttachedProp.Set(false) {
 		log.Error("Could not set logs to follow")
 	}
 
@@ -151,7 +126,7 @@ func TestLocalAPI(c *cli.Context) error {
 
 	// run the log tracking execution in it's own thread
 	// it appears that this stay open until the containers are shut down
-	if !stayAttachedConf.Set(true) {
+	if !stayAttachedProp.Set(true) {
 		log.Error("Could not set logs to follow")
 	}
 	go func() {

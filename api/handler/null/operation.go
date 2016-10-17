@@ -12,6 +12,7 @@ import (
 	"github.com/james-nesbitt/wundertools-go/api/operation/monitor"
 	"github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
 	"github.com/james-nesbitt/wundertools-go/api/operation/security"
+	"github.com/james-nesbitt/wundertools-go/api/operation/setting"
 )
 
 // Null base operation which always execs TRUE
@@ -53,16 +54,32 @@ type NullCommandExecOperation struct {
  * Config
  */
 
-// Null Configuration retreive accessor operation
-type NullConfigGetOperation struct {
+// Null Configuration retreive readers operation
+type NullConfigReadersOperation struct {
 	NullAllwaysTrueOperation
-	config.BaseConfigGetOperation
+	config.BaseConfigReadersOperation
 }
 
-// Null Configuration assign accessor operation
-type NullConfigSetOperation struct {
+// Null Configuration retrieve writers operation
+type NullConfigWritersOperation struct {
 	NullAllwaysTrueOperation
-	config.BaseConfigSetOperation
+	config.BaseConfigWritersOperation
+}
+
+/**
+ * Setting
+ */
+
+// Null Setting retreive accessor operation
+type NullSettingGetOperation struct {
+	NullAllwaysTrueOperation
+	setting.BaseSettingGetOperation
+}
+
+// Null Setting assign accessor operation
+type NullSettingSetOperation struct {
+	NullAllwaysTrueOperation
+	setting.BaseSettingSetOperation
 }
 
 /**

@@ -7,11 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-const (
-	BYTEARRAY_FILE_MAXREAD = 655
-)
-
-//
+// A base operation which relies on byte
 type BaseByteArraySourceOperation struct {
 	source []byte
 }

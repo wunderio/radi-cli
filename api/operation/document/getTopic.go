@@ -31,6 +31,6 @@ func (get *BaseDocumentTopicGetOperation) Description() string {
 func (get *BaseDocumentTopicGetOperation) Internal() bool {
 	return false
 }
-func (get *BaseDocumentTopicGetOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (get *BaseDocumentTopicGetOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

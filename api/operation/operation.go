@@ -9,14 +9,8 @@ package operation
 
 // A single operation
 type Operation interface {
-	// Run a validation check on the Operation
-	Validate() bool
 
-	// Is this operation meant to be used only inside the API
-	Internal() bool
-
-	// What settings does the Operation provide to an implemenentor
-	Configurations() *Configurations
+	// METADATA
 
 	// Return the string machinename/id of the Operation
 	Id() string
@@ -25,25 +19,53 @@ type Operation interface {
 	// return a multiline string description for the Operation
 	Description() string
 
+	// Is this operation meant to be used only inside the API
+	Internal() bool
+
+	// FUNCTIONAL
+
+	// Run a validation check on the Operation
+	Validate() bool
+
+	// What settings/values does the Operation provide to an implemenentor
+	Properties() *Properties
+
 	// Execute the Operation
 	Exec() Result
+
+	/**
+
+	// OPERATIONAL
+
+	Exec()
+
+	// Operational status of the operation
+	Status() (chan int)
+
+	// Trigger for operation failure
+	Fail() (chan bool)
+
+	// Error list
+	Errors() []error
+
+	*/
 }
 
 // Operations are a keyed map of individual Operations
 type Operations struct {
-	operationsMap   map[string]Operation
-	operationsOrder []string
+	opMap map[string]Operation
+	order []string
 }
 
 // Add a new Operation to the map
 func (operations *Operations) Add(add Operation) bool {
-	if operations.operationsMap == nil {
-		operations.operationsMap = map[string]Operation{}
-		operations.operationsOrder = []string{}
+	if operations.opMap == nil {
+		operations.opMap = map[string]Operation{}
+		operations.order = []string{}
 	}
 	addId := add.Id()
-	operations.operationsMap[addId] = add
-	operations.operationsOrder = append(operations.operationsOrder, addId)
+	operations.opMap[addId] = add
+	operations.order = append(operations.order, addId)
 	return true
 }
 
@@ -57,15 +79,15 @@ func (operations *Operations) Merge(merge *Operations) {
 
 // Operation accessor by id
 func (operations *Operations) Get(id string) (Operation, bool) {
-	if operations.operationsMap != nil {
-		operation, ok := operations.operationsMap[id]
+	if operations.opMap != nil {
+		operation, ok := operations.opMap[id]
 		return operation, ok
 	} else {
 		return nil, false
 	}
 }
 
-// OperationOrder returns a slice of operation ids, used in iterators to maintain an operation order
+// Order returns a slice of operation ids, used in iterators to maintain an operation order
 func (operations *Operations) Order() []string {
-	return operations.operationsOrder
+	return operations.order
 }

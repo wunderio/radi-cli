@@ -6,7 +6,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
-	// libCompose_config "github.com/docker/libcompose/config"
 	libCompose_docker "github.com/docker/libcompose/docker"
 	libCompose_dockerctx "github.com/docker/libcompose/docker/ctx"
 	libCompose_project "github.com/docker/libcompose/project"
@@ -19,22 +18,22 @@ import (
  * are needed to handler orchestration through libcompose
  */
 
-func MakeComposeProject(configurations *operation.Configurations) (*ComposeProject, bool) {
+func MakeComposeProject(properties *operation.Properties) (*ComposeProject, bool) {
 
-	projectNameConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_PROJECTNAME)
-	composeProjectName := projectNameConf.Get().(string)
+	projectNameProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_PROJECTNAME)
+	composeProjectName := projectNameProp.Get().(string)
 
-	projectFilesConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_COMPOSEFILES)
-	composeFiles := projectFilesConf.Get().([]string)
+	projectFilesProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_COMPOSEFILES)
+	composeFiles := projectFilesProp.Get().([]string)
 
-	contextConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_CONTEXT)
-	netContext := contextConf.Get().(context.Context)
+	contextProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_CONTEXT)
+	netContext := contextProp.Get().(context.Context)
 
-	outputConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_OUTPUT)
-	outputWriter := outputConf.Get().(io.Writer)
+	outputProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_OUTPUT)
+	outputWriter := outputProp.Get().(io.Writer)
 
-	errConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_ERROR)
-	errorWriter := errConf.Get().(io.Writer)
+	errProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_ERROR)
+	errorWriter := errProp.Get().(io.Writer)
 
 	loggerFactory := NewLibcomposeLoggerFactory(outputWriter, errorWriter)
 

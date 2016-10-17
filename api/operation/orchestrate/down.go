@@ -37,6 +37,6 @@ func (down *BaseOrchestrationDownOperation) Description() string {
 func (down *BaseOrchestrationDownOperation) Internal() bool {
 	return false
 }
-func (down *BaseOrchestrationDownOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (down *BaseOrchestrationDownOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

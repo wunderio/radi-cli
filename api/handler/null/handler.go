@@ -24,7 +24,7 @@ func (handler *NullHandler) Id() string {
 	return "null"
 }
 
-// [Handler.]Init tells the NullHandler to process it's configurations. Return true as Null Handler always validates true
+// [Handler.]Init tells the NullHandler to process itself. Return true as Null Handler always validates true
 func (handler *NullHandler) Init() operation.Result {
 	result := operation.BaseResult{}
 	result.Set(true, nil)
@@ -36,8 +36,11 @@ func (handler *NullHandler) Operations() *operation.Operations {
 	operations := operation.Operations{}
 
 	// Add Null config operations
-	operations.Add(operation.Operation(&NullConfigGetOperation{}))
-	operations.Add(operation.Operation(&NullConfigSetOperation{}))
+	operations.Add(operation.Operation(&NullConfigReadersOperation{}))
+	operations.Add(operation.Operation(&NullConfigWritersOperation{}))
+	// Add Null setting operations
+	operations.Add(operation.Operation(&NullSettingGetOperation{}))
+	operations.Add(operation.Operation(&NullSettingSetOperation{}))
 	// Add Null command operations
 	operations.Add(operation.Operation(&NullCommandListOperation{}))
 	operations.Add(operation.Operation(&NullCommandExecOperation{}))

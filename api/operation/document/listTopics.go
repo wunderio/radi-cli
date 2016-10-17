@@ -30,6 +30,6 @@ func (list *BaseDocumentTopicListOperation) Description() string {
 func (list *BaseDocumentTopicListOperation) Internal() bool {
 	return false
 }
-func (list *BaseDocumentTopicListOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (list *BaseDocumentTopicListOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

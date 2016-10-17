@@ -33,6 +33,6 @@ func (authenticate *BaseSecurityAuthenticateOperation) Description() string {
 func (authenticate *BaseSecurityAuthenticateOperation) Internal() bool {
 	return false
 }
-func (authenticate *BaseSecurityAuthenticateOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (authenticate *BaseSecurityAuthenticateOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

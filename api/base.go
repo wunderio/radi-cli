@@ -21,6 +21,7 @@ import (
 // BaseAPI is a base struct API implementation
 type BaseAPI struct {
 	handlers map[string]handler.Handler
+	order    []string
 }
 
 // Validate returns true as along as at least one Handler has been added
@@ -32,8 +33,12 @@ func (base *BaseAPI) Validate() bool {
 func (base *BaseAPI) AddHandler(add handler.Handler) bool {
 	if base.handlers == nil {
 		base.handlers = map[string]handler.Handler{}
+		base.order = []string{}
 	}
-	base.handlers[add.Id()] = add
+
+	id := add.Id()
+	base.handlers[id] = add
+	base.order = append(base.order, id) // @TODO this doesn't check if it was already added 1x
 	return true
 }
 
@@ -46,9 +51,10 @@ func (base *BaseAPI) Handler(id string) (handler.Handler, bool) {
 // Operations returns a list of all of the Operations provided by all of the Handlers
 func (base *BaseAPI) Operations() operation.Operations {
 	operations := operation.Operations{}
-	for _, handler := range base.handlers {
-		merge := handler.Operations()
-		operations.Merge(merge)
+	for _, id := range base.order {
+		handler, _ := base.Handler(id)
+		handlerOperations := handler.Operations()
+		operations.Merge(handlerOperations)
 	}
 	return operations
 }

@@ -26,7 +26,7 @@ type LibcomposeMonitorLogsOperation struct {
 	BaseLibcomposeStayAttachedOperation
 	BaseLibcomposeOrchestrateNameFilesOperation
 
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
 // Use a different Id() than the parent
@@ -39,15 +39,15 @@ func (logs *LibcomposeMonitorLogsOperation) Validate() bool {
 	return true
 }
 
-// Provide static configurations for the operation
-func (logs *LibcomposeMonitorLogsOperation) Configurations() *operation.Configurations {
-	if logs.configurations == nil {
-		newConfigurations := &operation.Configurations{}
-		newConfigurations.Merge(*logs.BaseLibcomposeStayAttachedOperation.Configurations())
-		newConfigurations.Merge(*logs.BaseLibcomposeOrchestrateNameFilesOperation.Configurations())
-		logs.configurations = newConfigurations
+// Provide static properties for the operation
+func (logs *LibcomposeMonitorLogsOperation) Properties() *operation.Properties {
+	if logs.properties == nil {
+		newProperties := &operation.Properties{}
+		newProperties.Merge(*logs.BaseLibcomposeStayAttachedOperation.Properties())
+		newProperties.Merge(*logs.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
+		logs.properties = newProperties
 	}
-	return logs.configurations
+	return logs.properties
 }
 
 // Execute the libCompose monitor logs operation
@@ -55,31 +55,31 @@ func (logs *LibcomposeMonitorLogsOperation) Exec() operation.Result {
 	result := operation.BaseResult{}
 	result.Set(true, nil)
 
-	configurations := logs.Configurations()
+	properties := logs.Properties()
 	// pass all confs to make a project
-	project, _ := MakeComposeProject(configurations)
+	project, _ := MakeComposeProject(properties)
 
 	// some confs we will use locally
 
 	var netContext context.Context
 	// net context
-	if netContextConf, found := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_CONTEXT); found {
-		netContext = netContextConf.Get().(context.Context)
+	if netContextProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_CONTEXT); found {
+		netContext = netContextProp.Get().(context.Context)
 	} else {
-		result.Set(false, []error{errors.New("Libcompose up operation is missing the context configuration")})
+		result.Set(false, []error{errors.New("Libcompose up operation is missing the context property")})
 	}
 
 	var follow bool
 	// follow conf
-	if followConf, found := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_ATTACH_FOLLOW); found {
-		follow = followConf.Get().(bool)
+	if followProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW); found {
+		follow = followProp.Get().(bool)
 	} else {
-		result.Set(true, []error{errors.New("Libcompose logs operation is missing the follow configuration")})
+		result.Set(true, []error{errors.New("Libcompose logs operation is missing the follow property")})
 	}
 
 	// output handling test
-	if outputConf, found := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_OUTPUT); found {
-		outputConf.Set(io.Writer(os.Stdout))
+	if outputProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_OUTPUT); found {
+		outputProp.Set(io.Writer(os.Stdout))
 	}
 
 	if success, _ := result.Success(); success {

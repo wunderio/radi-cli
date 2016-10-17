@@ -13,7 +13,7 @@ type MonitorBaseWriterOperation struct{}
 
 // A utility function to write a message to the configured writer
 func (op *MonitorBaseWriterOperation) WriteMessage(message string) bool {
-	if writerConfig, exists := op.Configurations().Get(OPERATION_CONFIGURATION_ID_MONITOR_WRITER); exists {
+	if writerConfig, exists := op.Properties().Get(OPERATION_PROPERTY_ID_MONITOR_WRITER); exists {
 		confValue := writerConfig.Get()
 		if writer, ok := confValue.(io.Writer); ok {
 			writer.Write([]byte(message))
@@ -26,10 +26,10 @@ func (op *MonitorBaseWriterOperation) WriteMessage(message string) bool {
 }
 
 // Add a writer configuration
-func (op *MonitorBaseWriterOperation) Configurations() *operation.Configurations {
-	configurations := operation.Configurations{}
+func (op *MonitorBaseWriterOperation) Properties() *operation.Properties {
+	configurations := operation.Properties{}
 
-	configurations.Add(operation.Configuration(&MonitorOutputConfiguration{}))
+	configurations.Add(operation.Property(&MonitorOutputProperty{}))
 
 	return &configurations
 }

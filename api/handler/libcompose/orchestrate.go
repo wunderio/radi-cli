@@ -17,7 +17,7 @@ type LibcomposeOrchestrateUpOperation struct {
 	BaseLibcomposeOrchestrateUpOperation
 	BaseLibcomposeOrchestrateNameFilesOperation
 
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
 // Validate the libCompose Orchestrate Up operation
@@ -25,15 +25,15 @@ func (up *LibcomposeOrchestrateUpOperation) Validate() bool {
 	return true
 }
 
-// Provide static configurations for the operation
-func (up *LibcomposeOrchestrateUpOperation) Configurations() *operation.Configurations {
-	if up.configurations == nil {
-		newConfigurations := &operation.Configurations{}
-		newConfigurations.Merge(*up.BaseLibcomposeOrchestrateUpOperation.Configurations())
-		newConfigurations.Merge(*up.BaseLibcomposeOrchestrateNameFilesOperation.Configurations())
-		up.configurations = newConfigurations
+// Provide static properties for the operation
+func (up *LibcomposeOrchestrateUpOperation) Properties() *operation.Properties {
+	if up.properties == nil {
+		newProperties := &operation.Properties{}
+		newProperties.Merge(*up.BaseLibcomposeOrchestrateUpOperation.Properties())
+		newProperties.Merge(*up.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
+		up.properties = newProperties
 	}
-	return up.configurations
+	return up.properties
 }
 
 // Execute the libCompose Orchestrate Up operation
@@ -41,26 +41,26 @@ func (up *LibcomposeOrchestrateUpOperation) Exec() operation.Result {
 	result := operation.BaseResult{}
 	result.Set(true, nil)
 
-	configurations := up.Configurations()
-	// pass all confs to make a project
-	project, _ := MakeComposeProject(configurations)
+	properties := up.Properties()
+	// pass all props to make a project
+	project, _ := MakeComposeProject(properties)
 
-	// some confs we will use locally
+	// some props we will use locally
 
 	var netContext context.Context
 	var upOptions libCompose_options.Up
 	// net context
-	if netContextConf, found := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_CONTEXT); found {
-		netContext = netContextConf.Get().(context.Context)
+	if netContextProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_CONTEXT); found {
+		netContext = netContextProp.Get().(context.Context)
 	} else {
-		result.Set(false, []error{errors.New("Libcompose up operation is missing the context configuration")})
+		result.Set(false, []error{errors.New("Libcompose up operation is missing the context property")})
 	}
 
 	// up options
-	if upOptionsConf, found := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_SETTINGS_UP); found {
-		upOptions = upOptionsConf.Get().(libCompose_options.Up)
+	if upOptionsProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_UP); found {
+		upOptions = upOptionsProp.Get().(libCompose_options.Up)
 	} else {
-		result.Set(false, []error{errors.New("Libcompose up operation is missing the UP configuration")})
+		result.Set(false, []error{errors.New("Libcompose up operation is missing the UP property")})
 	}
 
 	if success, _ := result.Success(); success {
@@ -78,7 +78,7 @@ type LibcomposeOrchestrateDownOperation struct {
 	BaseLibcomposeOrchestrateDownOperation
 	BaseLibcomposeOrchestrateNameFilesOperation
 
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
 // Validate the libCompose Orchestrate Down operation
@@ -86,32 +86,32 @@ func (down *LibcomposeOrchestrateDownOperation) Validate() bool {
 	return true
 }
 
-// Provide static configurations for the operation
-func (down *LibcomposeOrchestrateDownOperation) Configurations() *operation.Configurations {
-	if down.configurations == nil {
-		down.configurations = &operation.Configurations{}
-		down.configurations.Merge(*down.BaseLibcomposeOrchestrateDownOperation.Configurations())
-		down.configurations.Merge(*down.BaseLibcomposeOrchestrateNameFilesOperation.Configurations())
+// Provide static properties for the operation
+func (down *LibcomposeOrchestrateDownOperation) Properties() *operation.Properties {
+	if down.properties == nil {
+		down.properties = &operation.Properties{}
+		down.properties.Merge(*down.BaseLibcomposeOrchestrateDownOperation.Properties())
+		down.properties.Merge(*down.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
 	}
-	return down.configurations
+	return down.properties
 }
 
 // Execute the libCompose Orchestrate Down operation
 func (down *LibcomposeOrchestrateDownOperation) Exec() operation.Result {
 	result := operation.BaseResult{}
 
-	configurations := down.Configurations()
-	// pass all confs to make a project
-	project, _ := MakeComposeProject(configurations)
+	properties := down.Properties()
+	// pass all props to make a project
+	project, _ := MakeComposeProject(properties)
 
-	// some confs we will use locally
+	// some props we will use locally
 
 	// net context
-	netContextConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_CONTEXT)
-	netContext := netContextConf.Get().(context.Context)
+	netContextProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_CONTEXT)
+	netContext := netContextProp.Get().(context.Context)
 	// down options
-	downOptionsConf, _ := configurations.Get(OPERATION_CONFIGURATION_LIBCOMPOSE_SETTINGS_DOWN)
-	downOptions := downOptionsConf.Get().(libCompose_options.Down)
+	downOptionsProp, _ := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_DOWN)
+	downOptions := downOptionsProp.Get().(libCompose_options.Down)
 
 	if err := project.APIProject.Down(netContext, downOptions); err != nil {
 		result.Set(false, []error{err})

@@ -18,11 +18,11 @@ func (operation *DecoratedOperation) Label() string {
 	return operation.decorated.Label() + " [" + operation.decorating.Label() + "]"
 }
 
-// Get Operation Configuiration from both operations
-func (operation *DecoratedOperation) Configurations() *Configurations {
-	configurations := operation.decorated.Configurations()
-	configurations.Merge(*operation.decorating.Configurations())
-	return configurations
+// Get Operation Properties from both operations
+func (operation *DecoratedOperation) Properties() *Properties {
+	Properties := operation.decorated.Properties()
+	Properties.Merge(*operation.decorating.Properties())
+	return Properties
 }
 
 // Execute the decorating operation, and then execute the decorated operation if the decorating was successful

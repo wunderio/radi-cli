@@ -35,6 +35,6 @@ func (list *BaseCommandListOperation) Description() string {
 func (list *BaseCommandListOperation) Internal() bool {
 	return false
 }
-func (list *BaseCommandListOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (list *BaseCommandListOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

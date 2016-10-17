@@ -11,9 +11,9 @@ import (
  */
 
 const (
-	OPERATION_ID_MONITOR_LOG                         = "monitor.log"
-	OPERATION_CONFIGURATION_CONF_MONITOR_LOG_TYPE    = "monitor.log.type"
-	OPERATION_CONFIGURATION_CONF_MONITOR_LOG_MESSAGE = "monitor.log.message"
+	OPERATION_ID_MONITOR_LOG                    = "monitor.log"
+	OPERATION_PROPERTY_CONF_MONITOR_LOG_TYPE    = "monitor.log.type"
+	OPERATION_PROPERTY_CONF_MONITOR_LOG_MESSAGE = "monitor.log.message"
 )
 
 // Base class for monitor log Operation
@@ -48,7 +48,7 @@ func (logger *BaseMonitorLogOperation) Validate() bool {
 
 // Standard output logger
 type MonitorStandardLogOperation struct {
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
 // Id the operation
@@ -76,32 +76,32 @@ func (logger *MonitorStandardLogOperation) Validate() bool {
 	return false
 }
 
-// Add a Message configuration
-func (logger *MonitorStandardLogOperation) Configurations() *operation.Configurations {
-	if logger.configurations == nil {
-		logger.configurations = &operation.Configurations{}
+// Add a Message propery
+func (logger *MonitorStandardLogOperation) Properties() *operation.Properties {
+	if logger.properties == nil {
+		logger.properties = &operation.Properties{}
 
-		logger.configurations.Add(operation.Configuration(NewMonitorLogTypeConfiguration("info")))
-		logger.configurations.Add(operation.Configuration(&MonitorLogMessageConfiguration{}))
+		logger.properties.Add(operation.Property(NewMonitorLogTypeProperty("info")))
+		logger.properties.Add(operation.Property(&MonitorLogMessageProperty{}))
 	}
-	return logger.configurations
+	return logger.properties
 }
 
 // Exec the log output
 func (logger *MonitorStandardLogOperation) Exec() operation.Result {
 	baseResult := operation.BaseResult{}
 
-	// we ignore the conf tests, as we ensured that the conf would exist in the Configuration() method
-	logTypeConf, _ := logger.Configurations().Get(OPERATION_CONFIGURATION_CONF_MONITOR_LOG_TYPE)
-	messageConf, _ := logger.Configurations().Get(OPERATION_CONFIGURATION_CONF_MONITOR_LOG_MESSAGE)
+	// we ignore the conf tests, as we ensured that the conf would exist in the property() method
+	logTypeProp, _ := logger.Properties().Get(OPERATION_PROPERTY_CONF_MONITOR_LOG_TYPE)
+	messageProp, _ := logger.Properties().Get(OPERATION_PROPERTY_CONF_MONITOR_LOG_MESSAGE)
 
 	var logType, message string
 	var ok bool
 
-	if message, ok = messageConf.Get().(string); !ok {
+	if message, ok = messageProp.Get().(string); !ok {
 		log.Error("MonitorStandardLogOperation has no message assigned")
 	} else {
-		if logType, ok = logTypeConf.Get().(string); !ok {
+		if logType, ok = logTypeProp.Get().(string); !ok {
 			logType = "info"
 		}
 		switch logType {
@@ -120,48 +120,48 @@ func (logger *MonitorStandardLogOperation) Exec() operation.Result {
 	return operation.Result(&baseResult)
 }
 
-func NewMonitorLogTypeConfiguration(logType string) *MonitorLogTypeConfiguration {
-	conf := MonitorLogTypeConfiguration{}
+func NewMonitorLogTypeProperty(logType string) *MonitorLogTypeProperty {
+	conf := MonitorLogTypeProperty{}
 	conf.Set(logType)
 	return &conf
 }
 
-// Configuration for a monitoring log status : error|info
-type MonitorLogTypeConfiguration struct {
-	operation.StringConfiguration
+// property for a monitoring log status : error|info
+type MonitorLogTypeProperty struct {
+	operation.StringProperty
 }
 
-// Id for the configuration
-func (logType *MonitorLogTypeConfiguration) Id() string {
-	return OPERATION_CONFIGURATION_CONF_MONITOR_LOG_TYPE
+// Id for the property
+func (logType *MonitorLogTypeProperty) Id() string {
+	return OPERATION_PROPERTY_CONF_MONITOR_LOG_TYPE
 }
 
-// Label for the configuration
-func (logType *MonitorLogTypeConfiguration) Label() string {
+// Label for the property
+func (logType *MonitorLogTypeProperty) Label() string {
 	return "Message type."
 }
 
-// Description for the configuration
-func (logType *MonitorLogTypeConfiguration) Description() string {
+// Description for the property
+func (logType *MonitorLogTypeProperty) Description() string {
 	return "Message type, which can be either info or error."
 }
 
-// Configuration for a monitoring log message
-type MonitorLogMessageConfiguration struct {
-	operation.StringConfiguration
+// property for a monitoring log message
+type MonitorLogMessageProperty struct {
+	operation.StringProperty
 }
 
-// Id for the configuration
-func (message *MonitorLogMessageConfiguration) Id() string {
-	return OPERATION_CONFIGURATION_CONF_MONITOR_LOG_MESSAGE
+// Id for the property
+func (message *MonitorLogMessageProperty) Id() string {
+	return OPERATION_PROPERTY_CONF_MONITOR_LOG_MESSAGE
 }
 
-// Label for the configuration
-func (message *MonitorLogMessageConfiguration) Label() string {
+// Label for the property
+func (message *MonitorLogMessageProperty) Label() string {
 	return "Message to be logged."
 }
 
-// Description for the configuration
-func (message *MonitorLogMessageConfiguration) Description() string {
+// Description for the property
+func (message *MonitorLogMessageProperty) Description() string {
 	return "Message which will be sent to the standard logger."
 }

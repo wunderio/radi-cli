@@ -4,64 +4,85 @@ import (
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
-// A Base config operation that provides a config connector
-type BaseConfigConnectorOperation struct {
-	connector ConfigConnector
-}
+/**
+ * Base operations for configs, primarily giving some base Property structs
+ */
 
-// set the operation config connect
-func (base *BaseConfigConnectorOperation) SetConnector(connector ConfigConnector) {
-	base.connector = connector
-}
-
-// retrieve the operations config connnector
-func (base *BaseConfigConnectorOperation) Connector() ConfigConnector {
-	return base.connector
-}
-
-//
+// Config Base peration that has just a Key property
 type BaseConfigKeyOperation struct {
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
-//
-func (base *BaseConfigKeyOperation) Configurations() *operation.Configurations {
-	if base.configurations == nil {
-		base.configurations = &operation.Configurations{}
+// Return operation properties
+func (base *BaseConfigKeyOperation) Properties() *operation.Properties {
+	if base.properties == nil {
+		base.properties = &operation.Properties{}
 
-		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
+		base.properties.Add(operation.Property(&ConfigKeyProperty{}))
 	}
-	return base.configurations
+	return base.properties
 }
 
-//
+// Base Config operation that has a string key, and bytes array value property pair
 type BaseConfigKeyValueOperation struct {
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
-//
-func (base *BaseConfigKeyValueOperation) Configurations() *operation.Configurations {
-	if base.configurations == nil {
-		base.configurations = &operation.Configurations{}
+// Return operation properties
+func (base *BaseConfigKeyValueOperation) Properties() *operation.Properties {
+	if base.properties == nil {
+		base.properties = &operation.Properties{}
 
-		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
-		base.configurations.Add(operation.Configuration(&ConfigValueConfiguration{}))
+		base.properties.Add(operation.Property(&ConfigKeyProperty{}))
+		base.properties.Add(operation.Property(&ConfigValueProperty{}))
 	}
-	return base.configurations
+	return base.properties
 }
 
-//
+// Base Config operation that has a string key, and io.Reader value property pair
+type BaseConfigKeyReadersOperation struct {
+	properties *operation.Properties
+}
+
+// Return operation properties
+func (base *BaseConfigKeyReadersOperation) Properties() *operation.Properties {
+	if base.properties == nil {
+		base.properties = &operation.Properties{}
+
+		base.properties.Add(operation.Property(&ConfigKeyProperty{}))
+		base.properties.Add(operation.Property(&ConfigValueScopedReadersProperty{}))
+	}
+	return base.properties
+}
+
+// Base Config operation that has a string key, and io.Writer value property pair
+type BaseConfigKeyWritersOperation struct {
+	properties *operation.Properties
+}
+
+// Return operation properties
+func (base *BaseConfigKeyWritersOperation) Properties() *operation.Properties {
+	if base.properties == nil {
+		base.properties = &operation.Properties{}
+
+		base.properties.Add(operation.Property(&ConfigKeyProperty{}))
+		base.properties.Add(operation.Property(&ConfigValueScopedWritersProperty{}))
+	}
+	return base.properties
+}
+
+// Base Config operation that has a parent key, and key slice property pair
 type BaseConfigKeyKeysOperation struct {
-	configurations *operation.Configurations
+	properties *operation.Properties
 }
 
-//
-func (base *BaseConfigKeyKeysOperation) Configurations() *operation.Configurations {
-	if base.configurations == nil {
-		base.configurations = &operation.Configurations{}
+// Return Operation properties
+func (base *BaseConfigKeyKeysOperation) Properties() *operation.Properties {
+	if base.properties == nil {
+		base.properties = &operation.Properties{}
 
-		base.configurations.Add(operation.Configuration(&ConfigKeyConfiguration{}))
-		base.configurations.Add(operation.Configuration(&ConfigKeysConfiguration{}))
+		base.properties.Add(operation.Property(&ConfigKeyProperty{}))
+		base.properties.Add(operation.Property(&ConfigKeysProperty{}))
 	}
-	return base.configurations
+	return base.properties
 }

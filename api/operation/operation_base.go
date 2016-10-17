@@ -6,7 +6,7 @@ type BaseOperation struct {
 	label       string
 	description string
 
-	configurations *Configurations
+	properties *Properties
 }
 
 func (operation *BaseOperation) Validate() bool {
@@ -21,6 +21,6 @@ func (operation *BaseOperation) Label() string {
 func (operation *BaseOperation) Description() string {
 	return operation.description
 }
-func (operation *BaseOperation) Configurations() *Configurations {
-	return operation.configurations
+func (operation *BaseOperation) Properties() *Properties {
+	return operation.properties
 }

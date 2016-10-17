@@ -36,6 +36,6 @@ func (up *BaseOrchestrationUpOperation) Description() string {
 func (up *BaseOrchestrationUpOperation) Internal() bool {
 	return false
 }
-func (up *BaseOrchestrationUpOperation) Configurations() *operation.Configurations {
-	return &operation.Configurations{}
+func (up *BaseOrchestrationUpOperation) Properties() *operation.Properties {
+	return &operation.Properties{}
 }

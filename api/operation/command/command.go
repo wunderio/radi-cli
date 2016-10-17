@@ -6,7 +6,7 @@ import (
 
 /**
  * A base Command definition, which defines the command
- * container configuration, but may receive overrides for
+ * container property, but may receive overrides for
  * flags, input/error/output
  *
  * It turns out that a Command has a very similar need to
@@ -17,8 +17,8 @@ import (
 
 // Command definition
 type Command interface {
-	// Attach a set of configurations to the command
-	SetConfigurations(configurations *operation.Configurations)
+	// Attach a set of Properties to the command
+	SetProperties(Properties *operation.Properties)
 	// Convert the command into an operation
 	getOperation() operation.Operation
 
@@ -33,7 +33,7 @@ type Command interface {
 	Internal() bool
 
 	// What settings does the Operation provide to an implemenentor
-	Configurations() *operation.Configurations
+	Properties() *operation.Properties
 
 	// Return the string machinename/id of the Operation
 	Id() string

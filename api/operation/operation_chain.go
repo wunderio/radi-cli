@@ -1,6 +1,6 @@
 package operation
 
-// ChainOperation runs multiple operations in sequence.  Extend this and add ID/Label/Configurations handling
+// ChainOperation runs multiple operations in sequence.  Extend this and add ID/Label/Properties handling
 type ChainOperation struct {
 	// Tell this operation to stop processing the chained operations on the first TRUE result
 	stopOnSuccess bool
@@ -9,13 +9,13 @@ type ChainOperation struct {
 }
 
 // Get Operation Configuration from all operations
-func (chain *ChainOperation) Configurations() *Configurations {
-	configurations := Configurations{}
+func (chain *ChainOperation) Properties() *Properties {
+	Properties := Properties{}
 	for _, key := range chain.operations.Order() {
 		op, _ := chain.operations.Get(key)
-		configurations.Merge(*op.Configurations())
+		Properties.Merge(*op.Properties())
 	}
-	return &configurations
+	return &Properties
 }
 
 // Exec the chain operation by running Exec on each child

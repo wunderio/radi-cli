@@ -30,10 +30,10 @@ func TestNullAPI(c *cli.Context) error {
 
 	// just for fun, let's output some information about the operation
 	log.WithFields(log.Fields{"id": logger.Id(), "label": logger.Label()}).Info("Logger operation found")
-	loggerConfs := logger.Configurations()
-	for _, id := range loggerConfs.Order() {
-		conf, _ := loggerConfs.Get(id)
-		log.WithFields(log.Fields{"conf": conf}).Info("Logger has conf field: " + id)
+	loggerProps := logger.Properties()
+	for _, id := range loggerProps.Order() {
+		prop, _ := loggerProps.Get(id)
+		log.WithFields(log.Fields{"prop": prop}).Info("Logger has prop field: " + id)
 	}
 
 	log.Info("Listing operations")
@@ -41,7 +41,7 @@ func TestNullAPI(c *cli.Context) error {
 		op, _ := ops.Get(id)
 
 		log.WithFields(log.Fields{"id": op.Id()}).Info("Operation: " + op.Label())
-		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Configurations()
+		// we could also add "label": op.Label(), "description": op.Description(), "properties": op.Properties()
 	}
 
 	// if there is a monitor.status operation, attach a writer to it and use it
@@ -61,9 +61,9 @@ func TestNullAPI(c *cli.Context) error {
 	}
 
 	// lets try directly using the log operation (just ignoring the Get() bool for now)
-	confs := logger.Configurations()
-	logtype, _ := confs.Get(monitor.OPERATION_CONFIGURATION_CONF_MONITOR_LOG_TYPE)
-	message, _ := confs.Get(monitor.OPERATION_CONFIGURATION_CONF_MONITOR_LOG_MESSAGE)
+	props := logger.Properties()
+	logtype, _ := props.Get(monitor.OPERATION_PROPERTY_CONF_MONITOR_LOG_TYPE)
+	message, _ := props.Get(monitor.OPERATION_PROPERTY_CONF_MONITOR_LOG_MESSAGE)
 
 	// start off with just info
 	logtype.Set("info") // this is actually default
