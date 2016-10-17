@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/user"
 	"path"
-	// "time"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -14,7 +14,6 @@ import (
 	api_bytesource "github.com/james-nesbitt/wundertools-go/api/handler/bytesource"
 	api_libcompose "github.com/james-nesbitt/wundertools-go/api/handler/libcompose"
 	api_local "github.com/james-nesbitt/wundertools-go/api/handler/local"
-	// api_config "github.com/james-nesbitt/wundertools-go/api/operation/config"
 	api_orchestrate "github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
 )
 
@@ -85,12 +84,9 @@ func TestLocalAPI(c *cli.Context) error {
 	}
 
 	// Test setting.Set() for 'time'
-	/**
-	 * DON'T DO THIS YET, IT WILL WRITE AN EMPTY FILE :(
 	newTimeValue := time.Now().Format(time.UnixDate)
 	errSet := local.Settings.Set("time", newTimeValue)
 	log.WithFields(log.Fields{"key": "time", "value": newTimeValue}).WithError(errSet).Info("Saved `setting` value")
-	*/
 
 	// Before testing orchestration, let's attach to log output
 	log.Info("attaching to log output before testing orchestration")

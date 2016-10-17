@@ -54,9 +54,31 @@ func (fileSource *FileByteSource) Reader() (io.Reader, error) {
 
 // Get a reader for the File
 func (fileSource *FileByteSource) Writer() (io.Writer, error) {
-	// osFile, err := os.OpenFile(fileSource.path, os.O_WRONLY, os.FileMode(0666))
-	osFile, err := os.Create(fileSource.path)
-	return io.Writer(osFile), err
+	//fileWriter, err := os.OpenFile(fileSource.path, os.O_WRONLY, os.FileMode(0666))
+	//fileWriter, err := os.Create(fileSource.path)
+
+	fileWriter := SafeFileWriter{path: fileSource.path}
+	return io.Writer(fileWriter), nil
+}
+
+// Non-emptying writer wrapper, which doesn't open the file until it is written to
+type SafeFileWriter struct {
+	path string
+	file *os.File
+}
+
+// io.Writer() method, that first creates the file resource
+func (safe SafeFileWriter) Write(p []byte) (int, error) {
+	if safe.file == nil {
+		if osFile, err := os.Create(safe.path); err != nil {
+			return 0, err
+		} else {
+			safe.file = osFile
+		}
+	}
+
+	n, err := safe.file.Write(p)
+	return n, err
 }
 
 // An ordered set of filebytesources

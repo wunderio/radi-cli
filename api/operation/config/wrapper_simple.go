@@ -98,12 +98,14 @@ func (wrapper *SimpleConfigWrapper) Set(key string, values ConfigScopedValues) e
 	var returnError error
 	for _, scope := range values.Order() {
 		content, _ := values.Get(scope)
-		log.WithFields(log.Fields{"scope": scope, "content": string(content)}).Info("ConfigWrapper: writing config to writer")
-		if writer, found := writers.Get(key); found {
+		if writer, found := writers.Get(scope); found {
+			log.WithFields(log.Fields{"scope": scope, "content": string(content)}).Debug("ConfigWrapper: writing config to writer")
 			byteContent := []byte(content)
 			if _, err := writer.Write(byteContent); err != nil {
 				returnError = err
 			}
+		} else {
+			log.WithFields(log.Fields{"scope": scope, "scopes": writers.Order()}).Error("ConfigWrapper could not find wrapper for targeted Config Set")
 		}
 
 		/**
