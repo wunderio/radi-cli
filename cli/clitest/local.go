@@ -103,9 +103,9 @@ func TestLocalAPI(c *cli.Context) error {
 		monitorLogs, _ := ops.Get(api_libcompose.OPERATION_ID_COMPOSE_MONITOR_LOGS)
 		outputProp, _ := monitorLogs.Properties().Get(api_libcompose.OPERATION_PROPERTY_LIBCOMPOSE_OUTPUT)
 		outputProp.Set(os.Stdout)
-		stayAttachedProp, _ := monitorLogs.Properties().Get(api_libcompose.OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW)
-		if !stayAttachedProp.Set(false) {
-			log.Error("Could not set logs to follow")
+		stayAttachedProp, _ := monitorLogs.Properties().Get(api_libcompose.OPERATION_PROPERTY_LIBCOMPOSE_DETACH)
+		if !stayAttachedProp.Set(true) {
+			log.Error("Could not set logs to detach")
 		}
 
 		// This runs logging as an inline action, without following, which will output any existing log items

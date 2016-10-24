@@ -23,7 +23,6 @@ const (
 // An operations which streams the container logs from libcompose
 type LibcomposeMonitorLogsOperation struct {
 	monitor.BaseMonitorLogsOperation
-	BaseLibcomposeStayAttachedOperation
 	BaseLibcomposeNameFilesOperation
 
 	properties *operation.Properties
@@ -43,7 +42,7 @@ func (logs *LibcomposeMonitorLogsOperation) Validate() bool {
 func (logs *LibcomposeMonitorLogsOperation) Properties() *operation.Properties {
 	if logs.properties == nil {
 		newProperties := &operation.Properties{}
-		newProperties.Merge(*logs.BaseLibcomposeStayAttachedOperation.Properties())
+		newProperties.Add(&LibcomposeDetachProperty{})
 		newProperties.Merge(*logs.BaseLibcomposeNameFilesOperation.Properties())
 		logs.properties = newProperties
 	}
@@ -71,10 +70,10 @@ func (logs *LibcomposeMonitorLogsOperation) Exec() operation.Result {
 
 	var follow bool
 	// follow conf
-	if followProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW); found {
-		follow = followProp.Get().(bool)
+	if followProp, found := properties.Get(OPERATION_PROPERTY_LIBCOMPOSE_DETACH); found {
+		follow = !followProp.Get().(bool)
 	} else {
-		result.Set(true, []error{errors.New("Libcompose logs operation is missing the follow property")})
+		result.Set(true, []error{errors.New("Libcompose logs operation is missing the detach property")})
 	}
 
 	// output handling test

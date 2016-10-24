@@ -1,13 +1,14 @@
 package local
 
 import (
-	"errors"
 	"io"
 	"os"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 	"golang.org/x/net/context"
+
+	// libCompose_options "github.com/docker/libcompose/project/options"
 
 	api_operation "github.com/james-nesbitt/wundertools-go/api/operation"
 )
@@ -27,36 +28,54 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 
 		switch prop.Type() {
 		case "string":
-			prop.Set(cliContext.String(key))
+			if cliContext.IsSet(key) {
+				prop.Set(cliContext.String(key))
+			}
 		case "[]string":
-			prop.Set(cliContext.StringSlice(key))
+			if cliContext.IsSet(key) {
+				prop.Set(cliContext.StringSlice(key))
+			}
 		case "[]byte":
-			prop.Set([]byte(cliContext.String(key)))
+			if cliContext.IsSet(key) {
+				prop.Set([]byte(cliContext.String(key)))
+			}
 		case "int":
-			prop.Set(cliContext.Int(key))
+			if cliContext.IsSet(key) {
+				prop.Set(cliContext.Int(key))
+			}
 		case "int64":
-			prop.Set(cliContext.Int64(key))
+			if cliContext.IsSet(key) {
+				prop.Set(cliContext.Int64(key))
+			}
 		case "bool":
-			prop.Set(cliContext.Bool(key))
+			if cliContext.IsSet(key) {
+				prop.Set(cliContext.Bool(key))
+			}
 		case "io.Writer":
-			switch cliContext.String(key) {
-			case "stdout":
-				prop.Set(io.Writer(os.Stdout))
-			case "stderr":
-				prop.Set(io.Writer(os.Stderr))
+			if cliContext.IsSet(key) {
+				switch cliContext.String(key) {
+				case "stdout":
+					prop.Set(io.Writer(os.Stdout))
+				case "stderr":
+					prop.Set(io.Writer(os.Stderr))
+				}
 			}
 		case "io.Reader":
-			switch cliContext.String(key) {
-			case "stdin":
-				prop.Set(io.Reader(os.Stdin))
+			if cliContext.IsSet(key) {
+				switch cliContext.String(key) {
+				case "stdin":
+					prop.Set(io.Reader(os.Stdin))
+				}
 			}
 		case "golang.org/x/net/context.Context":
-			duration := cliContext.Duration(key)
-			if duration > 0 {
-				newContext, _ := context.WithTimeout(context.Background(), duration)
-				prop.Set(newContext)
-			} else {
-				prop.Set(context.Background())
+			if cliContext.IsSet(key + ":duration") {
+				duration := cliContext.Duration(key + ".duration")
+				if duration > 0 {
+					newContext, _ := context.WithTimeout(context.Background(), duration)
+					prop.Set(newContext)
+				} else {
+					prop.Set(context.Background())
+				}
 			}
 		default:
 			log.WithFields(log.Fields{"id": prop.Id(), "property": prop, "flag": cliContext.Generic(key)}).Debug("Unhandled property type for operation")
@@ -111,24 +130,23 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 				Usage: prop.Description(),
 			})
 		case "io.Writer":
-			converted := cli.Generic(&WriterProperty{property: prop})
-			flags = append(flags, cli.GenericFlag{
+			flags = append(flags, cli.StringFlag{
 				Name:  prop.Id(),
-				Value: converted,
+				Value: "",
 				Usage: prop.Description(),
 			})
 		case "io.Reader":
-			converted := cli.Generic(&ReaderProperty{property: prop})
-			flags = append(flags, cli.GenericFlag{
+			flags = append(flags, cli.StringFlag{
 				Name:  prop.Id(),
-				Value: converted,
+				Value: "",
 				Usage: prop.Description(),
 			})
 		case "golang.org/x/net/context.Context":
 			flags = append(flags, cli.DurationFlag{
-				Name:  prop.Id(),
+				Name:  prop.Id() + ":duration",
 				Usage: "Timeout in seconds. " + prop.Description(),
 			})
+
 		default:
 			log.WithFields(log.Fields{"id": prop.Id(), "property": prop}).Debug("Unhandled property type for operation")
 			converted := cli.Generic(&UnHandledProperty{property: prop})
@@ -153,46 +171,6 @@ func (prop *UnHandledProperty) Set(value string) error {
 	return nil
 }
 func (prop *UnHandledProperty) String() string {
-	log.WithFields(log.Fields{"id": prop.property.Id(), "property": prop.property}).Debug("Unhandled property retrieve")
-	return ""
-}
-
-// A cli.Generic implementor for writer properties
-type WriterProperty struct {
-	property api_operation.Property
-}
-
-func (prop *WriterProperty) Set(value string) error {
-	switch value {
-	case "stdout":
-		prop.property.Set(os.Stdout)
-	case "stderr":
-		prop.property.Set(os.Stdout)
-	default:
-		return errors.New("Could not interpret flag as an os.Writer")
-	}
-	return nil
-}
-func (prop *WriterProperty) String() string {
-	log.WithFields(log.Fields{"id": prop.property.Id(), "property": prop.property}).Debug("Unhandled property retrieve")
-	return ""
-}
-
-// A cli.Generic implementor for reader properties
-type ReaderProperty struct {
-	property api_operation.Property
-}
-
-func (prop *ReaderProperty) Set(value string) error {
-	switch value {
-	case "stdin":
-		prop.property.Set(os.Stdin)
-	default:
-		return errors.New("Could not interpret flag as an os.Reader")
-	}
-	return nil
-}
-func (prop *ReaderProperty) String() string {
 	log.WithFields(log.Fields{"id": prop.property.Id(), "property": prop.property}).Debug("Unhandled property retrieve")
 	return ""
 }

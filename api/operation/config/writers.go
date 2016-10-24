@@ -30,5 +30,5 @@ func (writers *BaseConfigKeyWritersOperation) Description() string {
 
 // Is this an internal API operation
 func (writers *BaseConfigKeyWritersOperation) Internal() bool {
-	return false
+	return true
 }

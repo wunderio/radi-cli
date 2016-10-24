@@ -1,9 +1,7 @@
 package libcompose
 
 import (
-	log "github.com/Sirupsen/logrus"
-
-	libCompose_options "github.com/docker/libcompose/project/options"
+	// libCompose_options "github.com/docker/libcompose/project/options"
 
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
@@ -28,8 +26,6 @@ const (
 
 	// config for an orchestration context limiter
 	OPERATION_PROPERTY_LIBCOMPOSE_CONTEXT = "compose.context"
-	// Should a process stay attached and follow?
-	OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW = "compose.attach.follow"
 
 	/**
 	 * Operation specific contexts
@@ -39,6 +35,20 @@ const (
 	OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_UP = "compose.up"
 	// config for down orchestration compose settings
 	OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_DOWN = "compose.down"
+
+	// Individual possible libcompose properties
+	OPERATION_PROPERTY_LIBCOMPOSE_FORCEREMOVE      = "compose.forceremove"
+	OPERATION_PROPERTY_LIBCOMPOSE_NOCACHE          = "compose.nocache"
+	OPERATION_PROPERTY_LIBCOMPOSE_PULL             = "compose.pull"
+	OPERATION_PROPERTY_LIBCOMPOSE_DETACH           = "compose.detach"
+	OPERATION_PROPERTY_LIBCOMPOSE_NORECREATE       = "compose.norecreate"
+	OPERATION_PROPERTY_LIBCOMPOSE_NOBUILD          = "compose.nobuild"
+	OPERATION_PROPERTY_LIBCOMPOSE_FORCERECREATE    = "compose.forcerecreate"
+	OPERATION_PROPERTY_LIBCOMPOSE_FORCEREBUILD     = "compose.forcerebuild"
+	OPERATION_PROPERTY_LIBCOMPOSE_REMOVEVOLUMES    = "compose.removevolumes"
+	OPERATION_PROPERTY_LIBCOMPOSE_REMOVEORPHANS    = "compose.removeorphans"
+	OPERATION_PROPERTY_LIBCOMPOSE_REMOVEIMAGETYPES = "compose.removeimagetypes"
+	OPERATION_PROPERTY_LIBCOMPOSE_REMOVERUNNING    = "compose.removerunning"
 )
 
 /**
@@ -175,113 +185,302 @@ func (err *LibcomposeErrorProperty) Internal() bool {
  * structs in https://github.com/docker/libcompose/blob/master/project/options/types.go
  */
 
-// Property for a docker.libCompose project to indicate that a process hsould stay attached and follow
-type LibcomposeAttachFollowProperty struct {
+// BUILD : Property for a docker.libCompose project to indicate that a build should ignore cached image layers
+type LibcomposeNoCacheProperty struct {
 	operation.BooleanProperty
 }
 
 // Id for the Property
-func (follow *LibcomposeAttachFollowProperty) Id() string {
-	return OPERATION_PROPERTY_LIBCOMPOSE_ATTACH_FOLLOW
+func (nocache *LibcomposeNoCacheProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_NOCACHE
 }
 
 // Label for the Property
-func (follow *LibcomposeAttachFollowProperty) Label() string {
-	return "Follow"
+func (nocache *LibcomposeNoCacheProperty) Label() string {
+	return "nocache"
 }
 
 // Description for the Property
-func (follow *LibcomposeAttachFollowProperty) Description() string {
-	return "When capturing output, stay attached and follow the output?"
+func (nocache *LibcomposeNoCacheProperty) Description() string {
+	return "When capturing building, ignore cached docker layers?"
 }
 
 // Is the Property internal only
-func (follow *LibcomposeAttachFollowProperty) Internal() bool {
+func (nocache *LibcomposeNoCacheProperty) Internal() bool {
 	return false
 }
 
-// A libcompose Property for net context limiting
-type LibcomposeOptionsUpProperty struct {
-	value libCompose_options.Up
+// Property for a docker.libCompose project to indicate that a process remove ... something
+type LibcomposeForceRemoveProperty struct {
+	operation.BooleanProperty
 }
 
 // Id for the Property
-func (optionsConf *LibcomposeOptionsUpProperty) Id() string {
-	return OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_UP
+func (forceremove *LibcomposeForceRemoveProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_FORCEREMOVE
 }
 
 // Label for the Property
-func (optionsConf *LibcomposeOptionsUpProperty) Label() string {
-	return "Up operation options"
+func (forceremove *LibcomposeForceRemoveProperty) Label() string {
+	return "Force remove"
 }
 
 // Description for the Property
-func (optionsConf *LibcomposeOptionsUpProperty) Description() string {
-	return "Options to configure the Up.  See github.com/docker/libcompose/project/options for more information."
+func (forceremove *LibcomposeForceRemoveProperty) Description() string {
+	return "When building, force remove .... something?"
 }
 
 // Is the Property internal only
-func (optionsConf *LibcomposeOptionsUpProperty) Internal() bool {
+func (forceremove *LibcomposeForceRemoveProperty) Internal() bool {
 	return false
 }
 
-// Give an idea of what type of value the property consumes
-func (optionsConf *LibcomposeOptionsUpProperty) Type() string {
-	return "github.com/docker/libcompose/project/options.Up"
-}
-
-func (optionsConf *LibcomposeOptionsUpProperty) Get() interface{} {
-	return interface{}(optionsConf.value)
-}
-func (optionsConf *LibcomposeOptionsUpProperty) Set(value interface{}) bool {
-	if converted, ok := value.(libCompose_options.Up); ok {
-		optionsConf.value = converted
-		return true
-	} else {
-		log.WithFields(log.Fields{"value": value}).Error("Could not assign Property value, because the passed parameter was the wrong type. Expected github.com/docker/libcompose/project/options.Up")
-		return false
-	}
-}
-
-// A libcompose Property for net context limiting
-type LibcomposeOptionsDownProperty struct {
-	value libCompose_options.Down
+// Property for a docker.libCompose project to indicate that a process hsould stay attached and follow
+type LibcomposePullProperty struct {
+	operation.BooleanProperty
 }
 
 // Id for the Property
-func (optionsConf *LibcomposeOptionsDownProperty) Id() string {
-	return OPERATION_PROPERTY_LIBCOMPOSE_SETTINGS_DOWN
+func (pull *LibcomposePullProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_PULL
 }
 
 // Label for the Property
-func (optionsConf *LibcomposeOptionsDownProperty) Label() string {
-	return "Down operation options"
+func (pull *LibcomposePullProperty) Label() string {
+	return "Pull"
 }
 
 // Description for the Property
-func (optionsConf *LibcomposeOptionsDownProperty) Description() string {
-	return "Options to configure the Down.  See github.com/docker/libcompose/project/options for more information."
+func (pull *LibcomposePullProperty) Description() string {
+	return "When building, pull all images before using them?"
 }
 
 // Is the Property internal only
-func (optionsConf *LibcomposeOptionsDownProperty) Internal() bool {
+func (pull *LibcomposePullProperty) Internal() bool {
 	return false
 }
 
-// Give an idea of what type of value the property consumes
-func (optionsConf *LibcomposeOptionsDownProperty) Type() string {
-	return "github.com/docker/libcompose/project/options.Down"
+// Property for a docker.libCompose project to indicate that a process hsould stay attached and follow
+type LibcomposeDetachProperty struct {
+	operation.BooleanProperty
 }
 
-func (optionsConf *LibcomposeOptionsDownProperty) Get() interface{} {
-	return interface{}(optionsConf.value)
+// Id for the Property
+func (detach *LibcomposeDetachProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_DETACH
 }
-func (optionsConf *LibcomposeOptionsDownProperty) Set(value interface{}) bool {
-	if converted, ok := value.(libCompose_options.Down); ok {
-		optionsConf.value = converted
-		return true
-	} else {
-		log.WithFields(log.Fields{"value": value}).Error("Could not assign Property value, because the passed parameter was the wrong type. Expected github.com/docker/libcompose/project/options.Down")
-		return false
-	}
+
+// Label for the Property
+func (detach *LibcomposeDetachProperty) Label() string {
+	return "Detach"
+}
+
+// Description for the Property
+func (detach *LibcomposeDetachProperty) Description() string {
+	return "When capturing output, detach from the output?"
+}
+
+// Is the Property internal only
+func (detach *LibcomposeDetachProperty) Internal() bool {
+	return false
+}
+
+// UP : Property for a docker.libCompose project to indicate that a process should not create missing containers
+type LibcomposeNoRecreateProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (norecreate *LibcomposeNoRecreateProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_NORECREATE
+}
+
+// Label for the Property
+func (norecreate *LibcomposeNoRecreateProperty) Label() string {
+	return "Create"
+}
+
+// Description for the Property
+func (norecreate *LibcomposeNoRecreateProperty) Description() string {
+	return "When starting a container, create it first, if it is missing?"
+}
+
+// Is the Property internal only
+func (norecreate *LibcomposeNoRecreateProperty) Internal() bool {
+	return false
+}
+
+// UP|RECREATE : Property for a docker.libCompose project to indicate that a process should build containers even if they are found
+type LibcomposeForceRecreateProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (forcerecreate *LibcomposeForceRecreateProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_FORCERECREATE
+}
+
+// Label for the Property
+func (forcerecreate *LibcomposeForceRecreateProperty) Label() string {
+	return "Force Recreate"
+}
+
+// Description for the Property
+func (forcerecreate *LibcomposeForceRecreateProperty) Description() string {
+	return "Force recreating containers, even if they exist already?"
+}
+
+// Is the Property internal only
+func (forcerecreate *LibcomposeForceRecreateProperty) Internal() bool {
+	return false
+}
+
+// UP|CREATE : Property for a docker.libCompose project to indicate that a process should not build any containers
+type LibcomposeNoBuildProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (dontbuild *LibcomposeNoBuildProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_NOBUILD
+}
+
+// Label for the Property
+func (dontbuild *LibcomposeNoBuildProperty) Label() string {
+	return "Don't Build"
+}
+
+// Description for the Property
+func (dontbuild *LibcomposeNoBuildProperty) Description() string {
+	return "Don't build any missing images?"
+}
+
+// Is the Property internal only
+func (dontbuild *LibcomposeNoBuildProperty) Internal() bool {
+	return false
+}
+
+// UP|CREATE : Property for a docker.libCompose project to indicate that a process should force rebuilding images
+type LibcomposeForceRebuildProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (forcerebuild *LibcomposeForceRebuildProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_FORCEREBUILD
+}
+
+// Label for the Property
+func (forcerebuild *LibcomposeForceRebuildProperty) Label() string {
+	return "Force rebuild"
+}
+
+// Description for the Property
+func (forcerebuild *LibcomposeForceRebuildProperty) Description() string {
+	return "Force rebuilding any images, even if they exist already?"
+}
+
+// Is the Property internal only
+func (forcerebuild *LibcomposeForceRebuildProperty) Internal() bool {
+	return false
+}
+
+// DOWN|DELETE : Property for a docker.libCompose project to indicate that a process should remove any volumes
+type LibcomposeRemoveVolumesProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (removevolumes *LibcomposeRemoveVolumesProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_REMOVEVOLUMES
+}
+
+// Label for the Property
+func (removevolumes *LibcomposeRemoveVolumesProperty) Label() string {
+	return "Remove volumes"
+}
+
+// Description for the Property
+func (removevolumes *LibcomposeRemoveVolumesProperty) Description() string {
+	return "When removing containers, remove any volumes?"
+}
+
+// Is the Property internal only
+func (removevolumes *LibcomposeRemoveVolumesProperty) Internal() bool {
+	return false
+}
+
+// DOWN : Property for a docker.libCompose project to indicate that a process should remove any orphan containers
+type LibcomposeRemoveOrphansProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (removeorphans *LibcomposeRemoveOrphansProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_REMOVEORPHANS
+}
+
+// Label for the Property
+func (removeorphans *LibcomposeRemoveOrphansProperty) Label() string {
+	return "Remove orphans"
+}
+
+// Description for the Property
+func (removeorphans *LibcomposeRemoveOrphansProperty) Description() string {
+	return "When removing containers, remove any orphans?"
+}
+
+// Is the Property internal only
+func (removeorphans *LibcomposeRemoveOrphansProperty) Internal() bool {
+	return false
+}
+
+// DOWN : Property for a docker.libCompose project to indicate that a process should remove images of a certain type
+type LibcomposeRemoveImageTypeProperty struct {
+	operation.StringProperty
+}
+
+// Id for the Property
+func (removeimagetypes *LibcomposeRemoveImageTypeProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_REMOVEIMAGETYPES
+}
+
+// Label for the Property
+func (removeimagetypes *LibcomposeRemoveImageTypeProperty) Label() string {
+	return "Remove image types"
+}
+
+// Description for the Property
+func (removeimagetypes *LibcomposeRemoveImageTypeProperty) Description() string {
+	return "When removing containers, remove either 'none' local' or 'all' images?"
+}
+
+// Is the Property internal only
+func (removeimagetypes *LibcomposeRemoveImageTypeProperty) Internal() bool {
+	return false
+}
+
+// DELETE : Property for a docker.libCompose project to indicate that a process should delete running containers
+type LibcomposeRemoveRunningProperty struct {
+	operation.BooleanProperty
+}
+
+// Id for the Property
+func (removerunning *LibcomposeRemoveRunningProperty) Id() string {
+	return OPERATION_PROPERTY_LIBCOMPOSE_REMOVERUNNING
+}
+
+// Label for the Property
+func (removerunning *LibcomposeRemoveRunningProperty) Label() string {
+	return "Remove running"
+}
+
+// Description for the Property
+func (removerunning *LibcomposeRemoveRunningProperty) Description() string {
+	return "When removing containers, remove running containers?"
+}
+
+// Is the Property internal only
+func (removerunning *LibcomposeRemoveRunningProperty) Internal() bool {
+	return false
 }

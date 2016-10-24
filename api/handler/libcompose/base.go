@@ -34,23 +34,6 @@ type BaseLibcomposeHandler struct {
  * Operations
  */
 
-// A base libcompose operation with Properties for staying attached
-type BaseLibcomposeStayAttachedOperation struct {
-	properties *operation.Properties
-}
-
-// Provide static Properties for the operation
-func (base *BaseLibcomposeStayAttachedOperation) Properties() *operation.Properties {
-	if base.properties == nil {
-		newProperties := &operation.Properties{}
-
-		newProperties.Add(operation.Property(&LibcomposeAttachFollowProperty{}))
-
-		base.properties = newProperties
-	}
-	return base.properties
-}
-
 // A handoff function to make a base orchestration operation, which is really just a lot of linear code.
 func New_BaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer, filesettings bytesource.BytesourceFileSettings) (BaseLibcomposeNameFilesOperation, operation.Result) {
 	result := operation.BaseResult{}
@@ -132,40 +115,6 @@ func (base *BaseLibcomposeNameFilesOperation) Properties() *operation.Properties
 
 		newProperties.Add(operation.Property(&LibcomposeOutputProperty{}))
 		newProperties.Add(operation.Property(&LibcomposeErrorProperty{}))
-
-		base.properties = newProperties
-	}
-	return base.properties
-}
-
-// Base Up operation
-type BaseLibcomposeOrchestrateUpOperation struct {
-	properties *operation.Properties
-}
-
-// Provide static Properties for the operation
-func (base *BaseLibcomposeOrchestrateUpOperation) Properties() *operation.Properties {
-	if base.properties == nil {
-		newProperties := &operation.Properties{}
-
-		newProperties.Add(operation.Property(&LibcomposeOptionsUpProperty{}))
-
-		base.properties = newProperties
-	}
-	return base.properties
-}
-
-// Base Down operation
-type BaseLibcomposeOrchestrateDownOperation struct {
-	properties *operation.Properties
-}
-
-// Provide static Properties for the operation
-func (base *BaseLibcomposeOrchestrateDownOperation) Properties() *operation.Properties {
-	if base.properties == nil {
-		newProperties := &operation.Properties{}
-
-		newProperties.Add(operation.Property(&LibcomposeOptionsDownProperty{}))
 
 		base.properties = newProperties
 	}
