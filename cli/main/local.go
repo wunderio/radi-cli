@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "net/http"
+	"net/http"
 	"os"
 	"os/user"
 	"path"
@@ -22,12 +22,14 @@ const (
 	WUNDERTOOLS_PROJECT_CONF_FOLDER = "wundertools"
 	WUNDERTOOLS_USER_CONF_SUBPATH   = "wundertools"
 
-	DO_LOCALSETTINGS_TEST = true
-	DO_OPERATION_TEST     = true
-	DO_CONFIG_TEST        = true
-	DO_SETTING_TEST       = true
-	DO_ORCHESTRATE_TEST   = false
-	DO_COMMAND_TEST       = true
+	DO_LOCALSETTINGS_TEST   = true
+	DO_OPERATION_TEST       = true
+	DO_CONFIG_TEST          = true
+	DO_SETTING_TEST         = true
+	DO_ORCHESTRATE_UPTEST   = true
+	DO_ORCHESTRATE_DOWNTEST = false
+	DO_SERVICETEST_HTTPTEST = false
+	DO_COMMAND_TEST         = true
 )
 
 func TestLocalAPI(c *cli.Context) error {
@@ -114,7 +116,7 @@ func TestLocalAPI(c *cli.Context) error {
 
 	}
 
-	if DO_ORCHESTRATE_TEST {
+	if DO_ORCHESTRATE_UPTEST {
 
 		// Before testing orchestration, let's attach to log output
 		log.Info("attaching to log output before testing orchestration")
@@ -159,22 +161,6 @@ func TestLocalAPI(c *cli.Context) error {
 			os.Stdout.Write([]byte("Log follow ended\n"))
 		}()
 
-		// response, err := http.Get("http://wundertools.docker")
-		// if err != nil {
-		// 	log.Fatal(err)
-		// } else {
-		// 	defer response.Body.Close()
-		// }
-
-		// // test orchestrate down
-		// log.Info("Testing orchestration down")
-		// orchestrateDown, _ := ops.Get(api_orchestrate.OPERATION_ID_ORCHESTRATE_DOWN)
-		// if success, errs := orchestrateDown.Exec().Success(); !success {
-		// 	for _, err := range errs {
-		// 		log.WithError(err).Error("failed to run orchestrate down")
-		// 	}
-		// }
-
 	}
 
 	if DO_COMMAND_TEST {
@@ -195,6 +181,28 @@ func TestLocalAPI(c *cli.Context) error {
 			log.WithFields(log.Fields{"command": "shell"}).Info("Running command")
 
 			shellCommand.Exec()
+		}
+
+	}
+
+	if DO_SERVICETEST_HTTPTEST {
+		response, err := http.Get("http://wundertools.docker")
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			defer response.Body.Close()
+		}
+	}
+
+	if DO_ORCHESTRATE_DOWNTEST {
+
+		// test orchestrate down
+		log.Info("Testing orchestration down")
+		orchestrateDown, _ := ops.Get(api_orchestrate.OPERATION_ID_ORCHESTRATE_DOWN)
+		if success, errs := orchestrateDown.Exec().Success(); !success {
+			for _, err := range errs {
+				log.WithError(err).Error("failed to run orchestrate down")
+			}
 		}
 
 	}
