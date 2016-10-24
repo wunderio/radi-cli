@@ -1,4 +1,4 @@
-package main
+package clitest
 
 import (
 	"net/http"
@@ -8,14 +8,13 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli"
-	"golang.org/x/net/context"
-
-	api_bytesource "github.com/james-nesbitt/wundertools-go/api/handler/bytesource"
 	api_libcompose "github.com/james-nesbitt/wundertools-go/api/handler/libcompose"
 	api_local "github.com/james-nesbitt/wundertools-go/api/handler/local"
+	"github.com/urfave/cli"
 	// api_command "github.com/james-nesbitt/wundertools-go/api/operation/command"
 	api_orchestrate "github.com/james-nesbitt/wundertools-go/api/operation/orchestrate"
+
+	cli_local "github.com/james-nesbitt/wundertools-go/cli/local"
 )
 
 const (
@@ -34,40 +33,20 @@ const (
 
 func TestLocalAPI(c *cli.Context) error {
 
-	workingDir, _ := os.Getwd()
-	settings := api_local.LocalAPISettings{
-		BytesourceFileSettings: api_bytesource.BytesourceFileSettings{
-			ExecPath:    workingDir,
-			ConfigPaths: &api_bytesource.Paths{},
-		},
-		Context: context.Background(),
-	}
-
-	// Discover paths for the user like ~ and ~/.config/wundertools
-	DiscoverUserPaths(&settings)
-	DiscoverProjectPaths(&settings)
-
-	/**
-	 * We could here add more paths for settings.ConfigPaths, for
-	 * configurations of a higher priority.  For example, a feature
-	 * or environment concept might want to override user and
-	 * project level confs
-	 */
-
-	local := api_local.MakeLocalAPI(settings)
+	local, _ := cli_local.MakeLocalAPI()
 
 	if DO_LOCALSETTINGS_TEST {
 
 		log.WithFields(log.Fields{"api": local}).Info("API")
 
-		log.WithFields(log.Fields{"path": settings.ExecPath}).Info("Exec Path")
-		log.WithFields(log.Fields{"path": settings.ProjectRootPath}).Info("Project Root Path")
-		log.WithFields(log.Fields{"path": settings.UserHomePath}).Info("User Home Path")
+		// log.WithFields(log.Fields{"path": local.ExecPath}).Info("Exec Path")
+		// log.WithFields(log.Fields{"path": local.ProjectRootPath}).Info("Project Root Path")
+		// log.WithFields(log.Fields{"path": local.UserHomePath}).Info("User Home Path")
 
-		for index, id := range settings.ConfigPaths.Order() {
-			confPath, _ := settings.ConfigPaths.Get(id)
-			log.WithFields(log.Fields{"index": index, "id": id, "path": confPath.PathString()}).Info("Property Path: ")
-		}
+		// for index, id := range local.ConfigPaths.Order() {
+		// 	confPath, _ := local.ConfigPaths.Get(id)
+		// 	log.WithFields(log.Fields{"index": index, "id": id, "path": confPath.PathString()}).Info("Property Path: ")
+		// }
 
 	}
 
