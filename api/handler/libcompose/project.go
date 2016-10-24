@@ -85,3 +85,43 @@ func (project *ComposeProject) ServicePS(names ...string) (libCompose_project.In
 func (project *ComposeProject) Context() context.Context {
 	return project.netContext
 }
+
+/**
+ * clean up a service based on this app
+ */
+func (project *ComposeProject) AlterService(service *libCompose_config.ServiceConfig) {
+
+	project.alterService_RewriteMappedVolumes(service)
+
+}
+
+// rewrite mapped service volumes to use app points.
+func (project *ComposeProject) alterService_RewriteMappedVolumes(service *libCompose_config.ServiceConfig) {
+
+	// short cut to the application paths, which we will use for substitution
+	appPaths := project.Paths
+
+	for index, _ := range service.Volumes.Volumes {
+
+		volume := service.Volumes.Volumes[index]
+
+		switch volume.Source[0] {
+		/**
+		 * @TODO refactor this string comparison to be less cumbersome
+		 */
+		case []byte("~")[0]:
+			homePath, _ := appPaths.Path("user-home")
+			volume.Source = strings.Replace(volume.Source, "~", homePath, 1)
+
+		case []byte(".")[0]:
+			appPath, _ := appPaths.Path("project-root")
+			volume.Source = strings.Replace(volume.Source, "~", appPath, 1)
+
+		case []byte("@")[0]:
+			if aliasPath, found := appPaths.Path(volume.Source[1:]); found {
+				volume.Source = strings.Replace(volume.Source, volume.Source, aliasPath, 1)
+			}
+		}
+	}
+
+}

@@ -14,6 +14,40 @@ import (
  * and Properties
  */
 
+/**
+ * Handlers
+ */
+
+func New_BaseLibcomposeHandler(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) *BaseLibcomposeHandler {
+	base := &BaseLibcomposeHandler{}
+	base.MakeBaseLibcomposeNameFilesOperation(projectName, dockerComposeFiles, runContext, outputWriter, errorWriter)
+	return base
+}
+
+// A libcompose handler base that can produce a BaseLibcomposeNameFilesOperation for ops base
+type BaseLibcomposeHandler struct {
+	LibComposeBaseOp *BaseLibcomposeNameFilesOperation
+}
+
+// An accessor for the ConfigBase ConfigWrapper
+func (base *BaseLibcomposeHandler) MakeBaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) error {
+	// Use discovered/default settings to build a base operation struct, to be share across orchestration operations
+	baseLibcomposeOp, _ := New_BaseLibcomposeNameFilesOperation(
+		projectName,
+		dockerComposeFiles,
+		runContext,
+		outputWriter,
+		errorWriter,
+	)
+	base.LibComposeBaseOp = &baseLibcomposeOp
+
+	return nil
+}
+
+/**
+ * Operations
+ */
+
 // A base libcompose operation with Properties for staying attached
 type BaseLibcomposeStayAttachedOperation struct {
 	properties *operation.Properties
@@ -32,13 +66,12 @@ func (base *BaseLibcomposeStayAttachedOperation) Properties() *operation.Propert
 }
 
 // A handoff function to make a base orchestration operation, which is really just a lot of linear code.
-// @NOTE this needs the "config.get" operation to already be available
-func New_BaseLibcomposeOrchestrateNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) (BaseLibcomposeOrchestrateNameFilesOperation, operation.Result) {
+func New_BaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) (BaseLibcomposeNameFilesOperation, operation.Result) {
 	result := operation.BaseResult{}
 	result.Set(true, nil)
 
 	// This Base operations will be at the root of all of the libCompose operations
-	baseLibcomposeOrchestrate := BaseLibcomposeOrchestrateNameFilesOperation{}
+	baseLibcomposeOrchestrate := BaseLibcomposeNameFilesOperation{}
 	orchestrateProperties := baseLibcomposeOrchestrate.Properties()
 
 	// Set a project name
@@ -86,12 +119,12 @@ func New_BaseLibcomposeOrchestrateNameFilesOperation(projectName string, dockerC
 }
 
 // A base libcompose operation with Properties for project-name, and yml files
-type BaseLibcomposeOrchestrateNameFilesOperation struct {
+type BaseLibcomposeNameFilesOperation struct {
 	properties *operation.Properties
 }
 
 // Provide static Properties for the operation
-func (base *BaseLibcomposeOrchestrateNameFilesOperation) Properties() *operation.Properties {
+func (base *BaseLibcomposeNameFilesOperation) Properties() *operation.Properties {
 	if base.properties == nil {
 		newProperties := &operation.Properties{}
 

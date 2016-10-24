@@ -24,7 +24,7 @@ const (
 type LibcomposeMonitorLogsOperation struct {
 	monitor.BaseMonitorLogsOperation
 	BaseLibcomposeStayAttachedOperation
-	BaseLibcomposeOrchestrateNameFilesOperation
+	BaseLibcomposeNameFilesOperation
 
 	properties *operation.Properties
 }
@@ -44,7 +44,7 @@ func (logs *LibcomposeMonitorLogsOperation) Properties() *operation.Properties {
 	if logs.properties == nil {
 		newProperties := &operation.Properties{}
 		newProperties.Merge(*logs.BaseLibcomposeStayAttachedOperation.Properties())
-		newProperties.Merge(*logs.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
+		newProperties.Merge(*logs.BaseLibcomposeNameFilesOperation.Properties())
 		logs.properties = newProperties
 	}
 	return logs.properties

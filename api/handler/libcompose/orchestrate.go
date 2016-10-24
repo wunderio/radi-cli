@@ -15,7 +15,7 @@ import (
 type LibcomposeOrchestrateUpOperation struct {
 	orchestrate.BaseOrchestrationUpOperation
 	BaseLibcomposeOrchestrateUpOperation
-	BaseLibcomposeOrchestrateNameFilesOperation
+	BaseLibcomposeNameFilesOperation
 
 	properties *operation.Properties
 }
@@ -30,7 +30,7 @@ func (up *LibcomposeOrchestrateUpOperation) Properties() *operation.Properties {
 	if up.properties == nil {
 		newProperties := &operation.Properties{}
 		newProperties.Merge(*up.BaseLibcomposeOrchestrateUpOperation.Properties())
-		newProperties.Merge(*up.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
+		newProperties.Merge(*up.BaseLibcomposeNameFilesOperation.Properties())
 		up.properties = newProperties
 	}
 	return up.properties
@@ -76,7 +76,7 @@ func (up *LibcomposeOrchestrateUpOperation) Exec() operation.Result {
 type LibcomposeOrchestrateDownOperation struct {
 	orchestrate.BaseOrchestrationDownOperation
 	BaseLibcomposeOrchestrateDownOperation
-	BaseLibcomposeOrchestrateNameFilesOperation
+	BaseLibcomposeNameFilesOperation
 
 	properties *operation.Properties
 }
@@ -91,7 +91,7 @@ func (down *LibcomposeOrchestrateDownOperation) Properties() *operation.Properti
 	if down.properties == nil {
 		down.properties = &operation.Properties{}
 		down.properties.Merge(*down.BaseLibcomposeOrchestrateDownOperation.Properties())
-		down.properties.Merge(*down.BaseLibcomposeOrchestrateNameFilesOperation.Properties())
+		down.properties.Merge(*down.BaseLibcomposeNameFilesOperation.Properties())
 	}
 	return down.properties
 }

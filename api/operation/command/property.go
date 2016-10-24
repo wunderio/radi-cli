@@ -1,6 +1,8 @@
 package command
 
 import (
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
@@ -11,6 +13,8 @@ import (
 const (
 	// Key string for a single operation
 	OPERATION_PROPERTY_COMMAND_KEY = "command.key"
+	// Command object for a single operation
+	OPERATION_PROPERTY_COMMAND_COMMAND = "command.command"
 	// List of keys
 	OPERATION_PROPERTY_COMMAND_KEYS = "command.keys"
 
@@ -44,6 +48,42 @@ func (confKey *CommandKeyProperty) Label() string {
 // Description for the Property
 func (confKey *CommandKeyProperty) Description() string {
 	return "Command key."
+}
+
+// Command for a single command object
+type CommandCommandProperty struct {
+	command Command
+}
+
+// Id for the Property
+func (com *CommandCommandProperty) Id() string {
+	return OPERATION_PROPERTY_COMMAND_COMMAND
+}
+
+// Label for the Property
+func (com *CommandCommandProperty) Label() string {
+	return "Command object."
+}
+
+// Description for the Property
+func (com *CommandCommandProperty) Description() string {
+	return "Command object."
+}
+
+// Get the Command value
+func (com *CommandCommandProperty) Get() interface{} {
+	return interface{}(com.command)
+}
+
+// Set the Command value
+func (com *CommandCommandProperty) Set(value interface{}) bool {
+	if converted, ok := value.(Command); ok {
+		com.command = converted
+		return true
+	} else {
+		log.WithFields(log.Fields{"value": value}).Error("Could not assign Property value, because the passed parameter was the wrong type. Expected Command")
+		return false
+	}
 }
 
 // Command for an ordered list of command keys
@@ -108,7 +148,7 @@ func (keyValue *CommandOutputProperty) Description() string {
 
 // A command Property for command error output
 type CommandErrorProperty struct {
-	BaseCommandWriterProperty
+	operation.WriterProperty
 }
 
 // Id for the Property
@@ -128,7 +168,7 @@ func (keyValue *CommandErrorProperty) Description() string {
 
 // A command Property for command execution input
 type CommandInputProperty struct {
-	BaseCommandReaderProperty
+	operation.ReaderProperty
 }
 
 // Id for the Property

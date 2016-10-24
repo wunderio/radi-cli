@@ -5,6 +5,46 @@ import (
 )
 
 /**
+ * A set of commands
+ */
+
+type Commands struct {
+	commands map[string]Command
+	order    []string
+}
+
+// Safe lazy constructor
+func (commands *Commands) safe() {
+	if &commands.commands == nil {
+		commands.commands = map[string]Command{}
+		commands.order = []string{}
+	}
+}
+
+// Get a command
+func (commands *Commands) Get(key string) (Command, bool) {
+	commands.safe()
+	comm, found := commands.commands[key]
+	return comm, found
+}
+
+// Add a command
+func (commands *Commands) Set(key string, comm Command) error {
+	commands.safe()
+	if _, exists := commands.commands[key]; !exists {
+		commands.order = append(commands.order, key)
+	}
+	commands.commands[key] = comm
+	return nil
+}
+
+// Order of commands
+func (commands *Commands) Order() []string {
+	commands.safe()
+	return commands.order
+}
+
+/**
  * A base Command definition, which defines the command
  * container property, but may receive overrides for
  * flags, input/error/output
@@ -17,14 +57,12 @@ import (
 
 // Command definition
 type Command interface {
-	// Attach a set of Properties to the command
-	SetProperties(Properties *operation.Properties)
-	// Convert the command into an operation
-	getOperation() operation.Operation
-
-	/**
-	 * These are taken directly from operation.Operation
-	 */
+	// Return the string machinename/id of the Operation
+	Id() string
+	// Return a user readable string label for the Operation
+	Label() string
+	// return a multiline string description for the Operation
+	Description() string
 
 	// Run a validation check on the Operation
 	Validate() bool
@@ -34,13 +72,6 @@ type Command interface {
 
 	// What settings does the Operation provide to an implemenentor
 	Properties() *operation.Properties
-
-	// Return the string machinename/id of the Operation
-	Id() string
-	// Return a user readable string label for the Operation
-	Label() string
-	// return a multiline string description for the Operation
-	Description() string
 
 	// Execute the Operation
 	Exec() operation.Result
