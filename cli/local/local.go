@@ -39,6 +39,8 @@ func AppLocalCommands(app *cli.App) {
 				Category: category,
 			}
 
+			cliComm.Flags = CliMakeFlagsFromProperties(*op.Properties())
+
 			app.Commands = append(app.Commands, cliComm)
 		}
 	}
@@ -57,6 +59,8 @@ func AppLocalCommands(app *cli.App) {
 				Action:   commWrapper.Exec,
 				Category: category,
 			}
+
+			cliComm.Flags = CliMakeFlagsFromProperties(*comm.Properties())
 
 			app.Commands = append(app.Commands, cliComm)
 
