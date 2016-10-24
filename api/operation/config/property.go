@@ -46,6 +46,11 @@ func (confKey *ConfigKeyProperty) Description() string {
 	return "property key."
 }
 
+// Is the Property internal only
+func (confKey *ConfigKeyProperty) Internal() bool {
+	return false
+}
+
 // property for an ordered list of config keys
 type ConfigKeysProperty struct {
 	operation.StringSliceProperty
@@ -66,24 +71,34 @@ func (keyValue *ConfigKeysProperty) Description() string {
 	return "property key list."
 }
 
+// Is the Property internal only
+func (keyValue *ConfigKeysProperty) Internal() bool {
+	return false
+}
+
 // property for a single config value
 type ConfigValueProperty struct {
 	operation.BytesArrayProperty
 }
 
 // Id for the property
-func (confValue *ConfigValueProperty) Id() string {
+func (property *ConfigValueProperty) Id() string {
 	return OPERATION_PROPERTY_CONFIG_VALUE
 }
 
 // Label for the property
-func (confValue *ConfigValueProperty) Label() string {
+func (property *ConfigValueProperty) Label() string {
 	return "property value."
 }
 
 // Description for the property
-func (confValue *ConfigValueProperty) Description() string {
+func (property *ConfigValueProperty) Description() string {
 	return "property value."
+}
+
+// Is the Property internal only
+func (property *ConfigValueProperty) Internal() bool {
+	return false
 }
 
 // property for a value as a set of io.Readers
@@ -92,18 +107,28 @@ type ConfigValueScopedReadersProperty struct {
 }
 
 // Id for the property
-func (confValue *ConfigValueScopedReadersProperty) Id() string {
+func (property *ConfigValueScopedReadersProperty) Id() string {
 	return OPERATION_PROPERTY_CONFIG_VALUE_READERS
 }
 
 // Label for the property
-func (confValue *ConfigValueScopedReadersProperty) Label() string {
+func (property *ConfigValueScopedReadersProperty) Label() string {
 	return "Config value readers."
 }
 
 // Description for the property
-func (confValue *ConfigValueScopedReadersProperty) Description() string {
+func (property *ConfigValueScopedReadersProperty) Description() string {
 	return "Config value in the form of an ScopeReaders, which is an ordered map of io.Readers."
+}
+
+// Is the Property internal only
+func (property *ConfigValueScopedReadersProperty) Internal() bool {
+	return false
+}
+
+// Give an idea of what type of value the property consumes
+func (property *ConfigValueScopedReadersProperty) Type() string {
+	return "operation/config.ScopeReaders"
 }
 
 // Retreive the property value
@@ -128,18 +153,28 @@ type ConfigValueScopedWritersProperty struct {
 }
 
 // Id for the property
-func (confValue *ConfigValueScopedWritersProperty) Id() string {
+func (property *ConfigValueScopedWritersProperty) Id() string {
 	return OPERATION_PROPERTY_CONFIG_VALUE_WRITERS
 }
 
 // Label for the property
-func (confValue *ConfigValueScopedWritersProperty) Label() string {
+func (property *ConfigValueScopedWritersProperty) Label() string {
 	return "Config value writers."
 }
 
 // Description for the property
-func (confValue *ConfigValueScopedWritersProperty) Description() string {
+func (property *ConfigValueScopedWritersProperty) Description() string {
 	return "Config value in the form of an io.Writer."
+}
+
+// Is the Property internal only
+func (property *ConfigValueScopedWritersProperty) Internal() bool {
+	return false
+}
+
+// Give an idea of what type of value the property consumes
+func (property *ConfigValueScopedWritersProperty) Type() string {
+	return "operation/config.ScopeWriters"
 }
 
 // Retreive the property value

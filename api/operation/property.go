@@ -25,6 +25,11 @@ type Property interface {
 	Label() string
 	// Description provides a longer multi-line string description of what the property does
 	Description() string
+	// Mark a property as being for internal use only (no shown to users)
+	Internal() bool
+
+	// Give an idea of what type of value the property consumes
+	Type() string
 
 	// Value allows the retrieval and setting of unknown Typed values for the property.
 	Get() interface{}

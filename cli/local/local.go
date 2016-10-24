@@ -14,9 +14,9 @@ import (
 /**
  * Add Local Commands to the app
  */
-func AppLocalCommands(app *cli.App) {
+func AppLocalCommands(app *cli.App) error {
 
-	local, _ := MakeLocalAPI()
+	local, err := MakeLocalAPI()
 
 	// get all of the operations
 	ops := local.Operations()
@@ -69,6 +69,7 @@ func AppLocalCommands(app *cli.App) {
 		log.WithError(err).Error("Failed to list commands")
 	}
 
+	return err
 }
 
 /**
@@ -81,6 +82,8 @@ type CliOperationWrapper struct {
 // Execute the operation for the cli
 func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 	log.WithFields(log.Fields{"id": opWrapper.op.Id()}).Debug("Running operation")
+
+	CliAssignPropertiesFromFlags(cliContext, opWrapper.op.Properties())
 
 	if success, errs := opWrapper.op.Exec().Success(); !success {
 		var err error
@@ -104,6 +107,8 @@ type CliCommandWrapper struct {
 // Execute the operation for the cli
 func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 	log.WithFields(log.Fields{"id": commWrapper.comm.Id()}).Debug("Running command")
+
+	CliAssignPropertiesFromFlags(cliContext, commWrapper.comm.Properties())
 
 	if success, errs := commWrapper.comm.Exec().Success(); !success {
 		var err error

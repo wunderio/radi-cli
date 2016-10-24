@@ -65,6 +65,11 @@ func (name *LibcomposeProjectnameProperty) Description() string {
 	return "Compose project name, which is used in container, volume and network naming."
 }
 
+// Is the Property internal only
+func (name *LibcomposeProjectnameProperty) Internal() bool {
+	return false
+}
+
 // YAML file list Property for a docker.libCompose project
 type LibcomposeComposefilesProperty struct {
 	operation.StringSliceProperty
@@ -83,6 +88,11 @@ func (files *LibcomposeComposefilesProperty) Label() string {
 // Description for the Property
 func (files *LibcomposeComposefilesProperty) Description() string {
 	return "An ordered list of docker-compose yml files, which are passed to libcompose."
+}
+
+// Is the Property internal only
+func (files *LibcomposeComposefilesProperty) Internal() bool {
+	return false
 }
 
 // A libcompose Property for net context limiting
@@ -105,6 +115,11 @@ func (contextConf *LibcomposeContextProperty) Description() string {
 	return "A golang.org/x/net/context for controling execution."
 }
 
+// Is the Property internal only
+func (contextConf *LibcomposeContextProperty) Internal() bool {
+	return false
+}
+
 // Output handler Property for a docker.libCompose project
 type LibcomposeOutputProperty struct {
 	operation.WriterProperty
@@ -125,6 +140,11 @@ func (output *LibcomposeOutputProperty) Description() string {
 	return "Output io.Writer which will receive compose output from containers."
 }
 
+// Is the Property internal only
+func (output *LibcomposeOutputProperty) Internal() bool {
+	return false
+}
+
 // Error handler Property for a docker.libCompose project
 type LibcomposeErrorProperty struct {
 	operation.WriterProperty
@@ -143,6 +163,11 @@ func (err *LibcomposeErrorProperty) Label() string {
 // Description for the Property
 func (err *LibcomposeErrorProperty) Description() string {
 	return "Error io.Writer which will receive compose output from containers."
+}
+
+// Is the Property internal only
+func (err *LibcomposeErrorProperty) Internal() bool {
+	return false
 }
 
 /**
@@ -170,6 +195,11 @@ func (follow *LibcomposeAttachFollowProperty) Description() string {
 	return "When capturing output, stay attached and follow the output?"
 }
 
+// Is the Property internal only
+func (follow *LibcomposeAttachFollowProperty) Internal() bool {
+	return false
+}
+
 // A libcompose Property for net context limiting
 type LibcomposeOptionsUpProperty struct {
 	value libCompose_options.Up
@@ -188,6 +218,16 @@ func (optionsConf *LibcomposeOptionsUpProperty) Label() string {
 // Description for the Property
 func (optionsConf *LibcomposeOptionsUpProperty) Description() string {
 	return "Options to configure the Up.  See github.com/docker/libcompose/project/options for more information."
+}
+
+// Is the Property internal only
+func (optionsConf *LibcomposeOptionsUpProperty) Internal() bool {
+	return false
+}
+
+// Give an idea of what type of value the property consumes
+func (optionsConf *LibcomposeOptionsUpProperty) Type() string {
+	return "github.com/docker/libcompose/project/options.Up"
 }
 
 func (optionsConf *LibcomposeOptionsUpProperty) Get() interface{} {
@@ -221,6 +261,16 @@ func (optionsConf *LibcomposeOptionsDownProperty) Label() string {
 // Description for the Property
 func (optionsConf *LibcomposeOptionsDownProperty) Description() string {
 	return "Options to configure the Down.  See github.com/docker/libcompose/project/options for more information."
+}
+
+// Is the Property internal only
+func (optionsConf *LibcomposeOptionsDownProperty) Internal() bool {
+	return false
+}
+
+// Give an idea of what type of value the property consumes
+func (optionsConf *LibcomposeOptionsDownProperty) Type() string {
+	return "github.com/docker/libcompose/project/options.Down"
 }
 
 func (optionsConf *LibcomposeOptionsDownProperty) Get() interface{} {

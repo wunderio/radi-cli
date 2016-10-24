@@ -19,6 +19,7 @@ type BaseProperty struct {
 	id          string
 	label       string
 	description string
+	internal    bool
 }
 
 // Id returns the string id variable
@@ -31,6 +32,9 @@ func (property *BaseProperty) Label() string {
 }
 func (property *BaseProperty) Description() string {
 	return property.description
+}
+func (property *BaseProperty) Internal() bool {
+	return property.internal
 }
 
 /**
@@ -51,6 +55,11 @@ type StringProperty struct {
 	value string
 }
 
+// Give an idea of what type of value the property consumes
+func (property *StringProperty) Type() string {
+	return "string"
+}
+
 func (property *StringProperty) Get() interface{} {
 	return interface{}(property.value)
 }
@@ -67,6 +76,11 @@ func (property *StringProperty) Set(value interface{}) bool {
 // A base Property that provides a slice of string values
 type StringSliceProperty struct {
 	value []string
+}
+
+// Give an idea of what type of value the property consumes
+func (property *StringSliceProperty) Type() string {
+	return "[]string"
 }
 
 func (property *StringSliceProperty) Get() interface{} {
@@ -87,6 +101,11 @@ type BytesArrayProperty struct {
 	value []byte
 }
 
+// Give an idea of what type of value the property consumes
+func (property *BytesArrayProperty) Type() string {
+	return "[]byte"
+}
+
 func (property *BytesArrayProperty) Get() interface{} {
 	return interface{}(property.value)
 }
@@ -105,6 +124,11 @@ type BooleanProperty struct {
 	value bool
 }
 
+// Give an idea of what type of value the property consumes
+func (property *BooleanProperty) Type() string {
+	return "bool"
+}
+
 func (property *BooleanProperty) Get() interface{} {
 	return interface{}(property.value)
 }
@@ -121,6 +145,11 @@ func (property *BooleanProperty) Set(value interface{}) bool {
 // A base Property that provides an IO.Writer
 type WriterProperty struct {
 	value io.Writer
+}
+
+// Give an idea of what type of value the property consumes
+func (property *WriterProperty) Type() string {
+	return "io.Writer"
 }
 
 func (property *WriterProperty) Get() interface{} {
@@ -147,6 +176,11 @@ type ReaderProperty struct {
 	value io.Reader
 }
 
+// Give an idea of what type of value the property consumes
+func (property *ReaderProperty) Type() string {
+	return "io.Reader"
+}
+
 func (property *ReaderProperty) Get() interface{} {
 	if property.value == nil {
 		property.value = io.Reader(os.Stdin)
@@ -166,6 +200,11 @@ func (property *ReaderProperty) Set(value interface{}) bool {
 // A base Property that provides an net context
 type ContextProperty struct {
 	value context.Context
+}
+
+// Give an idea of what type of value the property consumes
+func (property *ContextProperty) Type() string {
+	return "golang.org/x/net/context.Context"
 }
 
 // Retrieve the context, or retrieve a Background context by default

@@ -12,69 +12,121 @@ import (
 	api_operation "github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
+// Assign properties from flags back to properties
+func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.Properties) error {
+	for _, key := range props.Order() {
+		if !cliContext.IsSet(key) {
+			continue
+		}
+
+		prop, _ := props.Get(key)
+
+		if prop.Internal() {
+			continue
+		}
+
+		switch prop.Type() {
+		case "string":
+			prop.Set(cliContext.String(key))
+		case "[]string":
+			prop.Set(cliContext.StringSlice(key))
+		case "[]byte":
+			prop.Set([]byte(cliContext.String(key)))
+		case "int":
+			prop.Set(cliContext.Int(key))
+		case "int64":
+			prop.Set(cliContext.Int64(key))
+		case "bool":
+			prop.Set(cliContext.Bool(key))
+		case "io.Writer":
+			switch cliContext.String(key) {
+			case "stdout":
+				prop.Set(io.Writer(os.Stdout))
+			case "stderr":
+				prop.Set(io.Writer(os.Stderr))
+			}
+		case "io.Reader":
+			switch cliContext.String(key) {
+			case "stdin":
+				prop.Set(io.Reader(os.Stdin))
+			}
+		case "golang.org/x/net/context.Context":
+			duration := cliContext.Duration(key)
+			if duration > 0 {
+				newContext, _ := context.WithTimeout(context.Background(), duration)
+				prop.Set(newContext)
+			} else {
+				prop.Set(context.Background())
+			}
+		default:
+			log.WithFields(log.Fields{"id": prop.Id(), "property": prop, "flag": cliContext.Generic(key)}).Debug("Unhandled property type for operation")
+		}
+	}
+
+	return nil
+}
+
 // Make CLI flags from operation properties
 func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 	flags := []cli.Flag{}
 
 	for _, key := range props.Order() {
 		prop, _ := props.Get(key)
-		value := prop.Get()
 
-		switch value.(type) {
-		case string:
+		switch prop.Type() {
+		case "string":
 			flags = append(flags, cli.StringFlag{
 				Name:  prop.Id(),
-				Value: value.(string),
+				Value: prop.Get().(string),
 				Usage: prop.Description(),
 			})
-		case []string:
-			converted := cli.StringSlice(value.([]string))
+		case "[]string":
+			converted := cli.StringSlice(prop.Get().([]string))
 			flags = append(flags, cli.StringSliceFlag{
 				Name:  prop.Id(),
 				Value: &converted,
 				Usage: prop.Description(),
 			})
-		case []byte:
+		case "[]byte":
 			flags = append(flags, cli.StringFlag{
 				Name:  prop.Id(),
-				Value: string(value.([]byte)),
+				Value: string(prop.Get().([]byte)),
 				Usage: prop.Description(),
 			})
-		case int32:
+		case "int32":
 			flags = append(flags, cli.IntFlag{
 				Name:  prop.Id(),
-				Value: int(value.(int32)),
+				Value: int(prop.Get().(int32)),
 				Usage: prop.Description(),
 			})
-		case int64:
+		case "int64":
 			flags = append(flags, cli.Int64Flag{
 				Name:  prop.Id(),
-				Value: value.(int64),
+				Value: prop.Get().(int64),
 				Usage: prop.Description(),
 			})
-		case bool:
+		case "bool":
 			flags = append(flags, cli.BoolFlag{
 				Name:  prop.Id(),
 				Usage: prop.Description(),
 			})
-		case io.Writer:
+		case "io.Writer":
 			converted := cli.Generic(&WriterProperty{property: prop})
 			flags = append(flags, cli.GenericFlag{
 				Name:  prop.Id(),
 				Value: converted,
 				Usage: prop.Description(),
 			})
-		case io.Reader:
+		case "io.Reader":
 			converted := cli.Generic(&ReaderProperty{property: prop})
 			flags = append(flags, cli.GenericFlag{
 				Name:  prop.Id(),
 				Value: converted,
 				Usage: prop.Description(),
 			})
-		case context.Context:
-			flags = append(flags, cli.IntFlag{
-				Name:  prop.Id() + ".timeout",
-				Value: 30,
+		case "golang.org/x/net/context.Context":
+			flags = append(flags, cli.DurationFlag{
+				Name:  prop.Id(),
 				Usage: "Timeout in seconds. " + prop.Description(),
 			})
 		default:
@@ -83,7 +135,7 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 			flags = append(flags, cli.GenericFlag{
 				Name:  prop.Id(),
 				Value: converted,
-				Usage: prop.Description(),
+				Usage: "[UNHANDLED] " + prop.Description(),
 			})
 		}
 	}

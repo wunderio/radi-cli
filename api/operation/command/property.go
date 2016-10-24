@@ -50,6 +50,11 @@ func (confKey *CommandKeyProperty) Description() string {
 	return "Command key."
 }
 
+// Is the Property internal only
+func (confKey *CommandKeyProperty) Internal() bool {
+	return false
+}
+
 // Command for a single command object
 type CommandCommandProperty struct {
 	command Command
@@ -68,6 +73,16 @@ func (com *CommandCommandProperty) Label() string {
 // Description for the Property
 func (com *CommandCommandProperty) Description() string {
 	return "Command object."
+}
+
+// Is the Property internal only
+func (com *CommandCommandProperty) Internal() bool {
+	return true
+}
+
+// Give an idea of what type of value the property consumes
+func (com *CommandCommandProperty) Type() string {
+	return "operation/command.Command"
 }
 
 // Get the Command value
@@ -106,6 +121,11 @@ func (keyValue *CommandKeysProperty) Description() string {
 	return "Command key list."
 }
 
+// Is the Property internal only
+func (keyValue *CommandKeysProperty) Internal() bool {
+	return false
+}
+
 // Command for an ordered list of command keys
 type CommandFlagsProperty struct {
 	operation.StringSliceProperty
@@ -124,6 +144,11 @@ func (keyValue *CommandFlagsProperty) Label() string {
 // Description for the Property
 func (keyValue *CommandFlagsProperty) Description() string {
 	return "An ordered list of string flags to send to a command."
+}
+
+// Is the Property internal only
+func (keyValue *CommandFlagsProperty) Internal() bool {
+	return false
 }
 
 // A command Property for command output
@@ -146,6 +171,11 @@ func (keyValue *CommandOutputProperty) Description() string {
 	return "An io.Writer, which will receive the command execution output.  Any io.writer can be used, the default here will be os.Stdout."
 }
 
+// Is the Property internal only
+func (keyValue *CommandOutputProperty) Internal() bool {
+	return false
+}
+
 // A command Property for command error output
 type CommandErrorProperty struct {
 	operation.WriterProperty
@@ -164,6 +194,11 @@ func (keyValue *CommandErrorProperty) Label() string {
 // Description for the Property
 func (keyValue *CommandErrorProperty) Description() string {
 	return "An io.Writer, which will receive the command execution error output.  Any io.writer can be used, the default here will be os.Stdout."
+}
+
+// Is the Property internal only
+func (keyValue *CommandErrorProperty) Internal() bool {
+	return false
 }
 
 // A command Property for command execution input
@@ -186,6 +221,11 @@ func (keyValue *CommandInputProperty) Description() string {
 	return "An io.Reader, which will provide command execution input.  Any io.reader can be used, the default here will be os.Stdin"
 }
 
+// Is the Property internal only
+func (keyValue *CommandInputProperty) Internal() bool {
+	return false
+}
+
 // A command Property for command execution net context
 type CommandContextProperty struct {
 	operation.ContextProperty
@@ -204,4 +244,9 @@ func (contextConf *CommandContextProperty) Label() string {
 // Description for the Property
 func (contextConf *CommandContextProperty) Description() string {
 	return "A golang.org/x/net/context for controling execution."
+}
+
+// Is the Property internal only
+func (contextConf *CommandContextProperty) Internal() bool {
+	return false
 }

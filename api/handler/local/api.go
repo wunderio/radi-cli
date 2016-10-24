@@ -19,7 +19,7 @@ import (
 )
 
 // Make a Local based API object, based on a project path
-func MakeLocalAPI(settings LocalAPISettings) *LocalAPI {
+func MakeLocalAPI(settings LocalAPISettings) (*LocalAPI, error) {
 	localAPI := LocalAPI{
 		settings: &settings,
 	}
@@ -117,7 +117,7 @@ func MakeLocalAPI(settings LocalAPISettings) *LocalAPI {
 	// Get an orchestrate wrapper for other handlers
 	localAPI.Command = local_command.CommandWrapper()
 
-	return &localAPI
+	return &localAPI, nil
 }
 
 // Settings needed to make a local API

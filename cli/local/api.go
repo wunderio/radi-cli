@@ -19,6 +19,7 @@ const (
 )
 
 func MakeLocalAPI() (*api_local.LocalAPI, error) {
+	var err error
 
 	workingDir, _ := os.Getwd()
 	settings := api_local.LocalAPISettings{
@@ -40,9 +41,12 @@ func MakeLocalAPI() (*api_local.LocalAPI, error) {
 	 * project level confs
 	 */
 
-	API := api_local.MakeLocalAPI(settings)
+	if API, makeErr := api_local.MakeLocalAPI(settings); makeErr != nil {
+		return API, makeErr
+	} else {
+		return API, err
+	}
 
-	return API, nil
 }
 
 // a quick snippet to discover a user's home folder
@@ -62,7 +66,7 @@ func userHomePath() string {
  * dependening on OS, determine if the user has any settings
  * if so, add a conf path for them.
  */
-func DiscoverUserPaths(settings *api_local.LocalAPISettings) {
+func DiscoverUserPaths(settings *api_local.LocalAPISettings) error {
 	homeDir := userHomePath()
 	homeWTDir := path.Join(homeDir, WUNDERTOOLS_PROJECT_CONF_FOLDER)
 
@@ -79,6 +83,8 @@ func DiscoverUserPaths(settings *api_local.LocalAPISettings) {
 	 */
 	settings.UserHomePath = homeDir
 	settings.ConfigPaths.Set("user-wundertools", homeWTDir)
+
+	return nil
 }
 
 /**
@@ -88,7 +94,7 @@ func DiscoverUserPaths(settings *api_local.LocalAPISettings) {
  * has the key configuration subfolder in it.  That path is marked as the
  * application root, and the subfolder is marked as a conf path
  */
-func DiscoverProjectPaths(settings *api_local.LocalAPISettings) {
+func DiscoverProjectPaths(settings *api_local.LocalAPISettings) error {
 	workingDir := settings.ExecPath
 	homeDir := userHomePath()
 
@@ -110,4 +116,6 @@ RootSearch:
 	 */
 	settings.ProjectRootPath = projectRootDirectory
 	settings.ConfigPaths.Set("project-wundertools", path.Join(projectRootDirectory, WUNDERTOOLS_PROJECT_CONF_FOLDER))
+
+	return nil
 }

@@ -33,6 +33,16 @@ func (filesettings *BytesourceFilesettingsProperty) Description() string {
 	return "Filebased bytesource paths configuration object."
 }
 
+// Is the Property internal only
+func (filesettings *BytesourceFilesettingsProperty) Internal() bool {
+	return false
+}
+
+// Give an idea of what type of value the property consumes
+func (filesettings *BytesourceFilesettingsProperty) Type() string {
+	return "handler/bytesource.BytesourceFileSettings"
+}
+
 func (filesettings *BytesourceFilesettingsProperty) Get() interface{} {
 	return interface{}(filesettings.value)
 }

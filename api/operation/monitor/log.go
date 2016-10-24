@@ -146,6 +146,11 @@ func (logType *MonitorLogTypeProperty) Description() string {
 	return "Message type, which can be either info or error."
 }
 
+// Is the Property internal only
+func (logType *MonitorLogTypeProperty) Internal() bool {
+	return false
+}
+
 // property for a monitoring log message
 type MonitorLogMessageProperty struct {
 	operation.StringProperty
@@ -164,4 +169,9 @@ func (message *MonitorLogMessageProperty) Label() string {
 // Description for the property
 func (message *MonitorLogMessageProperty) Description() string {
 	return "Message which will be sent to the standard logger."
+}
+
+// Is the Property internal only
+func (message *MonitorLogMessageProperty) Internal() bool {
+	return false
 }

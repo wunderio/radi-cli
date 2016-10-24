@@ -40,6 +40,11 @@ func (key *SettingKeyProperty) Description() string {
 	return "Setting string key."
 }
 
+// Is the Property internal only
+func (key *SettingKeyProperty) Internal() bool {
+	return false
+}
+
 // Property for a single setting scope
 type SettingScopeProperty struct {
 	operation.StringProperty
@@ -58,6 +63,11 @@ func (scope *SettingScopeProperty) Label() string {
 // Description for the Property
 func (scope *SettingScopeProperty) Description() string {
 	return "Property string scope."
+}
+
+// Is the Property internal only
+func (scope *SettingScopeProperty) Internal() bool {
+	return false
 }
 
 // Property for an ordered list of config keys
@@ -80,6 +90,11 @@ func (keys *SettingKeysProperty) Description() string {
 	return "Property key list."
 }
 
+// Is the Property internal only
+func (keys *SettingKeysProperty) Internal() bool {
+	return false
+}
+
 // Property for a single config value
 type SettingValueProperty struct {
 	operation.BytesArrayProperty
@@ -98,4 +113,9 @@ func (settingValue *SettingValueProperty) Label() string {
 // Description for the Property
 func (settingValue *SettingValueProperty) Description() string {
 	return "Property value."
+}
+
+// Is the Property internal only
+func (settingValue *SettingValueProperty) Internal() bool {
+	return false
 }
