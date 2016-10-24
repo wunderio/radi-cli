@@ -273,10 +273,13 @@ func (ymlCommand *CommandYmlCommand) Exec() operation.Result {
 		Detached: false,
 	}
 
-	// allow our app to alter the service, to do some string replacements etc
-	//command.application.AlterService(&command.sserviceConfig)
+	// get the service for the command
+	service := ymlCommand.serviceConfig
 
-	ymlCommand.project.AddConfig(ymlCommand.Id(), &ymlCommand.serviceConfig)
+	// allow our app to alter the service, to do some string replacements etc
+	ymlCommand.project.AlterService(&service)
+
+	ymlCommand.project.AddConfig(ymlCommand.Id(), &service)
 	ymlCommand.project.Run(runContext, ymlCommand.Id(), flags, runOptions)
 
 	if !ymlCommand.persistant {

@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	"github.com/james-nesbitt/wundertools-go/api/handler/bytesource"
 	"github.com/james-nesbitt/wundertools-go/api/operation"
 )
 
@@ -18,30 +19,15 @@ import (
  * Handlers
  */
 
-func New_BaseLibcomposeHandler(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) *BaseLibcomposeHandler {
-	base := &BaseLibcomposeHandler{}
-	base.MakeBaseLibcomposeNameFilesOperation(projectName, dockerComposeFiles, runContext, outputWriter, errorWriter)
+func New_BaseLibcomposeHandler(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer, filesettings bytesource.BytesourceFileSettings) *BaseLibcomposeHandler {
+	baseLibcomposeOp, _ := New_BaseLibcomposeNameFilesOperation(projectName, dockerComposeFiles, runContext, outputWriter, errorWriter, filesettings)
+	base := &BaseLibcomposeHandler{LibComposeBaseOp: &baseLibcomposeOp}
 	return base
 }
 
 // A libcompose handler base that can produce a BaseLibcomposeNameFilesOperation for ops base
 type BaseLibcomposeHandler struct {
 	LibComposeBaseOp *BaseLibcomposeNameFilesOperation
-}
-
-// An accessor for the ConfigBase ConfigWrapper
-func (base *BaseLibcomposeHandler) MakeBaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) error {
-	// Use discovered/default settings to build a base operation struct, to be share across orchestration operations
-	baseLibcomposeOp, _ := New_BaseLibcomposeNameFilesOperation(
-		projectName,
-		dockerComposeFiles,
-		runContext,
-		outputWriter,
-		errorWriter,
-	)
-	base.LibComposeBaseOp = &baseLibcomposeOp
-
-	return nil
 }
 
 /**
@@ -66,7 +52,7 @@ func (base *BaseLibcomposeStayAttachedOperation) Properties() *operation.Propert
 }
 
 // A handoff function to make a base orchestration operation, which is really just a lot of linear code.
-func New_BaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer) (BaseLibcomposeNameFilesOperation, operation.Result) {
+func New_BaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles []string, runContext context.Context, outputWriter io.Writer, errorWriter io.Writer, filesettings bytesource.BytesourceFileSettings) (BaseLibcomposeNameFilesOperation, operation.Result) {
 	result := operation.BaseResult{}
 	result.Set(true, nil)
 
@@ -81,6 +67,15 @@ func New_BaseLibcomposeNameFilesOperation(projectName string, dockerComposeFiles
 		}
 	} else {
 		result.Set(false, []error{errors.New("Could not set base libCompose project name.  Config value not found on base Orchestration operation")})
+	}
+
+	// Add project context
+	if projectFilesettingsConf, found := orchestrateProperties.Get(bytesource.OPERATION_PROPERTY_BYTESOURCE_FILESETTINGS); found {
+		if !projectFilesettingsConf.Set(filesettings) {
+			result.Set(false, []error{errors.New("Could not set base libcompose file settings.  Config set error on base Orchestration operation")})
+		}
+	} else {
+		result.Set(false, []error{errors.New("Could not set base libcompose file settings.  Config not found on base Orchestration operation")})
 	}
 
 	// Add project docker-compose yml files
@@ -129,6 +124,9 @@ func (base *BaseLibcomposeNameFilesOperation) Properties() *operation.Properties
 		newProperties := &operation.Properties{}
 
 		newProperties.Add(operation.Property(&LibcomposeProjectnameProperty{}))
+
+		newProperties.Add(operation.Property(&bytesource.BytesourceFilesettingsProperty{}))
+
 		newProperties.Add(operation.Property(&LibcomposeComposefilesProperty{}))
 		newProperties.Add(operation.Property(&LibcomposeContextProperty{}))
 

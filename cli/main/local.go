@@ -26,7 +26,7 @@ const (
 	DO_OPERATION_TEST     = true
 	DO_CONFIG_TEST        = true
 	DO_SETTING_TEST       = true
-	DO_ORCHESTRATE_TEST   = true
+	DO_ORCHESTRATE_TEST   = false
 	DO_COMMAND_TEST       = true
 )
 
@@ -34,9 +34,11 @@ func TestLocalAPI(c *cli.Context) error {
 
 	workingDir, _ := os.Getwd()
 	settings := api_local.LocalAPISettings{
-		ExecPath:    workingDir,
-		ConfigPaths: &api_bytesource.Paths{},
-		Context:     context.Background(),
+		BytesourceFileSettings: api_bytesource.BytesourceFileSettings{
+			ExecPath:    workingDir,
+			ConfigPaths: &api_bytesource.Paths{},
+		},
+		Context: context.Background(),
 	}
 
 	// Discover paths for the user like ~ and ~/.config/wundertools

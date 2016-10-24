@@ -88,7 +88,7 @@ func MakeLocalAPI(settings LocalAPISettings) *LocalAPI {
 	 */
 
 	// LibComposeHandlerBase
-	base_libcompose := libcompose.New_BaseLibcomposeHandler(projectName, dockerComposeFiles, runContext, outputWriter, errorWriter)
+	base_libcompose := libcompose.New_BaseLibcomposeHandler(projectName, dockerComposeFiles, runContext, outputWriter, errorWriter, settings.BytesourceFileSettings)
 
 	/**
 	 * Build Handlers that actually provide usefull
@@ -122,11 +122,8 @@ func MakeLocalAPI(settings LocalAPISettings) *LocalAPI {
 
 // Settings needed to make a local API
 type LocalAPISettings struct {
-	ProjectRootPath string
-	UserHomePath    string
-	ExecPath        string
-	ConfigPaths     *bytesource.Paths
-	Context         context.Context
+	bytesource.BytesourceFileSettings
+	Context context.Context
 }
 
 // An API based entirely on local handler
