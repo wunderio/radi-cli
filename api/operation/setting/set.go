@@ -30,5 +30,5 @@ func (set *BaseSettingSetOperation) Description() string {
 
 // Is this an internal API operation
 func (set *BaseSettingSetOperation) Internal() bool {
-	return false
+	return true
 }

@@ -30,10 +30,12 @@ func AppLocalCommands(app *cli.App) error {
 		if !op.Internal() {
 			id := op.Id()
 			category := id[0:strings.Index(id, ".")]
+			alias := id[strings.Index(id, ".")+1:]
 			opWrapper := CliOperationWrapper{op: op}
 
 			cliComm := cli.Command{
 				Name:     op.Id(),
+				Aliases:  []string{alias},
 				Usage:    op.Description(),
 				Action:   opWrapper.Exec,
 				Category: category,
@@ -46,7 +48,7 @@ func AppLocalCommands(app *cli.App) error {
 	}
 
 	if comList, err := local.Command.List(""); err == nil {
-		category := "commands"
+		category := "custom"
 
 		for _, key := range comList {
 			comm, _ := local.Command.Get(key)
@@ -54,7 +56,8 @@ func AppLocalCommands(app *cli.App) error {
 			commWrapper := CliCommandWrapper{comm: comm}
 
 			cliComm := cli.Command{
-				Name:     comm.Id(),
+				Name:     "command.exec." + comm.Id(),
+				Aliases:  []string{comm.Id()},
 				Usage:    comm.Description(),
 				Action:   commWrapper.Exec,
 				Category: category,
@@ -109,6 +112,11 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 	log.WithFields(log.Fields{"id": commWrapper.comm.Id()}).Debug("Running command")
 
 	CliAssignPropertiesFromFlags(cliContext, commWrapper.comm.Properties())
+
+	// if there was a command flags property, then add any remaining arguments as flags
+	if flagsProp, found := commWrapper.comm.Properties().Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
+		flagsProp.Set([]string(cliContext.Args()))
+	}
 
 	if success, errs := commWrapper.comm.Exec().Success(); !success {
 		var err error

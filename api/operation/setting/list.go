@@ -30,5 +30,5 @@ func (list *BaseSettingListOperation) Description() string {
 
 // Is this an internal API operation
 func (list *BaseSettingListOperation) Internal() bool {
-	return false
+	return true
 }

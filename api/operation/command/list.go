@@ -33,7 +33,7 @@ func (list *BaseCommandListOperation) Description() string {
 
 // Is this an internal API operation
 func (list *BaseCommandListOperation) Internal() bool {
-	return false
+	return true
 }
 func (list *BaseCommandListOperation) Properties() *operation.Properties {
 	return &operation.Properties{}
