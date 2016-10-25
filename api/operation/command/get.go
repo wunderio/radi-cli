@@ -36,7 +36,7 @@ func (get *BaseCommandGetOperation) Description() string {
 
 // Is this an internal API operation
 func (get *BaseCommandGetOperation) Internal() bool {
-	return false
+	return true
 }
 func (get *BaseCommandGetOperation) Properties() *operation.Properties {
 	return &operation.Properties{}

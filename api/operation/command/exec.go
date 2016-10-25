@@ -32,7 +32,7 @@ func (exec *BaseCommandExecOperation) Description() string {
 
 // Is this an internal API operation
 func (exec *BaseCommandExecOperation) Internal() bool {
-	return false
+	return true
 }
 func (exec *BaseCommandExecOperation) Properties() *operation.Properties {
 	return &operation.Properties{}

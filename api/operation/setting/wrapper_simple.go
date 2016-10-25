@@ -12,7 +12,7 @@ import (
  * using the settings operations as a single struct.
  */
 
-// COnstructor for SimpleSettingWrapper
+// Constructor for SimpleSettingWrapper
 func New_SimpleSettingWrapper(operations *operation.Operations) *SimpleSettingWrapper {
 	return &SimpleSettingWrapper{
 		operations: operations,
