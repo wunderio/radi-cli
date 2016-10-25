@@ -86,7 +86,9 @@ type CliOperationWrapper struct {
 func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 	log.WithFields(log.Fields{"id": opWrapper.op.Id()}).Debug("Running operation")
 
-	CliAssignPropertiesFromFlags(cliContext, opWrapper.op.Properties())
+	props := opWrapper.op.Properties()
+
+	CliAssignPropertiesFromFlags(cliContext, props)
 
 	if success, errs := opWrapper.op.Exec().Success(); !success {
 		var err error
@@ -96,7 +98,33 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 			err = errors.New("Unknown error occured")
 		}
 		log.WithError(err).Error("Error occured running operation")
+		return err
 	}
+
+	// Create some meaningful output, by logging some of the properties
+	fields := map[string]interface{}{}
+	for _, key := range props.Order() {
+		prop, _ := props.Get(key)
+
+		if !prop.Internal() {
+			switch prop.Type() {
+			case "string":
+				fields[key] = prop.Get().(string)
+			case "[]string":
+				fields[key] = prop.Get().([]string)
+			case "[]byte":
+				fields[key] = string(prop.Get().([]byte))
+			case "int32":
+				fields[key] = int(prop.Get().(int32))
+			case "int64":
+				fields[key] = prop.Get().(int64)
+			case "bool":
+				fields[key] = prop.Get().(bool)
+			}
+		}
+	}
+	log.WithFields(log.Fields(fields)).Info("Operation completed")
+
 	return nil
 }
 
