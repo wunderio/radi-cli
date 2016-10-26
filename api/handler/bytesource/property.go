@@ -35,7 +35,7 @@ func (filesettings *BytesourceFilesettingsProperty) Description() string {
 
 // Is the Property internal only
 func (filesettings *BytesourceFilesettingsProperty) Internal() bool {
-	return false
+	return true
 }
 
 // Give an idea of what type of value the property consumes

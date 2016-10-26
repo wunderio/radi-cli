@@ -10,7 +10,7 @@ export WUNDERTOOLS_PKG='github.com/wundertools/wundertools-go'
 export WUNDERTOOLS_BUILD_PATH="./bin"
 export WUNDERTOOLS_BINARY_NAME="kraut"
 export WUNDERTOOLS_BUILD_BINARY_PATH="${WUNDERTOOLS_BUILD_PATH}/${WUNDERTOOLS_BINARY_NAME}"
-export WUNDERTOOLS_INSTALL_PATH="${GOPATH}/bin/wundertools"
+export WUNDERTOOLS_INSTALL_PATH="${GOPATH}/bin/${WUNDERTOOLS_BINARY_NAME}"
 
 # Build a bundle
 bundle() {

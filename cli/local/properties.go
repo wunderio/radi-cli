@@ -92,6 +92,10 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 	for _, key := range props.Order() {
 		prop, _ := props.Get(key)
 
+		if prop.Internal() {
+			continue
+		}
+
 		switch prop.Type() {
 		case "string":
 			flags = append(flags, cli.StringFlag{

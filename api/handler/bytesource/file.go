@@ -4,6 +4,8 @@ import (
 	"io"
 	"os"
 	"path"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 /**
@@ -58,7 +60,7 @@ func (fileSource *FileByteSource) Writer() (io.Writer, error) {
 	//fileWriter, err := os.Create(fileSource.path)
 
 	fileWriter := SafeFileWriter{path: fileSource.path}
-	return io.Writer(fileWriter), nil
+	return io.Writer(&fileWriter), nil
 }
 
 // Non-emptying writer wrapper, which doesn't open the file until it is written to
@@ -68,11 +70,13 @@ type SafeFileWriter struct {
 }
 
 // io.Writer() method, that first creates the file resource
-func (safe SafeFileWriter) Write(p []byte) (int, error) {
+func (safe *SafeFileWriter) Write(p []byte) (int, error) {
 	if safe.file == nil {
 		if osFile, err := os.Create(safe.path); err != nil {
+			log.WithError(err).WithFields(log.Fields{"path": safe.path}).Error("Could not write to file")
 			return 0, err
 		} else {
+			log.WithFields(log.Fields{"file": safe.file, "path": safe.path}).Debug("Opened file")
 			safe.file = osFile
 		}
 	}

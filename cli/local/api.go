@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	WUNDERTOOLS_PROJECT_CONF_FOLDER = "wundertools"
-	WUNDERTOOLS_USER_CONF_SUBPATH   = "wundertools"
+	WUNDERTOOLS_PROJECT_CONF_FOLDER = "kraut"
+	WUNDERTOOLS_USER_CONF_SUBPATH   = "kraut"
 )
 
 func MakeLocalAPI() (*api_local.LocalAPI, error) {
@@ -106,6 +106,7 @@ RootSearch:
 		if projectRootDirectory == homeDir || projectRootDirectory == "." || projectRootDirectory == "/" {
 			// Could not find a project folder
 			projectRootDirectory = workingDir
+			settings.ProjectDoesntExist = true
 			break RootSearch
 		}
 		_, err = os.Stat(path.Join(projectRootDirectory, WUNDERTOOLS_PROJECT_CONF_FOLDER))
