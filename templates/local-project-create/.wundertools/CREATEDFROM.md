@@ -1,0 +1,1 @@
+THIS PROJECT WAS CREATED A COACH YAML INSTALLER :../wundertest/kraut/init.yml

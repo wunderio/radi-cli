@@ -43,9 +43,9 @@ services:
     command:
       - /bin/true
     volumes:
-      - "./app/web:/app/web"
-      - "./app/vendor:/app/vendor"
-      - "./app/config:/app/config"
+      - "./source/web:/app/web"
+      - "./source/vendor:/app/vendor"
+      - "./source/config:/app/config"
 
   ####
   # Assets
@@ -112,6 +112,8 @@ services:
     volumes_from:
       - source
       - assets
+    environment:
+      DNSDOCK_ALIAS: wundertools.docker
     links:
       - fpm:fpm.app
 
