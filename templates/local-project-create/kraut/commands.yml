@@ -1,6 +1,5 @@
 
 shell:
-  type: container
   description: Give a command shell, with access to the application
   image: quay.io/wunder/wundertools-image-fuzzy-developershell
   hostname: "shell"
@@ -26,7 +25,6 @@ shell:
     - www
 
 drupal-init:
-  type: container
   description: Create a new Drupal8 project in ./source
   image: quay.io/wunder/wundertools-image-fuzzy-developershell
   hostname: "shell"
@@ -44,7 +42,6 @@ drupal-init:
     - "~/.ssh:/app/.ssh:ro"
 
 drupal:
-  type: container
   description: Run drupal console on the application
   image: quay.io/wunder/wundertools-image-fuzzy-developershell
   working_dir: /app/web
@@ -65,7 +62,6 @@ drupal:
     - db
 
 composer:
-  type: container
   description: Run composer as a command in the source folder
   image: quay.io/wunder/wundertools-image-fuzzy-developershell
   entrypoint: 

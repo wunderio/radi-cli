@@ -1,4 +1,0 @@
-KRAUT
-=====
-
-Kraut custom settings.

@@ -33,15 +33,15 @@ func (generator *YMLInitGenerator) generateSingleFile(fullPath string, sourcePat
 		return false
 	} else {
 
-		generator.output.Write([]byte("  Contents: |\n"))
-		line = "'" + line
+		generator.output.Write([]byte("  Contents: |2\n"))
+		line = "" + line
 
 		for {
 			generator.output.Write([]byte(indent + line))
 
 			line, err = r.ReadString(10) // 0x0A separator = newline
 			if err == io.EOF {
-				generator.output.Write([]byte(indent + "'\n"))
+				generator.output.Write([]byte(indent + "\n"))
 				break
 			} else if err != nil {
 				log.Error(err.Error())
