@@ -2,8 +2,9 @@ package bytesource
 
 // Settings needed to make a file based bytesource API
 type BytesourceFileSettings struct {
-	ProjectRootPath string
-	UserHomePath    string
-	ExecPath        string
-	ConfigPaths     *Paths
+	ProjectDoesntExist bool
+	ProjectRootPath    string
+	UserHomePath       string
+	ExecPath           string
+	ConfigPaths        *Paths
 }
