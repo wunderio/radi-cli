@@ -1,24 +1,26 @@
 .PHONY: cli-build build install clean
 
+MAKE_SCRIPT="./build/make.sh"
+
 default: all
 
 all: getdeps fmt cli-build install
 
 fmt:
-	./scripts/make.sh fmt	
+	${MAKE_SCRIPT} fmt
 
 cli-build:
-	./scripts/make.sh binary
+	${MAKE_SCRIPT} binary
 
 cli-getdeps:
-	./scripts/make.sh getdeps
+	${MAKE_SCRIPT} getdeps
 
 build: cli-build
 
 getdeps: cli-getdeps
 
 install: build
-	./scripts/make.sh install
+	${MAKE_SCRIPT} install
 
 clean:
-	./scripts/make.sh clean
+	${MAKE_SCRIPT} clean
