@@ -50,7 +50,7 @@ func (tasks *InitTasks) Init_Yaml_Run(path string) bool {
 	}
 
 	// Add some message items
-	tasks.AddFile(".wundertools/CREATEDFROM.md", "THIS PROJECT WAS CREATED A COACH YAML INSTALLER :"+path)
+	tasks.AddFile("kraut/CREATEDFROM.md", "THIS PROJECT WAS CREATED A KRAUT YAML INSTALLER :"+path)
 
 	return true
 }

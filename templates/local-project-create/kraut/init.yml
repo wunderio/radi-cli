@@ -220,9 +220,6 @@
           - www:backend.app
     
 - Type: File
-  path: .wundertools/CREATEDFROM.md
-  Contents: 
-- Type: File
   path: settings/drush/.gitkeep
   Contents: 
 - Type: File
