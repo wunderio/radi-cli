@@ -210,8 +210,10 @@ func (comm *CommandYmlCommand) UnmarshalYAML(unmarshal func(interface{}) error) 
 }
 
 // Turn this CommandYmlCommand into a command.Command
-func (ymlCommand *CommandYmlCommand) Command(project *ComposeProject) command.Command {
-	ymlCommand.project = project
+func (ymlCommand *CommandYmlCommand) Command(projectProps *operation.Properties) command.Command {
+	// merge the properties, keeping local over project.
+	projectProps.Merge(*ymlCommand.Properties())
+	ymlCommand.properties = projectProps
 	return command.Command(ymlCommand)
 }
 
@@ -276,17 +278,20 @@ func (ymlCommand *CommandYmlCommand) Exec() operation.Result {
 	// get the service for the command
 	service := ymlCommand.serviceConfig
 
-	// allow our app to alter the service, to do some string replacements etc
-	ymlCommand.project.AlterService(&service)
+	// create a libcompose project
+	project, _ := MakeComposeProject(ymlCommand.Properties())
 
-	ymlCommand.project.AddConfig(ymlCommand.Id(), &service)
-	ymlCommand.project.Run(runContext, ymlCommand.Id(), flags, runOptions)
+	// allow our app to alter the service, to do some string replacements etc
+	project.AlterService(&service)
+
+	project.AddConfig(ymlCommand.Id(), &service)
+	project.Run(runContext, ymlCommand.Id(), flags, runOptions)
 
 	if !ymlCommand.persistant {
 		deleteOptions := libCompose_project_options.Delete{
 			RemoveVolume: true,
 		}
-		ymlCommand.project.Delete(runContext, deleteOptions, ymlCommand.Id())
+		project.Delete(runContext, deleteOptions, ymlCommand.Id())
 	}
 
 	return operation.Result(&result)
