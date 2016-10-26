@@ -19,7 +19,7 @@ build: cli-build
 
 getdeps: cli-getdeps
 
-install: build
+install:
 	${MAKE_SCRIPT} install
 
 clean:

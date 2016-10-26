@@ -53,12 +53,11 @@ func (properties *Properties) makeSafe() {
 // Add a property
 func (properties *Properties) Add(property Property) {
 	properties.makeSafe()
-	/**
-	 * @TODO check if it already exists (by key)
-	 */
 	id := property.Id()
+	if _, exists := properties.propMap[id]; !exists {
+		properties.order = append(properties.order, id)
+	}
 	properties.propMap[id] = property
-	properties.order = append(properties.order, id)
 }
 
 // Merge in one set of properties into this configurations

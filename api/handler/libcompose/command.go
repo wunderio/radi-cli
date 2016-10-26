@@ -112,8 +112,7 @@ func (get *LibcomposeCommandGetOperation) Exec() operation.Result {
 
 		if comYml, err := get.Wrapper.Get(key); err == nil {
 			// pass all props to make a project
-			project, _ := MakeComposeProject(get.BaseLibcomposeNameFilesOperation.Properties())
-			com := comYml.Command(project)
+			com := comYml.Command(get.BaseLibcomposeNameFilesOperation.Properties())
 			commandProp.Set(com)
 		} else {
 			result.Set(false, []error{err})
