@@ -15,4 +15,4 @@ echo "  --> Building ${WUNDERTOOLS_BUILD_BINARY_PATH}"
 go build \
    -ldflags="-w -X ${WUNDERTOOLS_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${WUNDERTOOLS_PKG}/version.BUILDTIME=${BUILDTIME} -X ${WUNDERTOOLS_PKG}/version.SHOWWARNING=${SHOWWARNING}" \
    -o "${WUNDERTOOLS_BUILD_BINARY_PATH}" \
-   ./cli/main
+   ./main

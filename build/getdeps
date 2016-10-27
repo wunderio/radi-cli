@@ -11,7 +11,9 @@ DEPS="golang.org/x/net/context
 github.com/Sirupsen/logrus
 github.com/urfave/cli
 gopkg.in/yaml.v2
-github.com/docker/libcompose"
+github.com/docker/libcompose
+github.com/james-nesbitt/kraut-api
+github.com/james-nesbitt/kraut-handlers"
 
 for DEP in $DEPS; do
 	echo "     - ${DEP}"

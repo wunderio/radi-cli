@@ -1,4 +1,0 @@
-TEST
-====
-
-Testing operations
