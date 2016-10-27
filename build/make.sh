@@ -6,11 +6,11 @@ GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
 GOARCH="${GOARCH:-x64}"
 GOVERSION="latest"
 
-export WUNDERTOOLS_PKG='github.com/wundertools/wundertools-go'
-export WUNDERTOOLS_BUILD_PATH="./bin"
-export WUNDERTOOLS_BINARY_NAME="kraut"
-export WUNDERTOOLS_BUILD_BINARY_PATH="${WUNDERTOOLS_BUILD_PATH}/${WUNDERTOOLS_BINARY_NAME}"
-export WUNDERTOOLS_INSTALL_PATH="${GOPATH}/bin/${WUNDERTOOLS_BINARY_NAME}"
+export KRAUT_PKG='github.com/wunder/kraut-cli'
+export KRAUT_BUILD_PATH="./bin"
+export KRAUT_BINARY_NAME="kraut"
+export KRAUT_BUILD_BINARY_PATH="${KRAUT_BUILD_PATH}/${KRAUT_BINARY_NAME}"
+export KRAUT_INSTALL_PATH="${GOPATH}/bin/${KRAUT_BINARY_NAME}"
 
 # Build a bundle
 bundle() {

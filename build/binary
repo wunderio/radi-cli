@@ -2,17 +2,17 @@
 set -e
 
 # Get rid of existing binary
-rm -f "${WUNDERTOOLS_BUILD_BINARY_PATH}"
+rm -f "${KRAUT_BUILD_BINARY_PATH}"
 
 go generate
 
 BUILDTIME=$(date --rfc-3339 ns | sed -e 's/ /T/') &> /dev/null
 GITCOMMIT=$(git rev-parse --short HEAD)
 
-echo "  --> Building ${WUNDERTOOLS_BUILD_BINARY_PATH}"
+echo "  --> Building ${KRAUT_BUILD_BINARY_PATH}"
 
 # Build cli binaries
 go build \
-   -ldflags="-w -X ${WUNDERTOOLS_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${WUNDERTOOLS_PKG}/version.BUILDTIME=${BUILDTIME} -X ${WUNDERTOOLS_PKG}/version.SHOWWARNING=${SHOWWARNING}" \
-   -o "${WUNDERTOOLS_BUILD_BINARY_PATH}" \
+   -ldflags="-w -X ${KRAUT_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${KRAUT_PKG}/version.BUILDTIME=${BUILDTIME} -X ${KRAUT_PKG}/version.SHOWWARNING=${SHOWWARNING}" \
+   -o "${KRAUT_BUILD_BINARY_PATH}" \
    ./main

@@ -15,11 +15,11 @@ source build/.os-detect
 source build/make.sh
 
 EXEC_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INTERNAL_LIBRARY_PATH="github.com/james-nesbitt/wundertools-go"
+INTERNAL_LIBRARY_PATH="github.com/james-nesbitt/kraut-cli"
 
-echo "This will build wundertools as a 'kraut' for '$GOOS-$GOARCH'. Change this by setting \$GOOS and \$GOARCH environment variables.
+echo "This will build the kraut-cli as a 'kraut' binary for '$GOOS-$GOARCH'. Change this by setting \$GOOS and \$GOARCH environment variables.
 
- **** Building Wundertools in containerized golang environment
+ **** Building in containerized golang environment
  "
 
 docker run --rm -ti \
@@ -34,8 +34,8 @@ docker run --rm -ti \
 
 echo " **** Containerized build complete
 
-You should now have a binary ${WUNDERTOOLS_BUILD_BINARY_PATH}
+You should now have a binary ${KRAUT_BUILD_BINARY_PATH}
 you can run this directly or install it somewhere usefull.
 
 "
-#ls -la ${WUNDERTOOLS_BUILD_BINARY_PATH}
+#ls -la ${KRAUT_BUILD_BINARY_PATH}

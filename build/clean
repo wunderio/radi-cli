@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "  --> Cleaning by removing build path: ${WUNDERTOOLS_BUILD_PATH}"
+echo "  --> Cleaning by removing build path: ${KRAUT_BUILD_PATH}"
 
 # Get rid of existing binary
-rm -f "${WUNDERTOOLS_BUILD_PATH}"
+rm -f "${KRAUT_BUILD_PATH}"

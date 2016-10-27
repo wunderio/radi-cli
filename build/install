@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "  --> Installing last compiled binary (${WUNDERTOOLS_BUILD_BINARY_PATH}) to: ${WUNDERTOOLS_INSTALL_PATH}"
+echo "  --> Installing last compiled binary (${KRAUT_BUILD_BINARY_PATH}) to: ${KRAUT_INSTALL_PATH}"
 
 # Get rid of existing binary
-rm -f "${WUNDERTOOLS_INSTALL_PATH}"
+rm -f "${KRAUT_INSTALL_PATH}"
 
-cp "${WUNDERTOOLS_BUILD_BINARY_PATH}" "${WUNDERTOOLS_INSTALL_PATH}"
+cp "${KRAUT_BUILD_BINARY_PATH}" "${KRAUT_INSTALL_PATH}"
