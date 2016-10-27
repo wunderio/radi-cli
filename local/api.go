@@ -68,7 +68,7 @@ func userHomePath() string {
  */
 func DiscoverUserPaths(settings *api_local.LocalAPISettings) error {
 	homeDir := userHomePath()
-	homeConfDir := path.Join(homeDir, WUNDERTOOLS_PROJECT_CONF_FOLDER)
+	homeConfDir := path.Join(homeDir, "."+WUNDERTOOLS_PROJECT_CONF_FOLDER)
 
 	if _, err := os.Stat(path.Join(homeDir, "Library")); err == nil {
 		// OSX
