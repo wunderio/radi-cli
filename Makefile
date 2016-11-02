@@ -4,7 +4,7 @@ MAKE_SCRIPT="./build/make.sh"
 
 default: all
 
-all: getdeps fmt cli-build install
+all: getdeps fmt build install
 
 fmt:
 	${MAKE_SCRIPT} fmt

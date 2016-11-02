@@ -11,6 +11,8 @@ GITCOMMIT=$(git rev-parse --short HEAD)
 
 echo "  --> Building ${KRAUT_BUILD_BINARY_PATH}"
 
+mkdir -p "${KRAUT_BUILD_PATH}"
+
 # Build cli binaries
 go build \
    -ldflags="-w -X ${KRAUT_PKG}/version.GITCOMMIT=${GITCOMMIT} -X ${KRAUT_PKG}/version.BUILDTIME=${BUILDTIME} -X ${KRAUT_PKG}/version.SHOWWARNING=${SHOWWARNING}" \
