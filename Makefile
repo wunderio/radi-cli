@@ -9,15 +9,11 @@ all: getdeps fmt cli-build install
 fmt:
 	${MAKE_SCRIPT} fmt
 
-cli-build:
+build:
 	${MAKE_SCRIPT} binary
 
-cli-getdeps:
+getdeps:
 	${MAKE_SCRIPT} getdeps
-
-build: cli-build
-
-getdeps: cli-getdeps
 
 install:
 	${MAKE_SCRIPT} install
