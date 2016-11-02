@@ -77,6 +77,14 @@ func AppLocalCommands(app *cli.App) error {
 
 /**
  * Wrapper for operation Exec methods, from the urface CLI
+ *
+ * We use this wrapper because:
+ *  1. the cli library has a different return
+ *     expectation than what our operations return
+ *  2. we need to do some minor transformation on CLI
+ *     arguments, to make them fit our types.
+ *  3. we want to do some work to decide what to output
+ *     to the screen.
  */
 type CliOperationWrapper struct {
 	op api_operation.Operation
