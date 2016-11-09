@@ -9,23 +9,30 @@ import (
 	// "github.com/urfave/cli"
 	"golang.org/x/net/context"
 
-	api_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
-	api_local "github.com/james-nesbitt/kraut-handlers/local"
+	handler_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
+	handler_local "github.com/james-nesbitt/kraut-handlers/local"
 )
 
 const (
-	WUNDERTOOLS_PROJECT_CONF_FOLDER = ".kraut"
-	WUNDERTOOLS_USER_CONF_SUBPATH   = "kraut"
+	WUNDERTOOLS_PROJECT_CONF_FOLDER = ".kraut" // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
+	WUNDERTOOLS_USER_CONF_SUBPATH   = "kraut"  // If the user has user-scope config, they will be in this subfolder
 )
 
-func MakeLocalAPI() (*api_local.LocalAPI, error) {
+/**
+ * Build a local API, by scanning for project settings based on the
+ * path.  First a number of "conf" folders are determinged, and these
+ * are used to build the localAPI.
+ */
+
+// Construct a LocalAPI by checking some paths for the current user.
+func MakeLocalAPI() (*handler_local.LocalAPI, error) {
 	var err error
 
 	workingDir, _ := os.Getwd()
-	settings := api_local.LocalAPISettings{
-		BytesourceFileSettings: api_bytesource.BytesourceFileSettings{
+	settings := handler_local.LocalAPISettings{
+		BytesourceFileSettings: handler_bytesource.BytesourceFileSettings{
 			ExecPath:    workingDir,
-			ConfigPaths: &api_bytesource.Paths{},
+			ConfigPaths: &handler_bytesource.Paths{},
 		},
 		Context: context.Background(),
 	}
@@ -41,7 +48,7 @@ func MakeLocalAPI() (*api_local.LocalAPI, error) {
 	 * project level confs
 	 */
 
-	if API, makeErr := api_local.MakeLocalAPI(settings); makeErr != nil {
+	if API, makeErr := handler_local.MakeLocalAPI(settings); makeErr != nil {
 		return API, makeErr
 	} else {
 		return API, err
@@ -66,17 +73,23 @@ func userHomePath() string {
  * dependening on OS, determine if the user has any settings
  * if so, add a conf path for them.
  */
-func DiscoverUserPaths(settings *api_local.LocalAPISettings) error {
+func DiscoverUserPaths(settings *handler_local.LocalAPISettings) error {
 	homeDir := userHomePath()
-	homeConfDir := path.Join(homeDir, WUNDERTOOLS_PROJECT_CONF_FOLDER)
+
+	// This is a common, but not very good user config path for *Nix OSes
+	homeConfDir := path.Join(homeDir, "."+WUNDERTOOLS_PROJECT_CONF_FOLDER) // if in the home folder, add a "."
 
 	if _, err := os.Stat(path.Join(homeDir, "Library")); err == nil {
 		// OSX
 		homeConfDir = path.Join(homeDir, "Library", WUNDERTOOLS_USER_CONF_SUBPATH)
 	} else if _, err := os.Stat(path.Join(homeDir, ".config")); err == nil {
-		// Good Linux
+		// Good *Nix/BSD
 		homeConfDir = path.Join(homeDir, ".config", WUNDERTOOLS_USER_CONF_SUBPATH)
 	}
+
+	/**
+	 * @TODO does anybody care about any other OS?
+	 */
 
 	/**
 	 * Set up some frequesntly used paths
@@ -94,7 +107,7 @@ func DiscoverUserPaths(settings *api_local.LocalAPISettings) error {
  * has the key configuration subfolder in it.  That path is marked as the
  * application root, and the subfolder is marked as a conf path
  */
-func DiscoverProjectPaths(settings *api_local.LocalAPISettings) error {
+func DiscoverProjectPaths(settings *handler_local.LocalAPISettings) error {
 	workingDir := settings.ExecPath
 	homeDir := userHomePath()
 

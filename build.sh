@@ -31,7 +31,6 @@ docker run --rm -ti \
 	golang:${GOVERSION} \
 	make getdeps build
 
-
 echo " **** Containerized build complete
 
 You should now have a binary ${KRAUT_BUILD_BINARY_PATH}

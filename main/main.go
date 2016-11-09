@@ -7,8 +7,6 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/james-nesbitt/kraut-cli/version"
-
-	cli_local "github.com/james-nesbitt/kraut-cli/local"
 )
 
 func main() {
@@ -33,10 +31,21 @@ func main() {
 
 	if debug {
 		log.Info("Enabling verbose debug output")
+
+		/**
+		 * @TODO do something here to make logrus output debug
+		 *  statements
+		 */
 	}
 
-	// Add local commands
-	cli_local.AppLocalCommands(app)
+	/**
+	 * As a shortcut, we are wiring the CLI to use just a
+	 * local API implementation.  This hand-off function does
+	 * that.
+	 *
+	 * @TODO write a better implementation for this
+	 */
+	AppLocalCommands(app)
 
 	app.Run(os.Args)
 
