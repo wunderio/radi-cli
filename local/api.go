@@ -1,16 +1,19 @@
 package local
 
 import (
+	"errors"
 	"os"
-	"os/user"
-	"path"
 
-	// log "github.com/Sirupsen/logrus"
-	// "github.com/urfave/cli"
+	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
-	handler_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
-	handler_local "github.com/james-nesbitt/kraut-handlers/local"
+	api_api "github.com/james-nesbitt/kraut-api/api"
+	api_builder "github.com/james-nesbitt/kraut-api/builder"
+	api_config "github.com/james-nesbitt/kraut-api/operation/config"
+	handlers_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
+	handlers_configconnect "github.com/james-nesbitt/kraut-handlers/configconnect"
+	handlers_local "github.com/james-nesbitt/kraut-handlers/local"
+	handlers_null "github.com/james-nesbitt/kraut-handlers/null"
 )
 
 const (
@@ -25,14 +28,14 @@ const (
  */
 
 // Construct a LocalAPI by checking some paths for the current user.
-func MakeLocalAPI() (*handler_local.LocalAPI, error) {
+func MakeLocalAPI() (api_api.API, error) {
 	var err error
 
 	workingDir, _ := os.Getwd()
-	settings := handler_local.LocalAPISettings{
-		BytesourceFileSettings: handler_bytesource.BytesourceFileSettings{
+	settings := handlers_local.LocalAPISettings{
+		BytesourceFileSettings: handlers_bytesource.BytesourceFileSettings{
 			ExecPath:    workingDir,
-			ConfigPaths: &handler_bytesource.Paths{},
+			ConfigPaths: &handlers_bytesource.Paths{},
 		},
 		Context: context.Background(),
 	}
@@ -48,88 +51,60 @@ func MakeLocalAPI() (*handler_local.LocalAPI, error) {
 	 * project level confs
 	 */
 
-	if API, makeErr := handler_local.MakeLocalAPI(settings); makeErr != nil {
-		return API, makeErr
-	} else {
-		return API, err
-	}
-
-}
-
-// a quick snippet to discover a user's home folder
-func userHomePath() string {
-	if currentUser, err := user.Current(); err == nil {
-		return currentUser.HomeDir
-	} else {
-		return os.Getenv("HOME")
-	}
-}
-
-/**
- * Discover some user paths
- *
- * @NOTE we have to play some games for different OSes here
- *
- * dependening on OS, determine if the user has any settings
- * if so, add a conf path for them.
- */
-func DiscoverUserPaths(settings *handler_local.LocalAPISettings) error {
-	homeDir := userHomePath()
-
-	// This is a common, but not very good user config path for *Nix OSes
-	homeConfDir := path.Join(homeDir, "."+WUNDERTOOLS_PROJECT_CONF_FOLDER) // if in the home folder, add a "."
-
-	if _, err := os.Stat(path.Join(homeDir, "Library")); err == nil {
-		// OSX
-		homeConfDir = path.Join(homeDir, "Library", WUNDERTOOLS_USER_CONF_SUBPATH)
-	} else if _, err := os.Stat(path.Join(homeDir, ".config")); err == nil {
-		// Good *Nix/BSD
-		homeConfDir = path.Join(homeDir, ".config", WUNDERTOOLS_USER_CONF_SUBPATH)
-	}
+	/**
+	 * Now that we have local settings, let's start to build our API
+	 *
+	 * We will build it using a BuilderAPI, and adding the local
+	 * Builder, which will be used at a minimum for a ConfigWrapper,
+	 * to determine how to build the rest of the project
+	 */
+	localApi := api_builder.BuilderAPI{}
+	localApi.AddBuilder(handlers_local.New_LocalBuilder(settings))
 
 	/**
-	 * @TODO does anybody care about any other OS?
+	 * If we have discovered that there is no local project folder,
+	 * then we will enable a minimum API, which can be used to create
+	 * a local folder
 	 */
+	if settings.ProjectDoesntExist {
 
-	/**
-	 * Set up some frequesntly used paths
-	 */
-	settings.UserHomePath = homeDir
-	settings.ConfigPaths.Set("user", homeConfDir)
+		// allow local project operations, which could be used to build a project
+		localApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"project"}), nil)
 
-	return nil
-}
+		// Use null wrappers for those handlers that we don't have (to play safe)
+		localApi.AddBuilder(handlers_null.New_NullBuilder())
+		localApi.ActivateBuilder("null", *api_builder.New_Implementations([]string{"config", "seting", "command"}), nil)
 
-/**
- * Discover project paths
- *
- * Recursively navigate up the file path until we discover a folder that
- * has the key configuration subfolder in it.  That path is marked as the
- * application root, and the subfolder is marked as a conf path
- */
-func DiscoverProjectPaths(settings *handler_local.LocalAPISettings) error {
-	workingDir := settings.ExecPath
-	homeDir := userHomePath()
+		err = errors.New("No project found.")
 
-	projectRootDirectory := workingDir
-	_, err := os.Stat(path.Join(projectRootDirectory, WUNDERTOOLS_PROJECT_CONF_FOLDER))
-RootSearch:
-	for err != nil {
-		projectRootDirectory = path.Dir(projectRootDirectory)
-		if projectRootDirectory == homeDir || projectRootDirectory == "." || projectRootDirectory == "/" {
-			// Could not find a project folder
-			projectRootDirectory = workingDir
-			settings.ProjectDoesntExist = true
-			break RootSearch
+	} else {
+
+		// build at least the config operations, which we will need for a config wrapper
+		localApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"config"}), nil)
+		configOps := localApi.Operations()
+		configWrapper := api_config.New_SimpleConfigWrapper(&configOps)
+
+		builderConfigWrapper := handlers_configconnect.New_BuilderSettingsConfigWrapperYaml(configWrapper)
+		builderList := builderConfigWrapper.List()
+
+		if len(builderList) == 0 {
+
+			// build all local operations
+			localApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"config", "setting", "project", "orchestrate", "command"}), nil)
+
+		} else {
+
+			for _, key := range builderList {
+				builderSetting, _ := builderConfigWrapper.Get(key)
+
+				log.WithFields(log.Fields{"type": builderSetting.Type, "implementations": builderSetting.Implementations.Order(), "key": key}).Debug("Activate builder from settings")
+
+				localApi.ActivateBuilder(builderSetting.Type, builderSetting.Implementations, builderSetting.Settings)
+			}
+
 		}
-		_, err = os.Stat(path.Join(projectRootDirectory, WUNDERTOOLS_PROJECT_CONF_FOLDER))
+
 	}
 
-	/**
-	 * Set up some frequesntly used paths
-	 */
-	settings.ProjectRootPath = projectRootDirectory
-	settings.ConfigPaths.Set("project", path.Join(projectRootDirectory, WUNDERTOOLS_PROJECT_CONF_FOLDER))
-
-	return nil
+	return api_api.API(&localApi), err
 }

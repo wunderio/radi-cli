@@ -45,7 +45,7 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 
 		return err
 	} else {
-		log.WithError(err).Error("Failed to list commands")
+		log.WithError(err).Debug("Failed to list commands")
 		return err
 	}
 }
@@ -59,7 +59,8 @@ type CliCommandWrapper struct {
 
 // Execute the operation for the cli
 func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
-	log.WithFields(log.Fields{"id": commWrapper.comm.Id()}).Debug("Running command")
+	logger := log.WithFields(log.Fields{"id": commWrapper.comm.Id()})
+	logger.Debug("Running command")
 
 	CliAssignPropertiesFromFlags(cliContext, commWrapper.comm.Properties())
 
@@ -70,12 +71,19 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 
 	if success, errs := commWrapper.comm.Exec().Success(); !success {
 		var err error
+
 		if len(errs) > 0 {
+			for _, err := range errs {
+				logger = logger.WithError(err)
+			}
 			err = errs[0]
 		} else {
-			err = errors.New("Unknown error occured")
+			err = errors.New("Command failed to execute for unknown reasons")
+			logger = logger.WithError(err)
 		}
-		log.WithError(err).Error("Error occured running command")
+
+		logger.Error("Error occured running command")
+		return err
 	}
 	return nil
 }

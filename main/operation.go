@@ -7,15 +7,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 
-	api_api "github.com/james-nesbitt/kraut-api"
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
 )
 
 // Add operations from the API to the app
-func AppApiOperations(app *cli.App, api api_api.API) error {
-
-	ops := api.Operations()
-
+func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 	for _, id := range ops.Order() {
 		op, _ := ops.Get(id)
 

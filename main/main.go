@@ -6,6 +6,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 
+	api_command "github.com/james-nesbitt/kraut-api/operation/command"
+	cli_local "github.com/james-nesbitt/kraut-cli/local"
 	"github.com/james-nesbitt/kraut-cli/version"
 )
 
@@ -38,15 +40,18 @@ func main() {
 		 */
 	}
 
-	/**
-	 * As a shortcut, we are wiring the CLI to use just a
-	 * local API implementation.  This hand-off function does
-	 * that.
-	 *
-	 * @TODO write a better implementation for this
-	 */
-	AppLocalCommands(app)
+	// Make a local API instance
+	local, _ := cli_local.MakeLocalAPI()
 
+	// Catch the ops
+	localOps := local.Operations()
+
+	// Add any operations from the api to the app
+	AppApiOperations(app, localOps)
+
+	// Add any commands from the api CommandWrapper to the app
+	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(&localOps))
+
+	// Run the CLI command based on passed args
 	app.Run(os.Args)
-
 }
