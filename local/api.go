@@ -4,14 +4,11 @@ import (
 	"errors"
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
 	api_api "github.com/james-nesbitt/kraut-api/api"
 	api_builder "github.com/james-nesbitt/kraut-api/builder"
-	api_config "github.com/james-nesbitt/kraut-api/operation/config"
 	handlers_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
-	handlers_configconnect "github.com/james-nesbitt/kraut-handlers/configconnect"
 	handlers_local "github.com/james-nesbitt/kraut-handlers/local"
 	handlers_null "github.com/james-nesbitt/kraut-handlers/null"
 )
@@ -78,31 +75,12 @@ func MakeLocalAPI() (api_api.API, error) {
 		err = errors.New("No project found.")
 
 	} else {
+		/**
+		 * The automated build is complex enough that it deserves
+		 * it's own method
+		 */
 
-		// build at least the config operations, which we will need for a config wrapper
-		localApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"config"}), nil)
-		configOps := localApi.Operations()
-		configWrapper := api_config.New_SimpleConfigWrapper(&configOps)
-
-		builderConfigWrapper := handlers_configconnect.New_BuilderSettingsConfigWrapperYaml(configWrapper)
-		builderList := builderConfigWrapper.List()
-
-		if len(builderList) == 0 {
-
-			// build all local operations
-			localApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"config", "setting", "project", "orchestrate", "command"}), nil)
-
-		} else {
-
-			for _, key := range builderList {
-				builderSetting, _ := builderConfigWrapper.Get(key)
-
-				log.WithFields(log.Fields{"type": builderSetting.Type, "implementations": builderSetting.Implementations.Order(), "key": key}).Debug("Activate builder from settings")
-
-				localApi.ActivateBuilder(builderSetting.Type, builderSetting.Implementations, builderSetting.Settings)
-			}
-
-		}
+		LocalBuild(&localApi)
 
 	}
 
