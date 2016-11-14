@@ -1,4 +1,4 @@
-package local
+package main
 
 import (
 	"io"
@@ -7,8 +7,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 	"golang.org/x/net/context"
-
-	// libCompose_options "github.com/docker/libcompose/project/options"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
 )

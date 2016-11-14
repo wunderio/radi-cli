@@ -6,9 +6,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 
-	"github.com/james-nesbitt/kraut-cli/version"
-
+	api_command "github.com/james-nesbitt/kraut-api/operation/command"
 	cli_local "github.com/james-nesbitt/kraut-cli/local"
+	"github.com/james-nesbitt/kraut-cli/version"
 )
 
 func main() {
@@ -33,11 +33,25 @@ func main() {
 
 	if debug {
 		log.Info("Enabling verbose debug output")
+
+		/**
+		 * @TODO do something here to make logrus output debug
+		 *  statements
+		 */
 	}
 
-	// Add local commands
-	cli_local.AppLocalCommands(app)
+	// Make a local API instance
+	local, _ := cli_local.MakeLocalAPI()
 
+	// Catch the ops
+	localOps := local.Operations()
+
+	// Add any operations from the api to the app
+	AppApiOperations(app, localOps)
+
+	// Add any commands from the api CommandWrapper to the app
+	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(&localOps))
+
+	// Run the CLI command based on passed args
 	app.Run(os.Args)
-
 }

@@ -1,4 +1,4 @@
-package local
+package main
 
 import (
 	"errors"
@@ -8,19 +8,10 @@ import (
 	"github.com/urfave/cli"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
-	api_command "github.com/james-nesbitt/kraut-api/operation/command"
 )
 
-/**
- * Add Local Commands to the app
- */
-func AppLocalCommands(app *cli.App) error {
-
-	local, err := MakeLocalAPI()
-
-	// get all of the operations
-	ops := local.Operations()
-
+// Add operations from the API to the app
+func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 	for _, id := range ops.Order() {
 		op, _ := ops.Get(id)
 
@@ -47,32 +38,7 @@ func AppLocalCommands(app *cli.App) error {
 		}
 	}
 
-	if comList, err := local.Command.List(""); err == nil {
-		category := "custom"
-
-		for _, key := range comList {
-			comm, _ := local.Command.Get(key)
-
-			commWrapper := CliCommandWrapper{comm: comm}
-
-			cliComm := cli.Command{
-				Name:     "command.exec." + comm.Id(),
-				Aliases:  []string{comm.Id()},
-				Usage:    comm.Description(),
-				Action:   commWrapper.Exec,
-				Category: category,
-			}
-
-			cliComm.Flags = CliMakeFlagsFromProperties(*comm.Properties())
-
-			app.Commands = append(app.Commands, cliComm)
-
-		}
-	} else {
-		log.WithError(err).Error("Failed to list commands")
-	}
-
-	return err
+	return nil
 }
 
 /**
@@ -146,34 +112,4 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 		logger.Info("Operation completed.")
 		return nil
 	}
-}
-
-/**
- * Wrapper for command Exec methods, from the urface CLI
- */
-type CliCommandWrapper struct {
-	comm api_command.Command
-}
-
-// Execute the operation for the cli
-func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
-	log.WithFields(log.Fields{"id": commWrapper.comm.Id()}).Debug("Running command")
-
-	CliAssignPropertiesFromFlags(cliContext, commWrapper.comm.Properties())
-
-	// if there was a command flags property, then add any remaining arguments as flags
-	if flagsProp, found := commWrapper.comm.Properties().Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
-		flagsProp.Set([]string(cliContext.Args()))
-	}
-
-	if success, errs := commWrapper.comm.Exec().Success(); !success {
-		var err error
-		if len(errs) > 0 {
-			err = errs[0]
-		} else {
-			err = errors.New("Unknown error occured")
-		}
-		log.WithError(err).Error("Error occured running command")
-	}
-	return nil
 }
