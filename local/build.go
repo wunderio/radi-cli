@@ -41,7 +41,7 @@ func LocalBuild(localApi *api_builder.BuilderAPI) {
 
 			log.WithFields(log.Fields{"type": builderSetting.Type, "implementations": builderSetting.Implementations.Order(), "key": key}).Debug("Activate builder from settings")
 
-			localApi.ActivateBuilder(builderSetting.Type, builderSetting.Implementations, builderSetting.Settings)
+			localApi.ActivateBuilder(builderSetting.Type, builderSetting.Implementations, builderSetting.SettingsProvider)
 		}
 
 	}
