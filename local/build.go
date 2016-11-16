@@ -42,19 +42,20 @@ func LocalBuild(localApi *api_builder.BuilderAPI) {
 
 		for _, key := range builderList {
 			builderSetting, _ := builderConfigWrapper.Get(key)
+			var err error
 
 			if _, checked := built[builderSetting.Type]; !checked {
-				if err := localAddBuilder(localApi, builderSetting.Type); err == nil {
+				if err = localAddBuilder(localApi, builderSetting.Type); err == nil {
 					built[builderSetting.Type] = true
 				} else {
 					built[builderSetting.Type] = false
 				}
 			}
 
-			if built[builderSetting.Type] {
+			if success, checked := built[builderSetting.Type]; success && checked {
 				log.WithFields(log.Fields{"type": builderSetting.Type, "implementations": builderSetting.Implementations.Order(), "key": key}).Debug("Activate builder from settings")
 				localApi.ActivateBuilder(builderSetting.Type, builderSetting.Implementations, builderSetting.SettingsProvider)
-			} else {				
+			} else {
 				log.WithError(err).WithFields(log.Fields{"builder": builderSetting.Type}).Error("Unknown builder referenced in local project")
 			}
 		}
