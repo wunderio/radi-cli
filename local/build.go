@@ -5,7 +5,7 @@ import (
 
 	api_builder "github.com/james-nesbitt/kraut-api/builder"
 	api_config "github.com/james-nesbitt/kraut-api/operation/config"
-	handlers_configconnect "github.com/james-nesbitt/kraut-handlers/configconnect"
+	handlers_configwrapper "github.com/james-nesbitt/kraut-handlers/configwrapper"
 	handlers_upcloud "github.com/james-nesbitt/kraut-handlers/upcloud"
 )
 
@@ -19,7 +19,7 @@ func LocalBuild(localApi *api_builder.BuilderAPI) {
 	configWrapper := api_config.New_SimpleConfigWrapper(&configOps)
 
 	// Use the builderConfigWrapper to list build components
-	builderConfigWrapper := handlers_configconnect.New_BuilderSettingsConfigWrapperYaml(configWrapper)
+	builderConfigWrapper := handlers_configwrapper.New_BuilderSettingsConfigWrapperYaml(configWrapper)
 	builderList := builderConfigWrapper.List()
 
 	if len(builderList) == 0 {
