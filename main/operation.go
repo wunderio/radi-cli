@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
+	api_security "github.com/james-nesbitt/kraut-api/operation/security"
 )
 
 // Add operations from the API to the app
@@ -96,6 +97,9 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 				fields[key] = prop.Get().(int64)
 			case "bool":
 				fields[key] = prop.Get().(bool)
+			case "github.com/james-nesbitt/kraut-api/operation/security.SecurityUser":
+				user := prop.Get().(api_security.SecurityUser)
+				fields[key] = user.Id()
 			}
 		}
 	}
