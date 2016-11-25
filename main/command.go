@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli.v2"
 
 	api_command "github.com/james-nesbitt/kraut-api/operation/command"
 )
@@ -39,7 +39,8 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 
 			cliComm.Flags = CliMakeFlagsFromProperties(*comm.Properties())
 
-			app.Commands = append(app.Commands, cliComm)
+			log.WithFields(log.Fields{"id": comm.Id()}).Debug("CLI: Adding API command")
+			app.Commands = append(app.Commands, &cliComm)
 
 		}
 
@@ -66,7 +67,7 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 
 	// if there was a command flags property, then add any remaining arguments as flags
 	if flagsProp, found := commWrapper.comm.Properties().Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
-		flagsProp.Set([]string(cliContext.Args()))
+		flagsProp.Set([]string(cliContext.Args().Slice()))
 	}
 
 	if success, errs := commWrapper.comm.Exec().Success(); !success {
