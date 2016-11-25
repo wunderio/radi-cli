@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli.v2"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
 	api_security "github.com/james-nesbitt/kraut-api/operation/security"
@@ -35,7 +35,8 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 
 			cliComm.Flags = CliMakeFlagsFromProperties(*op.Properties())
 
-			app.Commands = append(app.Commands, cliComm)
+			log.WithFields(log.Fields{"id": id}).Debug("Cli: Adding Operation")
+			app.Commands = append(app.Commands, &cliComm)
 		}
 	}
 
@@ -71,7 +72,7 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 	if success, errs = opWrapper.op.Exec().Success(); !success {
 		if len(errs) == 0 {
-			errs = []error{errors.New("Unknown error occured")}
+			errs = []error{errors.New("KrautCLI: Unknown error occured")}
 		}
 	}
 

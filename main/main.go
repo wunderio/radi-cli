@@ -4,7 +4,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli.v2"
 
 	api_command "github.com/james-nesbitt/kraut-api/operation/command"
 	cli_local "github.com/james-nesbitt/kraut-cli/local"
@@ -14,21 +14,21 @@ import (
 func main() {
 	var debug bool
 
-	app := cli.NewApp()
+	app := &cli.App{}
+
 	app.Name = "wundertools"
 	app.Usage = "Command line interface for Kraut API."
 	app.Version = version.VERSION + " (" + version.GITCOMMIT + ")"
-	app.Author = "Wunder.IO"
-	app.Email = "https://github.com/james-nesbitt/kraut-cli"
+	app.Authors = []*cli.Author{&cli.Author{Name: "Wunder.IO", Email: "https://github.com/james-nesbitt/kraut-cli"}}
 
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:        "debug, d",
-			Usage:       "Enable verbose debugging output",
-			EnvVar:      "KRAUT_DEBUG",
-			Hidden:      false,
-			Destination: &debug,
-		},
+	// 	cli.Flag(cli.BoolFlag{
+	// 		Name:        "debug, d",
+	// 		Usage:       "Enable verbose debugging output",
+	// 		EnvVars:     []string{"KRAUT_DEBUG"},
+	// 		Hidden:      false,
+	// 		Destination: &debug,
+	// 	}),
 	}
 
 	if debug {
@@ -51,6 +51,8 @@ func main() {
 
 	// Add any commands from the api CommandWrapper to the app
 	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(&localOps))
+
+	app.Setup()
 
 	// Run the CLI command based on passed args
 	app.Run(os.Args)

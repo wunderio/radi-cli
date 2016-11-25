@@ -9,7 +9,7 @@ echo "  --> updating go dependencies"
 
 DEPS="golang.org/x/net/context
 github.com/Sirupsen/logrus
-github.com/urfave/cli
+github.com/urfave/cli.v2
 gopkg.in/yaml.v2
 github.com/docker/libcompose
 github.com/Jalle19/upcloud-go-sdk/upcloud/
