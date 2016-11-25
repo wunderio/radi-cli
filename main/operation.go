@@ -81,40 +81,42 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 		"success": success,
 		"errors":  errs,
 	}
-	for _, key := range props.Order() {
-		prop, _ := props.Get(key)
 
-		if !prop.Internal() {
-			switch prop.Type() {
-			case "string":
-				fields[key] = prop.Get().(string)
-			case "[]string":
-				fields[key] = prop.Get().([]string)
-			case "[]byte":
-				fields[key] = string(prop.Get().([]byte))
-			case "int32":
-				fields[key] = int(prop.Get().(int32))
-			case "int64":
-				fields[key] = prop.Get().(int64)
-			case "bool":
-				fields[key] = prop.Get().(bool)
-			case "github.com/james-nesbitt/kraut-api/operation/security.SecurityUser":
-				user := prop.Get().(api_security.SecurityUser)
-				fields[key] = user.Id()
-			}
-		}
-	}
 	logger = logger.WithFields(log.Fields(fields))
 
-	if len(errs) > 0 {
+	if success {
+		for _, key := range props.Order() {
+			prop, _ := props.Get(key)
+
+			if !prop.Internal() {
+				switch prop.Type() {
+				case "string":
+					fields[key] = prop.Get().(string)
+				case "[]string":
+					fields[key] = prop.Get().([]string)
+				case "[]byte":
+					fields[key] = string(prop.Get().([]byte))
+				case "int32":
+					fields[key] = int(prop.Get().(int32))
+				case "int64":
+					fields[key] = prop.Get().(int64)
+				case "bool":
+					fields[key] = prop.Get().(bool)
+				case "github.com/james-nesbitt/kraut-api/operation/security.SecurityUser":
+					user := prop.Get().(api_security.SecurityUser)
+					fields[key] = user.Id()
+				}
+			}
+		}
+
+		logger.Info("Operation completed.")
+		return nil
+	} else {
 		for _, err := range errs {
 			logger = logger.WithError(err)
 		}
 
 		logger.Error("Error occured running operation")
-		return errs[0]
-	} else {
-		logger.Info("Operation completed.")
-		return nil
+		return errs[len(errs)-1]
 	}
 }
