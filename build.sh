@@ -4,8 +4,8 @@
 # Build wundertools in a container
 #
 # @NOTE to specify a different os/arch:
-#    - GOOS : linux osx windows
-#    - GOARCH : 386 x64 rpi arm
+#    - GOOS : linux darwin windows
+#    - GOARCH : amd64 arm arm64
 #
 # @NOTE !does not install it yet
 #  (installs it, but inside the container)
@@ -17,7 +17,7 @@ source build/make.sh
 EXEC_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INTERNAL_LIBRARY_PATH="github.com/james-nesbitt/kraut-cli"
 
-echo "This will build the kraut-cli as a 'kraut' binary for '$GOOS-$GOARCH'. Change this by setting \$GOOS and \$GOARCH environment variables.
+echo "This will build the kraut-cli as a 'kraut' binary for '$GOOS-$GOARCH'. Override this by setting \$GOOS and \$GOARCH environment variables.
 
  **** Building in containerized golang environment
  "
