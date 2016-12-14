@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli.v2"
+	"gopkg.in/urfave/cli.v2"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
 	api_security "github.com/james-nesbitt/kraut-api/operation/security"
