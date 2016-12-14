@@ -22,13 +22,13 @@ func main() {
 	app.Authors = []*cli.Author{&cli.Author{Name: "Wunder.IO", Email: "https://github.com/james-nesbitt/kraut-cli"}}
 
 	app.Flags = []cli.Flag{
-		cli.Flag(cli.Flag(&cli.BoolFlag{
+		cli.Flag(&cli.BoolFlag{
 			Name:        "debug",
 			Usage:       "Enable verbose debugging output",
 			EnvVars:     []string{"KRAUT_DEBUG"},
 			Hidden:      false,
 			Destination: &debug,
-		})),
+		}),
 	}
 
 	// Run these functions before processing
