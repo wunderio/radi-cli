@@ -1,4 +1,4 @@
-Wundertools-go
+kraut-cli
 --------------
 
-A rewrite of Wundertools, with a docker-centric approach.
+A rewrite of [WunderTools](http://wundertools.wunder.io), with a docker-centric approach.
