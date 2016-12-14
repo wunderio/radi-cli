@@ -4,7 +4,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli.v2"
+	"gopkg.in/urfave/cli.v2"
 
 	api_command "github.com/james-nesbitt/kraut-api/operation/command"
 	cli_local "github.com/james-nesbitt/kraut-cli/local"

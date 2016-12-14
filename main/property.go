@@ -5,8 +5,8 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/urfave/cli.v2"
 	"golang.org/x/net/context"
+	"gopkg.in/urfave/cli.v2"
 
 	api_operation "github.com/james-nesbitt/kraut-api/operation"
 )
