@@ -15,7 +15,7 @@ github.com/docker/libcompose
 github.com/Jalle19/upcloud-go-sdk/upcloud/
 github.com/Jalle19/upcloud-go-sdk/upcloud/client
 github.com/rancher/go-rancher/v2
-github.com/wunderkraut/init-go
+github.com/james-nesbitt/init-go
 github.com/wunderkraut/radi-api
 github.com/wunderkraut/radi-handlers"
 
