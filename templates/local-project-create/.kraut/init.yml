@@ -1,7 +1,7 @@
 - Type: File
-  path: .kraut/settings.yml
+  path: .radi/settings.yml
   Contents: |2
-    Author: WunderKraut
+    Author: WunderRadi
     Client: Internal
     Country: LV
     Geo.City: Rīga
@@ -11,7 +11,7 @@
     time: Mon Oct 24 14:51:39 EEST 2016
     
 - Type: File
-  path: .kraut/commands.yml
+  path: .radi/commands.yml
   Contents: |2
     
     shell:

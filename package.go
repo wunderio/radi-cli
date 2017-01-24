@@ -1,1 +1,1 @@
-package krautcli
+package radicli

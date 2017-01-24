@@ -14,9 +14,10 @@ gopkg.in/yaml.v2
 github.com/docker/libcompose
 github.com/Jalle19/upcloud-go-sdk/upcloud/
 github.com/Jalle19/upcloud-go-sdk/upcloud/client
+github.com/rancher/go-rancher/v2
 github.com/james-nesbitt/init-go
-github.com/james-nesbitt/kraut-api
-github.com/james-nesbitt/kraut-handlers"
+github.com/james-nesbitt/radi-api
+github.com/james-nesbitt/radi-handlers"
 
 for DEP in $DEPS; do
 	echo "     - ${DEP}"
