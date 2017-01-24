@@ -7,14 +7,14 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
-	api_api "github.com/james-nesbitt/radi-api/api"
-	api_builder "github.com/james-nesbitt/radi-api/builder"
-	api_config "github.com/james-nesbitt/radi-api/operation/config"
-	handlers_bytesource "github.com/james-nesbitt/radi-handlers/bytesource"
-	handlers_configwrapper "github.com/james-nesbitt/radi-handlers/configwrapper"
-	handlers_local "github.com/james-nesbitt/radi-handlers/local"
-	handlers_null "github.com/james-nesbitt/radi-handlers/null"
-	handlers_upcloud "github.com/james-nesbitt/radi-handlers/upcloud"
+	api_api "github.com/wunderkraut/radi-api/api"
+	api_builder "github.com/wunderkraut/radi-api/builder"
+	api_config "github.com/wunderkraut/radi-api/operation/config"
+	handlers_bytesource "github.com/wunderkraut/radi-handlers/bytesource"
+	handlers_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
+	handlers_local "github.com/wunderkraut/radi-handlers/local"
+	handlers_null "github.com/wunderkraut/radi-handlers/null"
+	handlers_upcloud "github.com/wunderkraut/radi-handlers/upcloud"
 )
 
 const (

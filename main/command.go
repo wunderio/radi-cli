@@ -6,7 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
-	api_command "github.com/james-nesbitt/radi-api/operation/command"
+	api_command "github.com/wunderkraut/radi-api/operation/command"
 )
 
 /**

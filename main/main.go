@@ -6,9 +6,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
-	api_command "github.com/james-nesbitt/radi-api/operation/command"
-	cli_local "github.com/james-nesbitt/radi-cli/local"
-	"github.com/james-nesbitt/radi-cli/version"
+	api_command "github.com/wunderkraut/radi-api/operation/command"
+	cli_local "github.com/wunderkraut/radi-cli/local"
+	"github.com/wunderkraut/radi-cli/version"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	app.Name = "wundertools"
 	app.Usage = "Command line interface for Radi API."
 	app.Version = version.VERSION + " (" + version.GITCOMMIT + ")"
-	app.Authors = []*cli.Author{&cli.Author{Name: "Wunder.IO", Email: "https://github.com/james-nesbitt/radi-cli"}}
+	app.Authors = []*cli.Author{&cli.Author{Name: "Wunder.IO", Email: "https://github.com/wunderkraut/radi-cli"}}
 
 	app.Flags = []cli.Flag{
 		cli.Flag(&cli.BoolFlag{

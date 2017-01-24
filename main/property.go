@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/context"
 	"gopkg.in/urfave/cli.v2"
 
-	api_operation "github.com/james-nesbitt/radi-api/operation"
+	api_operation "github.com/wunderkraut/radi-api/operation"
 )
 
 // Assign properties from flags back to properties

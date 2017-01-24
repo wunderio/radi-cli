@@ -7,8 +7,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
-	api_operation "github.com/james-nesbitt/radi-api/operation"
-	api_security "github.com/james-nesbitt/radi-api/operation/security"
+	api_operation "github.com/wunderkraut/radi-api/operation"
+	api_security "github.com/wunderkraut/radi-api/operation/security"
 )
 
 // Add operations from the API to the app
@@ -102,7 +102,7 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 					fields[key] = prop.Get().(int64)
 				case "bool":
 					fields[key] = prop.Get().(bool)
-				case "github.com/james-nesbitt/radi-api/operation/security.SecurityUser":
+				case "github.com/wunderkraut/radi-api/operation/security.SecurityUser":
 					user := prop.Get().(api_security.SecurityUser)
 					fields[key] = user.Id()
 				}

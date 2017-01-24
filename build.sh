@@ -15,7 +15,7 @@ source build/.os-detect
 source build/make.sh
 
 EXEC_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INTERNAL_LIBRARY_PATH="github.com/james-nesbitt/radi-cli"
+INTERNAL_LIBRARY_PATH="github.com/wunderkraut/radi-cli"
 
 echo "This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'. Override this by setting \$GOOS and \$GOARCH environment variables.
 
