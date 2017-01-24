@@ -6,9 +6,9 @@ GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
 GOARCH="${GOARCH:-x64}"
 GOVERSION="latest"
 
-export KRAUT_PKG='github.com/wunder/kraut-cli'
+export KRAUT_PKG='github.com/wunder/radi-cli'
 export KRAUT_BUILD_PATH="./bin"
-export KRAUT_BINARY_NAME="kraut"
+export KRAUT_BINARY_NAME="radi"
 
 export KRAUT_BUILD_BINARY_PATH="${KRAUT_BUILD_PATH}/${KRAUT_BINARY_NAME}"
 export KRAUT_INSTALL_PATH="${GOPATH}/bin/${KRAUT_BINARY_NAME}"

@@ -7,19 +7,19 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
-	api_api "github.com/james-nesbitt/kraut-api/api"
-	api_builder "github.com/james-nesbitt/kraut-api/builder"
-	api_config "github.com/james-nesbitt/kraut-api/operation/config"
-	handlers_bytesource "github.com/james-nesbitt/kraut-handlers/bytesource"
-	handlers_configwrapper "github.com/james-nesbitt/kraut-handlers/configwrapper"
-	handlers_local "github.com/james-nesbitt/kraut-handlers/local"
-	handlers_null "github.com/james-nesbitt/kraut-handlers/null"
-	handlers_upcloud "github.com/james-nesbitt/kraut-handlers/upcloud"
+	api_api "github.com/wunderkraut/radi-api/api"
+	api_builder "github.com/wunderkraut/radi-api/builder"
+	api_config "github.com/wunderkraut/radi-api/operation/config"
+	handlers_bytesource "github.com/wunderkraut/radi-handlers/bytesource"
+	handlers_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
+	handlers_local "github.com/wunderkraut/radi-handlers/local"
+	handlers_null "github.com/wunderkraut/radi-handlers/null"
+	handlers_upcloud "github.com/wunderkraut/radi-handlers/upcloud"
 )
 
 const (
-	WUNDERTOOLS_PROJECT_CONF_FOLDER = ".kraut" // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
-	WUNDERTOOLS_USER_CONF_SUBPATH   = "kraut"  // If the user has user-scope config, they will be in this subfolder
+	WUNDERTOOLS_PROJECT_CONF_FOLDER = ".radi" // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
+	WUNDERTOOLS_USER_CONF_SUBPATH   = "radi"  // If the user has user-scope config, they will be in this subfolder
 )
 
 /**

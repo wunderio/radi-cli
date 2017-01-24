@@ -5,7 +5,7 @@ import (
 	"os/user"
 	"path"
 
-	handlers_local "github.com/james-nesbitt/kraut-handlers/local"
+	handlers_local "github.com/wunderkraut/radi-handlers/local"
 )
 
 /**

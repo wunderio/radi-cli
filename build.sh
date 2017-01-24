@@ -15,9 +15,9 @@ source build/.os-detect
 source build/make.sh
 
 EXEC_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-INTERNAL_LIBRARY_PATH="github.com/james-nesbitt/kraut-cli"
+INTERNAL_LIBRARY_PATH="github.com/wunderkraut/radi-cli"
 
-echo "This will build the kraut-cli as a 'kraut' binary for '$GOOS-$GOARCH'. Override this by setting \$GOOS and \$GOARCH environment variables.
+echo "This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'. Override this by setting \$GOOS and \$GOARCH environment variables.
 
  **** Building in containerized golang environment
  "
