@@ -11,6 +11,24 @@ import (
 	api_operation "github.com/wunderkraut/radi-api/operation"
 )
 
+/**
+ * Convert between operation.Property and CLI flag formats.
+ *
+ * There are two functions here to convert CLI flags into
+ * operation Property structs (to assign values) and back
+ * which allows us to directly use Operations properties as
+ * CLI flags without only a thin abstraction layer.
+ *
+ * The weakness is that we can only abstract property types
+ * that we can understand, usually primitives and common
+ * types.  If a handler provides a custom property that we
+ * don't know about, then we cannot convert it into a flag.
+ * This has not caused any problems yet.  These complex cases
+ * usually have triggered either a property refactor into
+ * simpler primitives, or an alternat approach to setting
+ * properties (like relying on config source like yml)
+ */
+
 // Assign properties from flags back to properties
 func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.Properties) error {
 	for _, key := range props.Order() {
@@ -20,6 +38,7 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 
 		prop, _ := props.Get(key)
 
+		// skip any property marked for internal use only
 		if !prop.Internal() {
 
 			switch prop.Type() {
@@ -90,6 +109,7 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 	for _, key := range props.Order() {
 		prop, _ := props.Get(key)
 
+		// skip any property marked as being for internal use only
 		if !prop.Internal() {
 
 			switch prop.Type() {
@@ -149,6 +169,12 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 
 			default:
 				log.WithFields(log.Fields{"id": prop.Id(), "property": prop}).Debug("Unhandled property type for operation")
+
+				/**
+				 * originally we were wrapping these unhandled argument types
+				 * using a generic handler, but it gave us no real value in
+				 * using them, so we stopped.
+				 */
 				// converted := cli.Generic(&UnHandledProperty{property: prop})
 				// flags = append(flags, cli.Flag(&cli.GenericFlag{
 				// 	Name:  prop.Id(),
