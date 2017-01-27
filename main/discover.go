@@ -11,6 +11,7 @@ import (
 const (
 	RADI_PROJECT_CONF_FOLDER = ".radi" // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
 	RADI_USER_CONF_SUBPATH   = "radi"  // If the user has user-scope config, they will be in this subfolder
+	RADI_ENVIRONMENT_CONF_SUBPATH = "environments" // a subpath in .radi for per environment settings
 )
 
 /**
@@ -127,7 +128,7 @@ func DiscoverEnvironmentPath(settings *handlers_local.LocalAPISettings, environm
 	 */
 
 	// add the environment sub path of the main project conf directory, as a conf path
-	settings.ConfigPaths.Set(environment, path.Join(settings.ProjectRootPath, RADI_PROJECT_CONF_FOLDER, environment))
+	settings.ConfigPaths.Set(environment, path.Join(settings.ProjectRootPath, RADI_PROJECT_CONF_FOLDER, RADI_ENVIRONMENT_CONF_SUBPATH, environment))
 
 	return nil
 }
