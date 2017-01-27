@@ -18,7 +18,8 @@ import (
  *
  * @todo should this receive an API list of operations and
  *  build it's own command wrapper, or should we abstract
- *  retrieving wrappers from api structs?
+ *  retrieving wrappers from api structs? both approaches
+ *  have advantages
  */
 func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error {
 	if comList, err := commands.List(""); err == nil {
@@ -53,6 +54,10 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 
 /**
  * Wrapper for command Exec methods, from the urface CLI
+ *
+ * The job of this struct is to wrap an API command struct in
+ * a format that meets the requirements of the urfave.CLI library
+ * mainly by translating the .Exec() method arguments and output.
  */
 type CliCommandWrapper struct {
 	comm api_command.Command
