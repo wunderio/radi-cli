@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	RADI_PROJECT_CONF_FOLDER = ".radi" // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
-	RADI_USER_CONF_SUBPATH   = "radi"  // If the user has user-scope config, they will be in this subfolder
+	RADI_PROJECT_CONF_FOLDER      = ".radi"        // If the project has existing setitngs, they will be in this subfolder, somewhere up the file tree.
+	RADI_USER_CONF_SUBPATH        = "radi"         // If the user has user-scope config, they will be in this subfolder
 	RADI_ENVIRONMENT_CONF_SUBPATH = "environments" // a subpath in .radi for per environment settings
 )
 

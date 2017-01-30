@@ -11,6 +11,7 @@ import (
 	handlers_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
 	handlers_local "github.com/wunderkraut/radi-handlers/local"
 	handlers_null "github.com/wunderkraut/radi-handlers/null"
+	handlers_rancher "github.com/wunderkraut/radi-handlers/rancher"
 	handlers_upcloud "github.com/wunderkraut/radi-handlers/upcloud"
 )
 
@@ -94,6 +95,9 @@ func MakeLocalAPI(settings handlers_local.LocalAPISettings) (api_api.API, error)
 				case "upcloud":
 					log.Debug("LocalAPI: Building UpCloud builder")
 					localApi.AddBuilder(api_builder.Builder(&handlers_upcloud.UpcloudBuilder{}))
+				case "rancher":
+					log.Debug("LocalAPI: Building Rancher builder")
+					localApi.AddBuilder(api_builder.Builder(&handlers_rancher.RancherBuilder{}))
 				default:
 					buildErr = errors.New("Unrecognized builder " + builderSetting.Type)
 					log.WithError(buildErr).Error("Could not build " + builderSetting.Type)
