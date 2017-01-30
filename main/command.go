@@ -38,7 +38,7 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 				Category: category,
 			}
 
-			cliComm.Flags = CliMakeFlagsFromProperties(*comm.Properties())
+			cliComm.Flags = CliMakeFlagsFromProperties(comm.Properties())
 
 			log.WithFields(log.Fields{"id": comm.Id()}).Debug("CLI: Adding API command")
 			app.Commands = append(app.Commands, &cliComm)
@@ -68,15 +68,21 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 	logger := log.WithFields(log.Fields{"id": commWrapper.comm.Id()})
 	logger.Debug("Running command")
 
-	CliAssignPropertiesFromFlags(cliContext, commWrapper.comm.Properties())
+	comm := commWrapper.comm
+	props := comm.Properties()
+	CliAssignPropertiesFromFlags(cliContext, &props)
 
 	// if there was a command flags property, then add any remaining arguments as flags
-	if flagsProp, found := commWrapper.comm.Properties().Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
+	if flagsProp, found := props.Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
 		flagsProp.Set([]string(cliContext.Args().Slice()))
 	}
 
-	if success, errs := commWrapper.comm.Exec().Success(); !success {
+	result := comm.Exec(&props)
+	<-result.Finished()
+
+	if !result.Success() {
 		var err error
+		errs := result.Errors()
 
 		if len(errs) > 0 {
 			for _, err := range errs {
@@ -84,7 +90,7 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 			}
 			err = errs[0]
 		} else {
-			err = errors.New("Command failed to execute for unknown reasons")
+			err = errors.New("Command failed to execute for unknown reasons.")
 			logger = logger.WithError(err)
 		}
 

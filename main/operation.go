@@ -33,7 +33,7 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 				Category: category,
 			}
 
-			cliComm.Flags = CliMakeFlagsFromProperties(*op.Properties())
+			cliComm.Flags = CliMakeFlagsFromProperties(op.Properties())
 
 			log.WithFields(log.Fields{"id": id}).Debug("Cli: Adding Operation")
 			app.Commands = append(app.Commands, &cliComm)
@@ -65,12 +65,16 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 	props := opWrapper.op.Properties()
 
-	CliAssignPropertiesFromFlags(cliContext, props)
+	CliAssignPropertiesFromFlags(cliContext, &props)
 
 	var success bool
-	var errs []error
+	var errs []error = []error{}
 
-	if success, errs = opWrapper.op.Exec().Success(); !success {
+	result := opWrapper.op.Exec(&props)
+	<-result.Finished()
+
+	if !result.Success() {
+		errs := result.Errors()
 		if len(errs) == 0 {
 			errs = []error{errors.New("RadiCLI: Unknown error occured")}
 		}
