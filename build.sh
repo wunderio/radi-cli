@@ -17,7 +17,11 @@ source build/make.sh
 EXEC_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INTERNAL_LIBRARY_PATH="github.com/wunderkraut/radi-cli"
 
-echo "This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'. Override this by setting \$GOOS and \$GOARCH environment variables.
+echo "***** Building RADI cli client.
+
+This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'. 
+
+(Override this by setting \$GOOS and \$GOARCH environment variables)
 
  **** Building in containerized golang environment
  "
@@ -31,10 +35,39 @@ docker run --rm -ti \
 	golang:${GOVERSION} \
 	make getdeps build
 
-echo " **** Containerized build complete
+echo " 
 
-You should now have a binary ${KRAUT_BUILD_BINARY_PATH}
-you can run this directly or install it somewhere usefull.
+Exited container
+"
+
+echo " **** Containerized build complete 
+
+an executable binary has (hopefully) now been built 
+in ${KRAUT_BUILD_BINARY_PATH}
 
 "
+
+export KRAUT_INSTALL_PATH="/usr/local/bin"
+
+echo " **** Installation
+
+This installer can now install the built binary for you,
+if you don't want to do it manually.
+
+The planned installation path is : ${KRAUT_INSTALL_PATH}
+
+Would you like to me install a binary to that location? (y/n)
+"
+read  yninstall
+    case "$yninstall" in
+        [Yy]* ) 
+
+			make install
+
+			;;
+        *) 
+			echo " "
+			echo "skipped installation"
+			;;
+    esac
 #ls -la ${KRAUT_BUILD_BINARY_PATH}

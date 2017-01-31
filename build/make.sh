@@ -2,16 +2,18 @@
 set -e
 
 # We should be determining these automatically somehow?
-GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
-GOARCH="${GOARCH:-x64}"
-GOVERSION="latest"
+export GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
+export GOARCH="${GOARCH:-x64}"
+export GOVERSION="latest"
 
 export KRAUT_PKG='github.com/wunder/radi-cli'
 export KRAUT_BUILD_PATH="./bin"
 export KRAUT_BINARY_NAME="radi"
 
 export KRAUT_BUILD_BINARY_PATH="${KRAUT_BUILD_PATH}/${KRAUT_BINARY_NAME}"
-export KRAUT_INSTALL_PATH="${GOPATH}/bin/${KRAUT_BINARY_NAME}"
+
+[ -z "${KRAUT_INSTALL_PATH}" ] && export KRAUT_INSTALL_PATH="${GOPATH}/bin"
+export KRAUT_INSTALL_BINARY="${KRAUT_INSTALL_PATH}/${KRAUT_BINARY_NAME}"
 
 # Build a bundle
 bundle() {
