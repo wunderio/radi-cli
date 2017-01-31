@@ -32,6 +32,7 @@ import (
 // Assign properties from flags back to properties
 func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.Properties) error {
 	for _, key := range props.Order() {
+
 		if !cliContext.IsSet(key) {
 			continue
 		}
@@ -93,7 +94,7 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 					}
 				}
 			default:
-				log.WithFields(log.Fields{"id": prop.Id(), "property": prop, "flag": cliContext.Generic(key)}).Debug("Unhandled property type for operation")
+				log.WithFields(log.Fields{"id": prop.Id(), "property": prop, "flag": cliContext.Generic(key)}).Debug("CLI does not handle any flags for property type")
 			}
 
 		}
@@ -168,7 +169,7 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 				}))
 
 			default:
-				log.WithFields(log.Fields{"id": prop.Id(), "property": prop}).Debug("Unhandled property type for operation")
+				log.WithFields(log.Fields{"id": prop.Id(), "property": prop}).Debug("CLI does not yet handle property type for operation")
 
 				/**
 				 * originally we were wrapping these unhandled argument types
