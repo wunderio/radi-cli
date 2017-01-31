@@ -47,7 +47,11 @@ in ${KRAUT_BUILD_BINARY_PATH}
 
 "
 
+# @TODO implement some improved logic for determining
+#    Install path, and sudo
+
 export KRAUT_INSTALL_PATH="/usr/local/bin"
+export KRAUT_INSTALL_SUDO="`which sudo`"
 
 echo " **** Installation
 
@@ -59,15 +63,14 @@ The planned installation path is : ${KRAUT_INSTALL_PATH}
 Would you like to me install a binary to that location? (y/n)
 "
 read  yninstall
-    case "$yninstall" in
-        [Yy]* ) 
+case "$yninstall" in
+    [Yy]* )
 
-			make install
+		${KRAUT_INSTALL_SUDO} -E make install
 
-			;;
-        *) 
-			echo " "
-			echo "skipped installation"
-			;;
-    esac
-#ls -la ${KRAUT_BUILD_BINARY_PATH}
+		;;
+    *)
+		echo " "
+		echo "skipped installation"
+		;;
+esac

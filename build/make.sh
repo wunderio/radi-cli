@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# @NOTE Do not do any logic or funcationaliy in this file
+#    as it may in some circumstances be sources in an
+#    escalated permission environment
+
 # We should be determining these automatically somehow?
 export GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
 export GOARCH="${GOARCH:-x64}"
