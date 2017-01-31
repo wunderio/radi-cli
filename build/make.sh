@@ -7,7 +7,7 @@ set -e
 
 # We should be determining these automatically somehow?
 export GOOS="${GOOS:-linux}" # Perhaps you would prefer "osx" ?
-export GOARCH="${GOARCH:-x64}"
+export GOARCH="${GOARCH:-amd64}"
 export GOVERSION="latest"
 
 export KRAUT_PKG='github.com/wunder/radi-cli'

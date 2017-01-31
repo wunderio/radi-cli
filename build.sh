@@ -33,7 +33,7 @@ docker run --rm -ti \
 	-e "GOARCH=${GOARCH}" \
 	-w /usr/src/myapp \
 	golang:${GOVERSION} \
-	make getdeps build
+	make clean getdeps build
 
 echo " 
 
@@ -51,7 +51,6 @@ in ${KRAUT_BUILD_BINARY_PATH}
 #    Install path, and sudo
 
 export KRAUT_INSTALL_PATH="/usr/local/bin"
-export KRAUT_INSTALL_SUDO="`which sudo`"
 
 echo " **** Installation
 
@@ -66,7 +65,14 @@ read  yninstall
 case "$yninstall" in
     [Yy]* )
 
-		${KRAUT_INSTALL_SUDO} -E make install
+		if [ -w "KRAUT_INSTALL_PATH" ] ; then 
+			export KRAUT_INSTALL_SUDO=""
+		else 
+			export KRAUT_INSTALL_SUDO="`which sudo`  -E"
+			echo "--> detected that sudo will be required, as you don't have write privelege to the target path"
+		fi
+
+		${KRAUT_INSTALL_SUDO} make install
 
 		;;
     *)

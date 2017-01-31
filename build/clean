@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "  --> Cleaning by removing build path: ${KRAUT_BUILD_PATH}"
+echo "  --> Cleaning by removing build : ${KRAUT_BUILD_BINARY_PATH}"
 
 # Get rid of existing binary
 rm -f "${KRAUT_BUILD_BINARY_PATH}"
