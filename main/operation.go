@@ -23,8 +23,10 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 			id := op.Id()
 			category := id[0:strings.Index(id, ".")]
 			alias := id[strings.Index(id, ".")+1:]
-			opWrapper := CliOperationWrapper{op: op}
 
+			log.WithFields(log.Fields{"id": id, "category": category, "alias": alias}).Debug("Cli: Adding Operation")
+
+			opWrapper := CliOperationWrapper{op: op}
 			cliComm := cli.Command{
 				Name:     op.Id(),
 				Aliases:  []string{alias},
@@ -33,9 +35,8 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 				Category: category,
 			}
 
-			cliComm.Flags = CliMakeFlagsFromProperties(*op.Properties())
+			cliComm.Flags = CliMakeFlagsFromProperties(op.Properties())
 
-			log.WithFields(log.Fields{"id": id}).Debug("Cli: Adding Operation")
 			app.Commands = append(app.Commands, &cliComm)
 		}
 	}
@@ -65,15 +66,16 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 	props := opWrapper.op.Properties()
 
-	CliAssignPropertiesFromFlags(cliContext, props)
+	CliAssignPropertiesFromFlags(cliContext, &props)
 
-	var success bool
-	var errs []error
+	result := opWrapper.op.Exec(&props)
+	<-result.Finished()
 
-	if success, errs = opWrapper.op.Exec().Success(); !success {
-		if len(errs) == 0 {
-			errs = []error{errors.New("RadiCLI: Unknown error occured")}
-		}
+	success := result.Success() // bool
+	errs := result.Errors()     // []error
+
+	if !success && len(errs) == 0 {
+		errs = []error{errors.New("RadiCLI: Unknown error occured")}
 	}
 
 	// Create some meaningful output, by logging some of the properties
@@ -117,6 +119,10 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 		}
 
 		logger.Error("Error occured running operation")
-		return errs[len(errs)-1]
+		if len(errs) > 0 {
+			return errs[len(errs)-1]
+		} else {
+			return errors.New("Unknown error occured when trying to run an operation")
+		}
 	}
 }
