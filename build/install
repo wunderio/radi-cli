@@ -3,7 +3,4 @@ set -e
 
 echo "  --> Installing last compiled binary (${KRAUT_BUILD_BINARY_PATH}) to: ${KRAUT_INSTALL_PATH}"
 
-# Get rid of existing binary
-rm -f "${KRAUT_INSTALL_PATH}"
-
-cp "${KRAUT_BUILD_BINARY_PATH}" "${KRAUT_INSTALL_PATH}"
+cp "${KRAUT_BUILD_BINARY_PATH}" "${KRAUT_INSTALL_BINARY}"
