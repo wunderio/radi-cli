@@ -1,23 +1,18 @@
 #!/bin/bash
 set -e
 
-echo "  --> updating go dependencies"
+echo "  --> retrieving go dependencies [recursively]"
 
 # Update all cli go dependencies
 
 #ORIGINALLY we were doing this go get -u ./cli/main
 
-DEPS="golang.org/x/net/context
-github.com/Sirupsen/logrus
+DEPS="github.com/Sirupsen/logrus
 gopkg.in/urfave/cli.v2
-gopkg.in/yaml.v2
-github.com/docker/libcompose
-github.com/Jalle19/upcloud-go-sdk/upcloud/
-github.com/Jalle19/upcloud-go-sdk/upcloud/client
-github.com/rancher/go-rancher/v2
-github.com/james-nesbitt/init-go
 github.com/wunderkraut/radi-api
-github.com/wunderkraut/radi-handlers"
+github.com/wunderkraut/radi-handlers
+github.com/wunderkraut/radi-handler-upcloud
+github.com/wunderkraut/radi-handler-rancher"
 
 for DEP in $DEPS; do
 	echo "     - ${DEP}"
