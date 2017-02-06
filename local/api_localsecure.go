@@ -8,11 +8,11 @@ import (
 	api_api "github.com/wunderkraut/radi-api/api"
 	api_builder "github.com/wunderkraut/radi-api/builder"
 	api_config "github.com/wunderkraut/radi-api/operation/config"
-	handlers_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
-	handlers_local "github.com/wunderkraut/radi-handlers/local"
-	handlers_null "github.com/wunderkraut/radi-handlers/null"
-	handlers_rancher "github.com/wunderkraut/radi-handlers/rancher"
-	handlers_upcloud "github.com/wunderkraut/radi-handlers/upcloud"
+	handler_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
+	handler_local "github.com/wunderkraut/radi-handlers/local"
+	handler_null "github.com/wunderkraut/radi-handlers/null"
+	handler_rancher "github.com/wunderkraut/radi-handler-rancher"
+	handler_upcloud "github.com/wunderkraut/radi-handler-upcloud"
 )
 
 /**
@@ -22,7 +22,7 @@ import (
  */
 
 // Construct a LocalAPI by checking some paths for the current user.
-func MakeLocalAPI_LocalSecure(settings handlers_local.LocalAPISettings, configWrapper api_config.ConfigWrapper) (api_api.API, error) {
+func MakeLocalAPI_LocalSecure(settings handler_local.LocalAPISettings, configWrapper api_config.ConfigWrapper) (api_api.API, error) {
 	var err error
 
 	// this is our actual local API
@@ -31,7 +31,7 @@ func MakeLocalAPI_LocalSecure(settings handlers_local.LocalAPISettings, configWr
 
 	// Use the builderConfigWrapper to list build components
 	log.Debug("CLI:LocalAPI: Building LocalAPI: Building builder configwrapper")
-	builderConfigWrapper := handlers_configwrapper.New_BuilderComponentsConfigWrapperYaml(configWrapper)
+	builderConfigWrapper := handler_configwrapper.New_BuilderComponentsConfigWrapperYaml(configWrapper)
 	builderList := builderConfigWrapper.List()
 	log.WithFields(log.Fields{"list": builderList}).Debug("CLI:LocalAPI: Building LocalAPI: Built builder configwrapper")
 
@@ -47,16 +47,16 @@ func MakeLocalAPI_LocalSecure(settings handlers_local.LocalAPISettings, configWr
 			switch builderSetting.Type {
 			case "null":
 				log.Debug("LocalAPI: Building Null builder")
-				localApi.AddBuilder(handlers_null.New_NullBuilder())
+				localApi.AddBuilder(handler_null.New_NullBuilder())
 			case "local":
 				log.Debug("LocalAPI: Building Local builder")
-				localApi.AddBuilder(handlers_local.New_LocalBuilder(settings))
+				localApi.AddBuilder(handler_local.New_LocalBuilder(settings))
 			case "upcloud":
 				log.Debug("LocalAPI: Building UpCloud builder")
-				localApi.AddBuilder(api_builder.Builder(&handlers_upcloud.UpcloudBuilder{}))
+				localApi.AddBuilder(api_builder.Builder(&handler_upcloud.UpcloudBuilder{}))
 			case "rancher":
 				log.Debug("LocalAPI: Building Rancher builder")
-				localApi.AddBuilder(api_builder.Builder(&handlers_rancher.RancherBuilder{}))
+				localApi.AddBuilder(api_builder.Builder(&handler_rancher.RancherBuilder{}))
 			default:
 				buildErr = errors.New("Unrecognized builder " + builderSetting.Type)
 				log.WithError(buildErr).Error("Could not build " + builderSetting.Type)

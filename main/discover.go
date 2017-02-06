@@ -5,7 +5,7 @@ import (
 	"os/user"
 	"path"
 
-	handlers_local "github.com/wunderkraut/radi-handlers/local"
+	handler_local "github.com/wunderkraut/radi-handlers/local"
 )
 
 const (
@@ -54,7 +54,7 @@ func userHomePath() string {
  * dependening on OS, determine if the user has any settings
  * if so, add a conf path for them.
  */
-func DiscoverUserPaths(settings *handlers_local.LocalAPISettings) error {
+func DiscoverUserPaths(settings *handler_local.LocalAPISettings) error {
 	var err error
 
 	homeDir := userHomePath()
@@ -90,7 +90,7 @@ func DiscoverUserPaths(settings *handlers_local.LocalAPISettings) error {
  * has the key configuration subfolder in it.  That path is marked as the
  * application root, and the subfolder is marked as a conf path
  */
-func DiscoverProjectPaths(settings *handlers_local.LocalAPISettings) error {
+func DiscoverProjectPaths(settings *handler_local.LocalAPISettings) error {
 	workingDir := settings.ExecPath
 	homeDir := userHomePath()
 
@@ -121,7 +121,7 @@ RootSearch:
  * Discover environment path for a specific environment
  *
  */
-func DiscoverEnvironmentPath(settings *handlers_local.LocalAPISettings, environment string) error {
+func DiscoverEnvironmentPath(settings *handler_local.LocalAPISettings, environment string) error {
 
 	/**
 	 * @TODO actually check to see if the path exists, so that we can warn if it doesn't?
