@@ -8,11 +8,11 @@ import (
 	api_api "github.com/wunderkraut/radi-api/api"
 	api_builder "github.com/wunderkraut/radi-api/builder"
 	api_config "github.com/wunderkraut/radi-api/operation/config"
+	handler_rancher "github.com/wunderkraut/radi-handler-rancher"
+	handler_upcloud "github.com/wunderkraut/radi-handler-upcloud"
 	handler_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
 	handler_local "github.com/wunderkraut/radi-handlers/local"
 	handler_null "github.com/wunderkraut/radi-handlers/null"
-	handler_rancher "github.com/wunderkraut/radi-handler-rancher"
-	handler_upcloud "github.com/wunderkraut/radi-handler-upcloud"
 )
 
 /**

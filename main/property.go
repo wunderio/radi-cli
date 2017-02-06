@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
-	log "github.com/Sirupsen/logrus"
 	"context"
+	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
 	api_operation "github.com/wunderkraut/radi-api/operation"

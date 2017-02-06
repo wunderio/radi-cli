@@ -15,12 +15,12 @@ import (
 )
 
 var (
-	debug       bool                            = false                             // defualt to disable debugging output
-	workingDir  string                          = ""                                // can't use os.Cwd which returns multi-value
-	environment string                          = "local"                           // default to using a local environment
-	flags       []string                        = os.Args                           // store the cli args before they get used
+	debug       bool                           = false                            // defualt to disable debugging output
+	workingDir  string                         = ""                               // can't use os.Cwd which returns multi-value
+	environment string                         = "local"                          // default to using a local environment
+	flags       []string                       = os.Args                          // store the cli args before they get used
 	settings    handler_local.LocalAPISettings = handler_local.LocalAPISettings{} // just make sure that we have an object
-	ctx         context.Context                 = context.Background()              // this would allow us to terminate/timeout operations
+	ctx         context.Context                = context.Background()             // this would allow us to terminate/timeout operations
 )
 
 func init() {
