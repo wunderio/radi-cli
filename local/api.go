@@ -8,7 +8,7 @@ import (
 	api_api "github.com/wunderkraut/radi-api/api"
 	api_builder "github.com/wunderkraut/radi-api/builder"
 	api_config "github.com/wunderkraut/radi-api/operation/config"
-	handlers_local "github.com/wunderkraut/radi-handlers/local"
+	handler_local "github.com/wunderkraut/radi-handlers/local"
 )
 
 /**
@@ -29,7 +29,7 @@ import (
  * but not much to worry about (perhaps a couple of files are opened 2x)
  *
  */
-func MakeLocalAPI(settings handlers_local.LocalAPISettings) (api_api.API, error) {
+func MakeLocalAPI(settings handler_local.LocalAPISettings) (api_api.API, error) {
 
 	if settings.ProjectDoesntExist {
 
@@ -41,7 +41,7 @@ func MakeLocalAPI(settings handlers_local.LocalAPISettings) (api_api.API, error)
 		// build an API with at least the config operations, which we will need for a config wrapper
 		log.Debug("Local:API:: Building bootsrap API")
 		bootstrapApi := api_builder.BuilderAPI{}
-		bootstrapApi.AddBuilder(handlers_local.New_LocalBuilder(settings))
+		bootstrapApi.AddBuilder(handler_local.New_LocalBuilder(settings))
 		bootstrapApi.ActivateBuilder("local", *api_builder.New_Implementations([]string{"config"}), nil)
 
 		// Now use the config operations to determine what builds are needed

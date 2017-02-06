@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
+	"context"
 	log "github.com/Sirupsen/logrus"
-	"golang.org/x/net/context"
 	"gopkg.in/urfave/cli.v2"
 
 	api_operation "github.com/wunderkraut/radi-api/operation"
@@ -83,7 +83,7 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 						prop.Set(io.Reader(os.Stdin))
 					}
 				}
-			case "golang.org/x/net/context.Context":
+			case "context.Context":
 				if cliContext.IsSet(key + ":duration") {
 					duration := cliContext.Duration(key + ".duration")
 					if duration > 0 {
@@ -162,7 +162,7 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 					Value: "",
 					Usage: prop.Description(),
 				}))
-			case "golang.org/x/net/context.Context":
+			case "context.Context":
 				flags = append(flags, cli.Flag(&cli.DurationFlag{
 					Name:  prop.Id() + ":duration",
 					Usage: "Timeout in seconds. " + prop.Description(),

@@ -33,7 +33,7 @@ docker run --rm -ti \
 	-e "GOARCH=${GOARCH}" \
 	-w /usr/src/myapp \
 	golang:${GOVERSION} \
-	make clean getdeps build
+	make build
 
 echo " 
 
