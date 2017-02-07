@@ -28,21 +28,22 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 		for _, key := range comList {
 			comm, _ := commands.Get(key)
 
-			commWrapper := CliCommandWrapper{comm: comm}
+			if !comm.Internal() {
+				commWrapper := CliCommandWrapper{comm: comm}
 
-			cliComm := cli.Command{
-				Name:     "command.exec." + comm.Id(),
-				Aliases:  []string{comm.Id()},
-				Usage:    comm.Description(),
-				Action:   commWrapper.Exec,
-				Category: category,
+				cliComm := cli.Command{
+					Name:     "command.exec." + comm.Id(),
+					Aliases:  []string{comm.Id()},
+					Usage:    comm.Description(),
+					Action:   commWrapper.Exec,
+					Category: category,
+				}
+
+				cliComm.Flags = CliMakeFlagsFromProperties(comm.Properties())
+
+				log.WithFields(log.Fields{"id": comm.Id()}).Debug("CLI: Adding API command")
+				app.Commands = append(app.Commands, &cliComm)
 			}
-
-			cliComm.Flags = CliMakeFlagsFromProperties(comm.Properties())
-
-			log.WithFields(log.Fields{"id": comm.Id()}).Debug("CLI: Adding API command")
-			app.Commands = append(app.Commands, &cliComm)
-
 		}
 
 		return err
