@@ -1,7 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Format all GO code using gofmt
+#
+# In Golang, formatting validation is a common precompile
+# task.  This target does the autoformatting for you.
+#
+# This task is a requirement for any contribution.
+#
 
 echo "  --> Applying go formatting (gofmt) to the entire application"
 
 # gofmt all the things
-find . -iname "*.go" -exec gofmt -w {} \;
+find . -iname "*.go" -not -path "./vendor/*" -exec gofmt -w {} \;

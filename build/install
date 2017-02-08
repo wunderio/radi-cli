@@ -1,5 +1,10 @@
 #!/bin/bash
-set -e
+#
+# Install the built binary somewhere usefull
+#
+# This puts the build result in a usefull place,
+# depending on make configuration
+#
 
 echo "  --> Installing last compiled binary (${RADI_BUILD_BINARY_PATH}) to: ${RADI_INSTALL_PATH}"
 

@@ -1,0 +1,19 @@
+[submodule "vendor/github.com/wunderkraut/radi-api"]
+	path = vendor/github.com/wunderkraut/radi-api
+	url = https://github.com/wunderkraut/radi-api.git
+[submodule "vendor/github.com/wunderkraut/radi-handlers"]
+	path = vendor/github.com/wunderkraut/radi-handlers
+	url = https://github.com/wunderkraut/radi-handlers.git
+[submodule "vendor/github.com/Sirupsen/logrus"]
+	path = vendor/github.com/Sirupsen/logrus
+	url = https://github.com/Sirupsen/logrus.git
+[submodule "vendor/gopkg.in/urfave/cli.v2"]
+	path = vendor/gopkg.in/urfave/cli.v2
+	url = https://github.com//urfave/cli
+	branch = v2
+[submodule "vendor/github.com/wunderkraut/radi-handler-upcloud"]
+	path = vendor/github.com/wunderkraut/radi-handler-upcloud
+	url = https://github.com/wunderkraut/radi-handler-upcloud.git
+[submodule "vendor/github.com/wunderkraut/radi-handler-rancher"]
+	path = vendor/github.com/wunderkraut/radi-handler-rancher
+	url = https://github.com/wunderkraut/radi-handler-rancher.git

@@ -1,5 +1,9 @@
 #!/bin/bash
-set -e
+#
+# Cleans out build results
+#
+# This just removes the build target folder
+#
 
 echo "  --> Cleaning by removing build : ${RADI_BUILD_BINARY_PATH}"
 
