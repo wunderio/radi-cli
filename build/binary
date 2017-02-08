@@ -1,5 +1,10 @@
 #!/bin/bash
-set -e
+#
+# Build an executable binary
+#
+# This target uses 'go build' to build an executable
+# for the target platform, in the configured path.
+#
 
 # Get rid of existing binary
 rm -f "${RADI_BUILD_BINARY_PATH}"

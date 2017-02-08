@@ -1,7 +1,19 @@
 #!/bin/bash
-set -e
+#
+# Here we flesh out the gitsubmodules, if they haven't
+# already been done.
+# If this is in build.sh, then these updates occur only
+# inside the container, and don't add to the FS, but 
+# locally this will add all of the submodule files to
+# the vendor path.
+#
 
 echo "  --> retrieving vendor dependencies [recursively]"
+
+# @TODO can we automate this list from .gitmodules?
+#(
+#	git submodule foreach `echo "     - ${name}"; git submodule update --force --init --recursive ${name}`
+#)
 
 DEPS="github.com/Sirupsen/logrus
 gopkg.in/urfave/cli.v2
