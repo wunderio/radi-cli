@@ -27,11 +27,11 @@ This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'.
  "
 
 docker run --rm -ti \
-	-v "${EXEC_PATH}:/usr/src/myapp" \
 	-v "${EXEC_PATH}:/go/src/${INTERNAL_LIBRARY_PATH}" \
+	-v "/go/src/${INTERNAL_LIBRARY_PATH}/vendor" \
 	-e "GOOS=${GOOS}" \
 	-e "GOARCH=${GOARCH}" \
-	-w /usr/src/myapp \
+	-w "/go/src/${INTERNAL_LIBRARY_PATH}" \
 	golang:${GOVERSION} \
 	make build
 

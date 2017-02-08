@@ -6,7 +6,7 @@ default: all
 
 all: build
 
-build: getdeps fmt binary install
+build: getdeps binary install
 
 local: clean getdeps fmt binary install
 

@@ -1,11 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "  --> retrieving go dependencies [recursively]"
-
-# Update all cli go dependencies
-
-#ORIGINALLY we were doing this go get -u ./cli/main
+echo "  --> retrieving vendor dependencies [recursively]"
 
 DEPS="github.com/Sirupsen/logrus
 gopkg.in/urfave/cli.v2
@@ -16,7 +12,10 @@ github.com/wunderkraut/radi-handler-rancher"
 
 for DEP in $DEPS; do
 	echo "     - ${DEP}"
-	go get -u ${DEP}
+
+	(
+		git submodule update --force --init --recursive "vendor/${DEP}"
+	)
 done
 
 echo "  --- Finished dependency update"
