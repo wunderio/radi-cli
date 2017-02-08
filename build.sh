@@ -26,8 +26,15 @@ This will build the radi-cli as a 'radi' binary for '$GOOS-$GOARCH'.
  **** Building in containerized golang environment
  "
 
+# some sanity stuff, to prevent docker related permissions issues
 mkdir -p "${RADI_BUILD_PATH}"
 mkdir -p ".git/modules/vendor"
+
+# Run the build inside a container
+#
+#  - volumify the submodule changes
+#  - build in a valid gopath to get active vendor dependencies
+#  - pass in env variables for environment contril
 docker run --rm -ti \
 	-v "${EXEC_PATH}:/go/src/${INTERNAL_LIBRARY_PATH}" \
 	-v "/go/src/${INTERNAL_LIBRARY_PATH}/.git/modules/vendor" \
