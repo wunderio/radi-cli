@@ -8,26 +8,10 @@
 # the vendor path.
 #
 
-echo "  --> retrieving vendor dependencies [recursively]"
+echo "  --> updating vendor dependencies [recursively]"
 
-# @TODO can we automate this list from .gitmodules?
-#(
-#	git submodule foreach `echo "     - ${name}"; git submodule update --force --init --recursive ${name}`
-#)
-
-DEPS="github.com/Sirupsen/logrus
-gopkg.in/urfave/cli.v2
-github.com/wunderkraut/radi-api
-github.com/wunderkraut/radi-handlers
-github.com/wunderkraut/radi-handler-upcloud
-github.com/wunderkraut/radi-handler-rancher"
-
-for DEP in $DEPS; do
-	echo "     - ${DEP}"
-
-	(
-		git submodule update --force --init --recursive "vendor/${DEP}"
-	)
-done
+(
+	git submodule update --force --init --recursive
+)
 
 echo "  --- Finished dependency update"
