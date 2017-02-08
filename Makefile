@@ -8,7 +8,8 @@ all: build
 
 build: getdeps binary install
 
-local: getdeps fmt binary install
+local: fmt binary install
+local-full: getdeps local
 
 
 
