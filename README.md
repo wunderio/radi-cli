@@ -55,33 +55,11 @@ binaries.  If there is consensus on install paths, we can make an installer
 ### Manually building
 
 When manually building the source code, you will need a working `go`
-environemnt and the source checked out inside the GOPATH.
+environment and the source must be checked out inside the GOPATH.
 
-* The project uses a vendor folder, so **go 1.6 is required as a minimum**.
+* The project uses a [vendor](https://golang.org/cmd/go/#hdr-Vendor_Directories) folder, so **go 1.6 is required as a minimum**.
 
-#### Using go get
-
-Try simple running:
-
-```
-$/> go get -u github.com/wunderkraut/radi-cli/radi
-```
-
-If this works, you should have a radi binary executable in the `$GOPATH/bin`
-folder. Unfortunately go-get doesn't use the packaged libraries vendor git 
-submodules properly yet, which means that dependency versioning isn't strict.
-
-You should then manually rebuild the binary using:
-
-```
-$/> cd "${GOPATH}/src/github.com/wunderkraut/radi-cli"
-$/> make all
-
-```
-
-This will result in a properly build binary.
-
-#### Manually check out the source
+#### Options 1 : Manually check out the source
 
 ##### 1. use git to clone the repository into the appropriate path
 
@@ -98,6 +76,28 @@ $/> make all
 
 Which will pull dependencies and product a binary locally.  It also installs
 the binary to a reasonable path.
+
+#### Option 2 : Using go get
+
+Try simply running:
+
+```
+$/> go get -u github.com/wunderkraut/radi-cli/radi
+```
+
+If this works, you should have a radi binary executable in the `$GOPATH/bin`
+folder. ** Unfortunately go-get doesn't use the packaged libraries vendor git 
+submodules properly yet, which means that dependency versioning isn't strict.**
+
+You should then manually rebuild the binary using:
+
+```
+$/> cd "${GOPATH}/src/github.com/wunderkraut/radi-cli"
+$/> make all
+
+```
+
+This will result in a properly built binary.
 
 ## Using the CLI
 
