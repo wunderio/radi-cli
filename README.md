@@ -34,6 +34,12 @@ that requires a go runtime
 
 ### Building inside a docker container
 
+The standard installation process is to run the build compile inside a docker
+container that has golang installed.
+
+* You will need to have docker installed, with access to a docker engine that support local volumes
+* we have tested this approach on docker 1.11 and later.
+
 #### 1. retrieve this source code via git.
 
 ```
