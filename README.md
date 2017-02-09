@@ -58,6 +58,7 @@ When manually building the source code, you will need a working `go`
 environment and the source must be checked out inside the GOPATH.
 
 * The project uses a [vendor](https://golang.org/cmd/go/#hdr-Vendor_Directories) folder, so **go 1.6 is required as a minimum**.
+* *buntu users note that full `golang` is required.  The `gccgo-go` package is not a complete go builder (no core libraries)
 
 #### Options 1 : Manually check out the source
 
