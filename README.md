@@ -67,8 +67,19 @@ Try simple running:
 $/> go get -u github.com/wunderkraut/radi-cli/radi
 ```
 
-if this works, you should have a radi binary executable in the `$GOPATH/bin`
-folder.
+If this works, you should have a radi binary executable in the `$GOPATH/bin`
+folder. Unfortunately go-get doesn't use the packaged libraries vendor git 
+submodules properly yet, which means that dependency versioning isn't strict.
+
+You should then manually rebuild the binary using:
+
+```
+$/> cd "${GOPATH}/src/github.com/wunderkraut/radi-cli"
+$/> make all
+
+```
+
+This will result in a properly build binary.
 
 #### Manually check out the source
 
