@@ -1,4 +1,4 @@
-package radi
+package main
 
 import (
 	"context"
