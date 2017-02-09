@@ -121,6 +121,9 @@ func main() {
 	workingDir, _ = os.Getwd()
 	settings = MakeLocalAPISettings(workingDir, ctx)
 
+	// Discover the current User
+	DiscoverCurrentUser(&settings)
+
 	// Discover paths for the user like ~ and ~/.config/wundertools
 	DiscoverUserPaths(&settings)
 	DiscoverProjectPaths(&settings)

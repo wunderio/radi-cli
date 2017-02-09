@@ -47,6 +47,22 @@ func userHomePath() string {
 }
 
 /**
+ * Discover who is the current user
+ *
+ * Used in some security cases.
+ */
+func DiscoverCurrentUser(settings *handler_local.LocalAPISettings) error {
+
+	if user, err := user.Current(); err == nil {
+		settings.User = *user
+		return err
+	} else {
+		return err
+	}
+
+}
+
+/**
  * Discover some user paths
  *
  * @NOTE we have to play some games for different OSes here

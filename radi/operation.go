@@ -108,9 +108,19 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 					user := prop.Get().(api_security.SecurityUser)
 					fields[key] = user.Id()
 				}
+			} else {
+				// some intenal props can get output regardless
+				switch prop.Id() {
+				case "security.user":
+					user := prop.Get().(api_security.SecurityUser)
+					fields[key] = user.Id()
+				case "security.authorization.success":
+					fields[key] = prop.Get().(bool)
+				}
 			}
 		}
 
+		logger = logger.WithFields(log.Fields(fields))
 		logger.Info("Operation completed.")
 		return nil
 	} else {
