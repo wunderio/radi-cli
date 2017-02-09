@@ -53,6 +53,16 @@ func init() {
 	 */
 	flag.BoolVar(&debug, "debug", debug, "Enable verbose debugging output")
 
+	/**
+	 * The following flags are all flags that we use pass through
+	 * to the cli, and ignore here, but we need them declared so
+	 * that the flag library doesn't fial validation.
+	 */
+	flag.Bool("help", false, "show help")
+	flag.Bool("h", false, "show help")
+	flag.Bool("version", false, "show version")
+	flag.Bool("v", false, "show version")
+
 	// parse those preprocessed flags
 	flag.Parse()
 
@@ -74,7 +84,7 @@ func main() {
 	 * on the current project configuration.
 	 */
 	app := &cli.App{}
-	app.Name = "wundertools"
+	app.Name = "radi-cli"
 	app.Usage = "Command line interface for Radi API."
 	app.Version = version.VERSION + " (" + version.GITCOMMIT + ")"
 	app.Authors = []*cli.Author{&cli.Author{Name: "Wunder.IO", Email: "https://github.com/wunderkraut/radi-cli"}}
