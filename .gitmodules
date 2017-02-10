@@ -1,11 +1,3 @@
-[submodule "vendor/github.com/wunderkraut/radi-api"]
-	path = vendor/github.com/wunderkraut/radi-api
-	url = https://github.com/wunderkraut/radi-api.git
-	branch = d45c61b4dd361bdc23707f9abafdc024baedbf71
-[submodule "vendor/github.com/wunderkraut/radi-handlers"]
-	path = vendor/github.com/wunderkraut/radi-handlers
-	url = https://github.com/wunderkraut/radi-handlers.git
-	branch = 9c0eb5f890676e389eb90cba2a1742d1caaff652
 [submodule "vendor/github.com/Sirupsen/logrus"]
 	path = vendor/github.com/Sirupsen/logrus
 	url = https://github.com/Sirupsen/logrus.git
@@ -14,6 +6,14 @@
 	path = vendor/gopkg.in/urfave/cli.v2
 	url = https://github.com//urfave/cli
 	branch = e485446237011b8abac93919242e6f059ad56c87
+[submodule "vendor/github.com/wunderkraut/radi-api"]
+	path = vendor/github.com/wunderkraut/radi-api
+	url = https://github.com/wunderkraut/radi-api.git
+	branch = d45c61b4dd361bdc23707f9abafdc024baedbf71
+[submodule "vendor/github.com/wunderkraut/radi-handlers"]
+	path = vendor/github.com/wunderkraut/radi-handlers
+	url = https://github.com/wunderkraut/radi-handlers.git
+	branch = 6d8b669d4f2172fa23672e77e7ed9e470895b8fe
 [submodule "vendor/github.com/wunderkraut/radi-handler-upcloud"]
 	path = vendor/github.com/wunderkraut/radi-handler-upcloud
 	url = https://github.com/wunderkraut/radi-handler-upcloud.git
