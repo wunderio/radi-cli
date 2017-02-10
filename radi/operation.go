@@ -90,6 +90,8 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 		for _, key := range props.Order() {
 			prop, _ := props.Get(key)
 
+			log.WithFields(log.Fields{"id": prop.Id(), "type": prop.Type(), "value": prop.Get(), "internal": prop.Internal()}).Debug("CLI:Operation: Properties collect")
+
 			if !prop.Internal() {
 				switch prop.Type() {
 				case "string":
