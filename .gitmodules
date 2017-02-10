@@ -1,11 +1,11 @@
 [submodule "vendor/github.com/wunderkraut/radi-api"]
 	path = vendor/github.com/wunderkraut/radi-api
 	url = https://github.com/wunderkraut/radi-api.git
-	branch = 6b2d580aa8934d43df1e791b82d5a3e368efcf63
+	branch = b6d485c69dab1e6378bb24f342ca0c70fb45ffb6
 [submodule "vendor/github.com/wunderkraut/radi-handlers"]
 	path = vendor/github.com/wunderkraut/radi-handlers
 	url = https://github.com/wunderkraut/radi-handlers.git
-	branch = 42659cf8f819403c288ce4935ad9784afceca8e0
+	branch = 9c0eb5f890676e389eb90cba2a1742d1caaff652
 [submodule "vendor/github.com/Sirupsen/logrus"]
 	path = vendor/github.com/Sirupsen/logrus
 	url = https://github.com/Sirupsen/logrus.git
