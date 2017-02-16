@@ -30,7 +30,7 @@ import (
  */
 
 // Assign properties from flags back to properties
-func CliAssignPropertiesFromFlags(cliContext *cli.Context, props api_property.Properties) error {
+func CliAssignPropertiesFromFlags(cliContext *cli.Context, props api_property.Properties, internal bool) error {
 	for _, key := range props.Order() {
 
 		if !cliContext.IsSet(key) {
@@ -41,7 +41,7 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props api_property.Pr
 
 		// skip any property marked for internal use only
 		usage := prop.Usage()
-		if api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
+		if internal || api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
 
 			switch prop.Type() {
 			case "string":
@@ -105,7 +105,7 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props api_property.Pr
 }
 
 // Make CLI flags from operation properties
-func CliMakeFlagsFromProperties(props api_property.Properties) []cli.Flag {
+func CliMakeFlagsFromProperties(props api_property.Properties, internal bool) []cli.Flag {
 	flags := []cli.Flag{}
 
 	for _, key := range props.Order() {
@@ -113,7 +113,7 @@ func CliMakeFlagsFromProperties(props api_property.Properties) []cli.Flag {
 
 		// skip any property marked as being for internal use only
 		usage := prop.Usage()
-		if api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
+		if internal || api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
 
 			switch prop.Type() {
 			case "string":

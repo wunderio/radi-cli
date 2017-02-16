@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	debug       bool                           = false                            // defualt to disable debugging output
+	debug       bool                           = false                            // default to disable debugging output
+	internal    bool                           = false                            // use and display components that are considered internal
 	workingDir  string                         = ""                               // can't use os.Cwd which returns multi-value
 	environment string                         = "local"                          // default to using a local environment
 	flags       []string                       = os.Args                          // store the cli args before they get used
@@ -54,6 +55,15 @@ func init() {
 	flag.BoolVar(&debug, "debug", debug, "Enable verbose debugging output")
 
 	/**
+	 * PreProcess the "internal" flag
+	 *
+	 * While not strictly necessary, we preprocess debug
+	 * in order to get the logrus verbosity raised as early
+	 * as possible.
+	 */
+	flag.BoolVar(&internal, "internal", internal, "Enable API components that are considered internal")
+
+	/**
 	 * The following flags are all flags that we use pass through
 	 * to the cli, and ignore here, but we need them declared so
 	 * that the flag library doesn't fial validation.
@@ -72,6 +82,10 @@ func init() {
 		log.Debug("Enabling verbose debug output")
 	} else {
 		log.SetLevel(log.InfoLevel)
+	}
+
+	if internal {
+		log.Info("CLI: Showing internal components")
 	}
 
 }
@@ -110,6 +124,13 @@ func main() {
 			EnvVars:     []string{"RADI_DEBUG"},
 			Hidden:      false,
 			Destination: &debug,
+		}),
+		cli.Flag(&cli.BoolFlag{
+			Name:        "internal",
+			Usage:       "Enable API components that are considered internal",
+			EnvVars:     []string{"RADI_INTERNAL"},
+			Hidden:      false,
+			Destination: &internal,
 		}),
 	}
 
@@ -150,10 +171,10 @@ func main() {
 	localOps := local.Operations()
 
 	// Add any "external" operations from the api to the app
-	AppApiOperations(app, localOps)
+	AppApiOperations(app, localOps, internal)
 
 	// Add any commands from the api CommandWrapper to the app
-	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(localOps))
+	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(localOps), internal)
 
 	// Run the App initializer again to process the added operations
 	app.Setup()

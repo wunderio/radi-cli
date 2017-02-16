@@ -22,15 +22,18 @@ import (
  *  retrieving wrappers from api structs? both approaches
  *  have advantages
  */
-func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error {
+func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper, internal bool) error {
 	if comList, err := commands.List(""); err == nil {
 		category := "custom"
 
 		for _, key := range comList {
 			comm, _ := commands.Get(key)
 
-			if api_operation.IsUsage_External(comm.Usage()) {
-				commWrapper := CliCommandWrapper{comm: comm}
+			if internal || api_operation.IsUsage_External(comm.Usage()) {
+				commWrapper := CliCommandWrapper{
+					comm:     comm,
+					internal: internal,
+				}
 
 				cliComm := cli.Command{
 					Name:     "command.exec." + comm.Id(),
@@ -40,7 +43,7 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 					Category: category,
 				}
 
-				cliComm.Flags = CliMakeFlagsFromProperties(comm.Properties())
+				cliComm.Flags = CliMakeFlagsFromProperties(comm.Properties(), internal)
 
 				log.WithFields(log.Fields{"id": comm.Id()}).Debug("CLI: Adding API command")
 				app.Commands = append(app.Commands, &cliComm)
@@ -62,7 +65,8 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
  * mainly by translating the .Exec() method arguments and output.
  */
 type CliCommandWrapper struct {
-	comm api_command.Command
+	comm     api_command.Command
+	internal bool
 }
 
 // Execute the operation for the cli
@@ -72,7 +76,7 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 
 	comm := commWrapper.comm
 	props := comm.Properties()
-	CliAssignPropertiesFromFlags(cliContext, props)
+	CliAssignPropertiesFromFlags(cliContext, props, commWrapper.internal)
 
 	// if there was a command flags property, then add any remaining arguments as flags
 	if flagsProp, found := props.Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {

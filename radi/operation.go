@@ -13,21 +13,27 @@ import (
 )
 
 // Add operations from the API to the app
-func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
+func AppApiOperations(app *cli.App, ops api_operation.Operations, internal bool) error {
 	for _, id := range ops.Order() {
 		op, _ := ops.Get(id)
 
 		log.WithFields(log.Fields{"id": op.Id()}).Debug("Operation: " + op.Label())
 		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Properties()
 
-		if api_operation.IsUsage_External(op.Usage()) {
+		// usage := op.Usage()
+		// log.WithFields(log.Fields{"id": id, "usage": usage, "is-external": api_operation.IsUsage_External(usage)}).Info("Operation usage investigation")
+
+		if internal || api_operation.IsUsage_External(op.Usage()) {
 			id := op.Id()
 			category := id[0:strings.Index(id, ".")]
 			alias := id[strings.Index(id, ".")+1:]
 
 			log.WithFields(log.Fields{"id": id, "category": category, "alias": alias}).Debug("Cli: Adding Operation")
 
-			opWrapper := CliOperationWrapper{op: op}
+			opWrapper := CliOperationWrapper{
+				op:       op,
+				internal: internal,
+			}
 			cliComm := cli.Command{
 				Name:     op.Id(),
 				Aliases:  []string{alias},
@@ -36,7 +42,7 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 				Category: category,
 			}
 
-			cliComm.Flags = CliMakeFlagsFromProperties(op.Properties())
+			cliComm.Flags = CliMakeFlagsFromProperties(op.Properties(), internal)
 
 			app.Commands = append(app.Commands, &cliComm)
 		}
@@ -57,7 +63,8 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
  *     to the screen.
  */
 type CliOperationWrapper struct {
-	op api_operation.Operation
+	op       api_operation.Operation
+	internal bool
 }
 
 // Execute the operation for the cli
@@ -67,7 +74,7 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 	props := opWrapper.op.Properties()
 
-	CliAssignPropertiesFromFlags(cliContext, props)
+	CliAssignPropertiesFromFlags(cliContext, props, opWrapper.internal)
 
 	result := opWrapper.op.Exec(props)
 	<-result.Finished()
@@ -93,7 +100,7 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 			log.WithFields(log.Fields{"id": prop.Id(), "type": prop.Type(), "value": prop.Get()}).Debug("CLI:Operation: Properties collect")
 
-			if api_property.IsUsage_ExternalVisibleAfter(prop.Usage()) {
+			if opWrapper.internal || api_property.IsUsage_ExternalVisibleAfter(prop.Usage()) {
 				switch prop.Type() {
 				case "string":
 					fields[key] = prop.Get().(string)
