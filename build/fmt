@@ -10,5 +10,20 @@
 
 echo "  --> Applying go formatting (gofmt) to the entire application"
 
-# gofmt all the things
-find . -iname "*.go" -not -path "./vendor/*" -exec gofmt -w {} \;
+FIND="`which find`"
+GOFMT="`which gofmt`"
+
+PATH="."
+echo "    - Formatting root ${PATH}"
+${FIND} "$PATH" -iname "*.go" -not -path "./vendor/*" -exec $GOFMT -w {} \;
+
+
+echo "    - Formatting internal vendor paths"
+for PATH in ./vendor/github.com/wunderkraut/*; do
+	if [ -d "${PATH}" ]; then
+		echo "      - Formatting ${PATH}"
+		(
+			${FIND} "${PATH}" -iname "*.go" -not -path "${PATH}/vendor/*" -exec $GOFMT -w {} \;
+		)
+	fi
+done
