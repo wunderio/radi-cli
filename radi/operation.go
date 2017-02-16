@@ -26,7 +26,7 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations, internal bool)
 		if internal || api_operation.IsUsage_External(op.Usage()) {
 			id := op.Id()
 			category := id[0:strings.Index(id, ".")]
-			alias := id[strings.Index(id, ".")+1:]
+			alias := id[strings.LastIndex(id, ".")+1:]
 
 			log.WithFields(log.Fields{"id": id, "category": category, "alias": alias}).Debug("Cli: Adding Operation")
 

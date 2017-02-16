@@ -22,3 +22,7 @@
 	path = vendor/github.com/wunderkraut/radi-handler-rancher
 	url = https://github.com/wunderkraut/radi-handler-rancher.git
 	branch = ca6bd4c84c95223d240f41e7662a471282d75fc0
+[submodule "vendor/github.com/wunderkraut/radi-handler-libcompose"]
+	path = vendor/github.com/wunderkraut/radi-handler-libcompose
+	url = https://github.com/wunderkraut/radi-handler-libcompose.git
+	branch = c43115c4f9c5d297ac53bc190de4067ade3d5dee
