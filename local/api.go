@@ -8,11 +8,14 @@ import (
 	api_api "github.com/wunderkraut/radi-api/api"
 	api_builder "github.com/wunderkraut/radi-api/builder"
 	api_config "github.com/wunderkraut/radi-api/operation/config"
-	handler_rancher "github.com/wunderkraut/radi-handler-rancher"
-	handler_upcloud "github.com/wunderkraut/radi-handler-upcloud"
+
 	handler_configwrapper "github.com/wunderkraut/radi-handlers/configwrapper"
 	handler_local "github.com/wunderkraut/radi-handlers/local"
 	handler_null "github.com/wunderkraut/radi-handlers/null"
+
+	handler_libcompose_local "github.com/wunderkraut/radi-handler-libcompose/local"
+	handler_rancher "github.com/wunderkraut/radi-handler-rancher"
+	handler_upcloud "github.com/wunderkraut/radi-handler-upcloud"
 )
 
 /**
@@ -92,6 +95,9 @@ func ActivateConfigBuilders(localProject api_builder.Project, localSettings hand
 			case "rancher":
 				log.Debug("CLI:LocalProject: Building Rancher builder")
 				localProject.AddBuilder(api_builder.Builder(&handler_rancher.RancherBuilder{}))
+			case "libcompose_local":
+				log.Debug("CLI:LocalProject: Building Local builder")
+				localProject.AddBuilder(handler_libcompose_local.New_LocalBuilder(localSettings))
 			default:
 				buildErr = errors.New("Unrecognized builder " + projectSetting.Type)
 				log.WithError(buildErr).Error("Could not build " + projectSetting.Type)
