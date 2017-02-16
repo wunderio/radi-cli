@@ -9,11 +9,11 @@
 [submodule "vendor/github.com/wunderkraut/radi-api"]
 	path = vendor/github.com/wunderkraut/radi-api
 	url = https://github.com/wunderkraut/radi-api.git
-	branch = fafdc3b04f4a0364f14be3e53a83112ffff01739
+	branch = 43477788e2aaf433ad3ad4b5dd375d4e7bcf1c98
 [submodule "vendor/github.com/wunderkraut/radi-handlers"]
 	path = vendor/github.com/wunderkraut/radi-handlers
 	url = https://github.com/wunderkraut/radi-handlers.git
-	branch = fafdc3b04f4a0364f14be3e53a83112ffff01739
+	branch = 2057fb8ba44d2db78782d6261b09acb9905c1557
 [submodule "vendor/github.com/wunderkraut/radi-handler-upcloud"]
 	path = vendor/github.com/wunderkraut/radi-handler-upcloud
 	url = https://github.com/wunderkraut/radi-handler-upcloud.git
