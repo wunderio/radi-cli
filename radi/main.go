@@ -153,7 +153,7 @@ func main() {
 	AppApiOperations(app, localOps)
 
 	// Add any commands from the api CommandWrapper to the app
-	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(&localOps))
+	AppWrapperCommands(app, api_command.New_SimpleCommandWrapper(localOps))
 
 	// Run the App initializer again to process the added operations
 	app.Setup()

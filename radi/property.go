@@ -8,7 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
-	api_operation "github.com/wunderkraut/radi-api/operation"
+	api_property "github.com/wunderkraut/radi-api/property"
 )
 
 /**
@@ -30,7 +30,7 @@ import (
  */
 
 // Assign properties from flags back to properties
-func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.Properties) error {
+func CliAssignPropertiesFromFlags(cliContext *cli.Context, props api_property.Properties) error {
 	for _, key := range props.Order() {
 
 		if !cliContext.IsSet(key) {
@@ -40,7 +40,8 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 		prop, _ := props.Get(key)
 
 		// skip any property marked for internal use only
-		if !prop.Internal() {
+		usage := prop.Usage()
+		if api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
 
 			switch prop.Type() {
 			case "string":
@@ -104,14 +105,15 @@ func CliAssignPropertiesFromFlags(cliContext *cli.Context, props *api_operation.
 }
 
 // Make CLI flags from operation properties
-func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
+func CliMakeFlagsFromProperties(props api_property.Properties) []cli.Flag {
 	flags := []cli.Flag{}
 
 	for _, key := range props.Order() {
 		prop, _ := props.Get(key)
 
 		// skip any property marked as being for internal use only
-		if !prop.Internal() {
+		usage := prop.Usage()
+		if api_property.IsUsage_ExternalRequired(usage) || api_property.IsUsage_ExternalOptional(usage) {
 
 			switch prop.Type() {
 			case "string":
@@ -192,7 +194,7 @@ func CliMakeFlagsFromProperties(props api_operation.Properties) []cli.Flag {
 
 // A cli.Generic implementor for un-handled properties
 type UnHandledProperty struct {
-	property api_operation.Property
+	property api_property.Property
 }
 
 func (prop *UnHandledProperty) Set(value string) error {

@@ -6,6 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/urfave/cli.v2"
 
+	api_operation "github.com/wunderkraut/radi-api/operation"
 	api_command "github.com/wunderkraut/radi-api/operation/command"
 )
 
@@ -28,7 +29,7 @@ func AppWrapperCommands(app *cli.App, commands api_command.CommandWrapper) error
 		for _, key := range comList {
 			comm, _ := commands.Get(key)
 
-			if !comm.Internal() {
+			if api_operation.IsUsage_External(comm.Usage()) {
 				commWrapper := CliCommandWrapper{comm: comm}
 
 				cliComm := cli.Command{
@@ -71,14 +72,14 @@ func (commWrapper *CliCommandWrapper) Exec(cliContext *cli.Context) error {
 
 	comm := commWrapper.comm
 	props := comm.Properties()
-	CliAssignPropertiesFromFlags(cliContext, &props)
+	CliAssignPropertiesFromFlags(cliContext, props)
 
 	// if there was a command flags property, then add any remaining arguments as flags
 	if flagsProp, found := props.Get(api_command.OPERATION_PROPERTY_COMMAND_FLAGS); found {
 		flagsProp.Set([]string(cliContext.Args().Slice()))
 	}
 
-	result := comm.Exec(&props)
+	result := comm.Exec(props)
 	<-result.Finished()
 
 	if !result.Success() {

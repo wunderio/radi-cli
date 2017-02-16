@@ -50,7 +50,7 @@ func MakeLocalAPI(settings handler_local.LocalAPISettings) (api_api.API, error) 
 
 		// Now use the config operations to determine what builds are needed
 		bootstrapOps := bootstrapProject.Operations()
-		bootstrapConfigWrapper := api_config.New_SimpleConfigWrapper(&bootstrapOps)
+		bootstrapConfigWrapper := api_config.New_SimpleConfigWrapper(bootstrapOps)
 
 		localProject, err := MakeLocal_SecureProject(settings)
 
@@ -66,7 +66,7 @@ func ActivateConfigBuilders(localProject api_builder.Project, localSettings hand
 
 	// Use the builderConfigWrapper to list build components
 	log.Debug("CLI:LocalProject: Building SecureProject: Building builder configwrapper")
-	projectConfigWrapper := handler_configwrapper.New_ProjectComponentsConfigWrapperYaml(configWrapper)
+	projectConfigWrapper := handler_configwrapper.New_ProjectComponentsConfigWrapperYaml(configWrapper).ProjectConfigWrapper()
 	builderList := projectConfigWrapper.List()
 	log.WithFields(log.Fields{"list": builderList}).Debug("CLI:LocalProject: Building SecureProject: Built builder configwrapper")
 

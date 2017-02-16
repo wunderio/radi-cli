@@ -9,6 +9,7 @@ import (
 
 	api_operation "github.com/wunderkraut/radi-api/operation"
 	api_security "github.com/wunderkraut/radi-api/operation/security"
+	api_property "github.com/wunderkraut/radi-api/property"
 )
 
 // Add operations from the API to the app
@@ -19,7 +20,7 @@ func AppApiOperations(app *cli.App, ops api_operation.Operations) error {
 		log.WithFields(log.Fields{"id": op.Id()}).Debug("Operation: " + op.Label())
 		// we could also add "label": op.Label(), "description": op.Description(), "configurations": op.Properties()
 
-		if !op.Internal() {
+		if api_operation.IsUsage_External(op.Usage()) {
 			id := op.Id()
 			category := id[0:strings.Index(id, ".")]
 			alias := id[strings.Index(id, ".")+1:]
@@ -66,9 +67,9 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 
 	props := opWrapper.op.Properties()
 
-	CliAssignPropertiesFromFlags(cliContext, &props)
+	CliAssignPropertiesFromFlags(cliContext, props)
 
-	result := opWrapper.op.Exec(&props)
+	result := opWrapper.op.Exec(props)
 	<-result.Finished()
 
 	success := result.Success() // bool
@@ -90,9 +91,9 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 		for _, key := range props.Order() {
 			prop, _ := props.Get(key)
 
-			log.WithFields(log.Fields{"id": prop.Id(), "type": prop.Type(), "value": prop.Get(), "internal": prop.Internal()}).Debug("CLI:Operation: Properties collect")
+			log.WithFields(log.Fields{"id": prop.Id(), "type": prop.Type(), "value": prop.Get()}).Debug("CLI:Operation: Properties collect")
 
-			if !prop.Internal() {
+			if api_property.IsUsage_ExternalVisibleAfter(prop.Usage()) {
 				switch prop.Type() {
 				case "string":
 					fields[key] = prop.Get().(string)
@@ -109,15 +110,6 @@ func (opWrapper *CliOperationWrapper) Exec(cliContext *cli.Context) error {
 				case "github.com/wunderkraut/radi-api/operation/security.SecurityUser":
 					user := prop.Get().(api_security.SecurityUser)
 					fields[key] = user.Id()
-				}
-			} else {
-				// some intenal props can get output regardless
-				switch prop.Id() {
-				case "security.user":
-					user := prop.Get().(api_security.SecurityUser)
-					fields[key] = user.Id()
-				case "security.authorization.success":
-					fields[key] = prop.Get().(bool)
 				}
 			}
 		}
