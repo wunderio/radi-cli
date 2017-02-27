@@ -84,12 +84,15 @@ func ActivateConfigBuilders(localProject api_builder.Project, localSettings hand
 
 	for _, key := range builderList {
 		projectSetting, _ := projectConfigWrapper.Get(key)
+		builder := projectSetting.Type
+
 		var buildErr error
 
 		if _, checked := built[projectSetting.Type]; !checked {
-			log.WithFields(log.Fields{"builder": projectSetting.Type}).Debug("CLI:LocalProject: AddingBuilder")
-			built[projectSetting.Type] = true
-			switch projectSetting.Type {
+			log.WithFields(log.Fields{"builder": builder}).Debug("CLI:LocalProject: AddingBuilder")
+			built[projectSetting.Type] = true // mark it as successfully built by default, and downgrade it if it fails below
+
+			switch builder {
 			case "null":
 				log.Debug("CLI:LocalProject: Creating Null builder")
 				localProject.AddBuilder(handler_null.New_NullBuilder())
@@ -102,10 +105,12 @@ func ActivateConfigBuilders(localProject api_builder.Project, localSettings hand
 			case "rancher":
 				log.Debug("CLI:LocalProject: Creating Rancher builder")
 				localProject.AddBuilder(api_builder.Builder(&handler_rancher.RancherBuilder{}))
-			// case "libcompose_local":
+			// case "libcompose":
+			//	builder = "libcompose_local"
 			// 	log.Debug("CLI:LocalProject: Creating Local builder from LibCompose")
 			// 	localProject.AddBuilder(handler_libcompose_local.New_LocalBuilder(localSettings))
-			case "dockercli_local":
+			case "docker":
+				builder = "dockercli_local"
 				log.Debug("CLI:LocalProject: Creating Local builder from DockerCLI")
 				localProject.AddBuilder(handler_dockercli_local.New_LocalBuilder(localSettings, nil))
 			default:
@@ -116,21 +121,21 @@ func ActivateConfigBuilders(localProject api_builder.Project, localSettings hand
 		}
 
 		if success, checked := built[projectSetting.Type]; success && checked {
-			log.WithFields(log.Fields{"type": projectSetting.Type, "implementations": projectSetting.Implementations.Order(), "key": key}).Debug("CLI:LocalProject: Activating builder")
-			res := localProject.ActivateBuilder(projectSetting.Type, projectSetting.Implementations, projectSetting.SettingsProvider)
+			log.WithFields(log.Fields{"type": builder, "implementations": projectSetting.Implementations.Order(), "key": key}).Debug("CLI:LocalProject: Activating builder")
+			res := localProject.ActivateBuilder(builder, projectSetting.Implementations, projectSetting.SettingsProvider)
 			<-res.Finished()
 
 			if res.Success() {
-				log.WithFields(log.Fields{"type": projectSetting.Type, "implementations": projectSetting.Implementations.Order(), "key": key}).Debug("CLI:LocalProject: Activate builder from settings")
+				log.WithFields(log.Fields{"type": builder, "implementations": projectSetting.Implementations.Order(), "key": key}).Debug("CLI:LocalProject: Activate builder from settings")
 			} else {
-				logger := log.WithFields(log.Fields{"type": projectSetting.Type, "implementations": projectSetting.Implementations.Order(), "key": key})
+				logger := log.WithFields(log.Fields{"type": builder, "implementations": projectSetting.Implementations.Order(), "key": key})
 				for _, err := range res.Errors() {
 					logger.WithError(err)
 				}
 				logger.Warn("CLI:LocalProject: Builder activation FAILED")
 			}
 		} else {
-			log.WithFields(log.Fields{"builder": projectSetting.Type}).Error("CLI:LocalProject: Unknown builder referenced in local project")
+			log.WithFields(log.Fields{"Type": projectSetting.Type, "builder": builder}).Error("CLI:LocalProject: Unknown builder referenced in local project")
 		}
 	}
 
