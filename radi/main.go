@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	secure      bool                           = true                             // should the cli use a SecureProject (authorized operations)
 	debug       bool                           = false                            // default to disable debugging output
 	internal    bool                           = false                            // use and display components that are considered internal
 	workingDir  string                         = ""                               // can't use os.Cwd which returns multi-value
@@ -165,7 +166,7 @@ func main() {
 	 */
 
 	// Build a local API implementation from the settings
-	local, _ := cli_local.MakeLocalAPI(settings)
+	local, _ := cli_local.MakeLocalAPI(settings, secure)
 
 	// Get a list of operations from the API
 	localOps := local.Operations()

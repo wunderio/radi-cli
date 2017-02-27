@@ -37,7 +37,7 @@ import (
  * but not much to worry about (perhaps a couple of files are opened 2x)
  *
  */
-func MakeLocalAPI(settings handler_local.LocalAPISettings) (api_api.API, error) {
+func MakeLocalAPI(settings handler_local.LocalAPISettings, makeSecureProject bool) (api_api.API, error) {
 
 	if settings.ProjectDoesntExist {
 
@@ -56,7 +56,14 @@ func MakeLocalAPI(settings handler_local.LocalAPISettings) (api_api.API, error) 
 		bootstrapOps := bootstrapProject.Operations()
 		bootstrapConfigWrapper := api_config.New_SimpleConfigWrapper(bootstrapOps)
 
-		localProject, err := MakeLocal_SecureProject(settings)
+		var localProject api_builder.Project
+		var err error
+
+		if makeSecureProject {
+			localProject, err = MakeLocal_SecureProject(settings)
+		} else {
+			localProject, err = MakeLocal_StandardProject(settings)
+		}
 
 		ActivateConfigBuilders(localProject, settings, bootstrapConfigWrapper)
 
